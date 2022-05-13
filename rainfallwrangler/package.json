@@ -11,7 +11,7 @@
     "url": "https://git.starbeamrainbowlabs.com/sbrl/PhD-Rainfall-Radar.git"
   },
   "author": "Starbeamrainbowlabs",
-  "license": "GPL-3.0",
+  "license": "GPL-3.0-or-later",
   "dependencies": {
     "applause-cli": "^1.8.1",
     "gunzip-maybe": "^1.4.2",
