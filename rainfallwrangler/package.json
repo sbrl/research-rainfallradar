@@ -1,0 +1,21 @@
+{
+  "name": "rainfallwrangler",
+  "version": "1.0.0",
+  "description": "Wrangles rainfall radar and water depth data into something sensible.",
+  "main": "src/index.mjs",
+  "scripts": {
+    "test": "echo \"No tests have been implemented yet\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://git.starbeamrainbowlabs.com/sbrl/PhD-Rainfall-Radar.git"
+  },
+  "author": "Starbeamrainbowlabs",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "applause-cli": "^1.8.1",
+    "gunzip-maybe": "^1.4.2",
+    "terrain50": "^1.10.1",
+    "tfrecord-stream": "^0.2.0"
+  }
+}
