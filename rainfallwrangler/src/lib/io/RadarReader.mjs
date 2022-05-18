@@ -17,14 +17,13 @@ import transpose from '../manip/array2d_transpose.mjs';
  * @param	{number}	time_step_interval	The nominal interval, in seconds, between time steps (default: 300 seconds)
  */
 class RadarReader {
-	constructor(in_stride = 1, do_interpolate = true, time_step_interval = 300) {
+	constructor(time_step_interval = 300, in_stride = 1, do_interpolate = true) {
 		this.time_step_interval = time_step_interval;
 		this.stride = in_stride;
 		this.do_interpolate = do_interpolate;
 		
-		this.writer_interp_stats = [];
+		// this.writer_interp_stats = [];
 	}
-	
 	
 	/**
 	 * An async iterator that yields rainfall radar objects in order.
@@ -125,7 +124,7 @@ class RadarReader {
 				interpolation_percentage
 			);
 			
-			this.writer_interp_stats.push(next_timestamp);
+			// this.writer_interp_stats.push(next_timestamp);
 			
 			yield obj_interpolated;
 			
