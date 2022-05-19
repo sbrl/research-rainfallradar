@@ -22,7 +22,7 @@ async function load_subcommands(cli) {
 
 export default async function () {
 	let cli = new CliParser(path.resolve(__dirname, "../package.json"));
-	cli.argument("verbose", "Enable verbose debugging output", null, "boolean")
+	cli.argument("verbose", "Enable verbose debugging output", false, "boolean")
 		.argument("log-level", "Sets the log level. Value values: DEBUG, INFO (the default), LOG, WARN, ERROR, NONE", "INFO", "string");
 	
 	await load_subcommands(cli);
@@ -53,7 +53,7 @@ export default async function () {
 	}
 	catch(error) {
 		console.error();
-		if(settings.cli.verbose)
+		if(settings.verbose)
 			throw error;
 		else
 			console.error(`${a.fred}${a.hicol}${error.message}${a.reset}`);

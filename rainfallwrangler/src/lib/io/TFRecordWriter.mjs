@@ -7,14 +7,14 @@ import tfrecord from 'tfrecord-stream';
 import pretty_ms from 'pretty-ms';
 
 class TFRecordWriter {
+	#builder = tfrecord.createBuilder();
+	
 	constructor(dirpath, count_per_file) {
 		this.dirpath = dirpath;
 		this.count_per_file = count_per_file;
 		
-		if(!fs.existsSync(dirpath))
-			fs.mkdirSync(dirpath);
-		
-		this.#builder = tfrecord.createBuilder();
+		if(!fs.existsSync(this.dirpath))
+			fs.mkdirSync(this.dirpath);
 	}
 	
 	async write(reader_radar, reader_water) {
@@ -28,7 +28,7 @@ class TFRecordWriter {
 			// Start writing to a new file when necessary
 			if(writer == null || count_this_file > this.count_per_file) {
 				if(writer !== null) await writer.close();
-				const filepath_next = path.join(dirpath, `${i_file}.tfrecord`);
+				const filepath_next = path.join(this.dirpath, `${i_file}.tfrecord`);
 				writer = await tfrecord.Writer.createFromStream(
 					fs.createWriteStream(filepath_next)
 				);

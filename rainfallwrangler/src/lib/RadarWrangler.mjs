@@ -1,5 +1,9 @@
 "use strict";
 
+import RadarReader from './io/RadarReader.mjs';
+
+import array2d_pool from './manip/array2d_pool.mjs';
+
 class RadarWrangler {
 	/**
 	 * The total number of timesteps we need in the buffer before we can even consider generating a sample.

@@ -6,9 +6,9 @@ import fs from 'fs';
 import path from 'path';
 
 
-import log from './lib/io/NamespacedLog.mjs'; const l = log("reader:terrain50stream");
+import log from './NamespacedLog.mjs'; const l = log("reader:terrain50stream");
 
-import array2d_classify_convert_bin from '../../manip/array2d_classify_convert_bin.mjs';
+import array2d_classify_convert_bin from '../manip/array2d_classify_convert_bin.mjs';
 
 class Terrain50StreamReader {	
 	constructor(threshold = 0.1, tolerant = false) {

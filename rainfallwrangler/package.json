@@ -13,6 +13,7 @@
   "author": "Starbeamrainbowlabs",
   "license": "GPL-3.0-or-later",
   "dependencies": {
+    "@tensorflow/tfjs-node-gpu": "^3.17.0",
     "applause-cli": "^1.8.1",
     "gunzip-maybe": "^1.4.2",
     "pretty-ms": "^7.0.1",

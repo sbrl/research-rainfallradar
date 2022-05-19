@@ -6,7 +6,7 @@ import { Readable } from 'stream';
 import nexline from 'nexline';
 import gunzip from 'gunzip-maybe';
 
-import log from './lib/io/NamespacedLog.mjs'; const l = log("reader:radar");
+import log from './NamespacedLog.mjs'; const l = log("reader:radar");
 import interpolate from '../manip/array2d_interpolate.mjs';
 import transpose from '../manip/array2d_transpose.mjs';
 
