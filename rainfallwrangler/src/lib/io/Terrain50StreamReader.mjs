@@ -30,8 +30,6 @@ class Terrain50StreamReader {
 		for await (const next of stream) {
 			i++;
 			
-			console.log(`Terrain50 STEP ${i}`);
-			
 			// Skip the first few items, because we want to predict the water
 			// depth after the rainfall radar data
 			if(i < this.offset)

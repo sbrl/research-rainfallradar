@@ -36,9 +36,7 @@ class TFRecordWriter {
 			}
 			
 			const sample_radar = await reader_radar.next();
-			console.log(`SAMPLE_RADAR`);
 			const sample_water = await reader_water.next();
-			console.log(`SAMPLE_WATER`);
 			
 			if(sample_radar.done || sample_water.done) break;
 			
