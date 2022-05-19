@@ -1,13 +1,14 @@
 "use strict";
 
-import { pipeline } from 'stream';
 import util from 'util';
+import { Readable } from 'stream';
 import fs from 'fs';
 import path from 'path';
 
+import Terrain50 from 'terrain50';
+import gunzip from 'gunzip-maybe';
 
 import log from './NamespacedLog.mjs'; const l = log("reader:terrain50stream");
-
 import array2d_classify_convert_bin from '../manip/array2d_classify_convert_bin.mjs';
 
 class Terrain50StreamReader {	
@@ -18,10 +19,11 @@ class Terrain50StreamReader {
 	}
 	
 	async *iterate(filepath) {
-		const stream = Terrain50.ParseStream(pipeline(
-			fs.createReadStream(filepath),
-			gunzip()
-		), this.tolerant ? /\s+/ : " ");
+		const reader = fs.createReadStream(filepath);
+		const extractor = gunzip();
+		reader.pipe(extractor);
+		
+		const stream = Terrain50.ParseStream(new Readable(extractor), this.tolerant ? /\s+/ : " ");
 		
 		let i = -1;
 		for await (const next of stream) {

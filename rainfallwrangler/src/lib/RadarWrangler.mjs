@@ -46,10 +46,11 @@ class RadarWrangler {
 			for(let i = offset; i < channel_timestep_count+offset; i++) {
 				acc.push(timestep_buffer[i]);
 			}
-			
 			grouped_timesteps.push(array2d_pool(acc, this.pooling_operator));
 			offset += channel_timestep_count;
 		}
+		
+		return grouped_timesteps;
 	}
 }
 

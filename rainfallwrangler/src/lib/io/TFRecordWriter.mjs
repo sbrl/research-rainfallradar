@@ -36,7 +36,9 @@ class TFRecordWriter {
 			}
 			
 			const sample_radar = await reader_radar.next();
+			console.log(`SAMPLE_RADAR`);
 			const sample_water = await reader_water.next();
+			console.log(`SAMPLE_WATER`);
 			
 			if(sample_radar.done || sample_water.done) break;
 			
@@ -53,8 +55,11 @@ class TFRecordWriter {
 	}
 	
 	make_example(sample_radar, sample_water) {
-		this.#builder.setFloats("rainfallradar", sample_radar.flat());
+		console.log(`SAMPLE WATER ${sample_water.flat().length} RAINFALL ${sample_radar.flat().length}`);
+		const sample_radar_flat1 = sample_radar.flat();
+		this.#builder.setFloats("rainfallradar", sample_radar_flat1.flat());
 		this.#builder.setInteger("rainfallradar_width", sample_radar[0].length);
+		this.#builder.setInteger("rainfallradar_channelsize", sample_radar_flat1[0].length);
 		this.#builder.setFloats("waterdepth", sample_water.flat());
 		this.#builder.setInteger("waterdepth_width", sample_water[0].length);
 		
