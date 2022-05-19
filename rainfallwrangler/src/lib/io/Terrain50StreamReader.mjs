@@ -20,14 +20,18 @@ class Terrain50StreamReader {
 	
 	async *iterate(filepath) {
 		const reader = fs.createReadStream(filepath);
-		const extractor = gunzip();
-		reader.pipe(extractor);
 		
-		const stream = Terrain50.ParseStream(new Readable(extractor), this.tolerant ? /\s+/ : " ");
+		const stream = Terrain50.ParseStream(
+			new Readable().wrap(reader.pipe(gunzip())),
+			this.tolerant ? /\s+/ : " "
+		);
 		
 		let i = -1;
 		for await (const next of stream) {
 			i++;
+			
+			console.log(`Terrain50 STEP ${i}`);
+			
 			// Skip the first few items, because we want to predict the water
 			// depth after the rainfall radar data
 			if(i < this.offset)
