@@ -10,5 +10,6 @@ export default function(cli) {
 				.map(el => parseInt(el))
 				.reverse();
 		})
-		.argument("water-offset", "Make the water depth data be this many time steps ahead of the rainfall radar data.", 1, "integer");
+		.argument("water-offset", "Make the water depth data be this many time steps ahead of the rainfall radar data.", 1, "integer")
+		.argument("output", "The path to the directory to write the generated TFRecord files to.", null, "string");
 }

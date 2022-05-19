@@ -11,7 +11,7 @@ import log from './lib/io/NamespacedLog.mjs'; const l = log("reader:terrain50str
 import array2d_classify_convert_bin from '../../manip/array2d_classify_convert_bin.mjs';
 
 class Terrain50StreamReader {	
-	constructor(threshold, tolerant = false) {
+	constructor(threshold = 0.1, tolerant = false) {
 		this.threshold = threshold;
 		
 		this.tolerant = tolerant;
