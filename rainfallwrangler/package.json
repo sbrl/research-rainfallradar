@@ -13,10 +13,10 @@
   "author": "Starbeamrainbowlabs",
   "license": "GPL-3.0-or-later",
   "dependencies": {
-    "@tensorflow/tfjs-node-gpu": "^3.17.0",
+    "@tensorflow/tfjs-node-gpu": "^3.18.0",
     "applause-cli": "^1.8.1",
     "gunzip-maybe": "^1.4.2",
-    "pretty-ms": "^7.0.1",
+    "pretty-ms": "^8.0.0",
     "terrain50": "^1.10.1",
     "tfrecord-stream": "^0.2.0"
   }
