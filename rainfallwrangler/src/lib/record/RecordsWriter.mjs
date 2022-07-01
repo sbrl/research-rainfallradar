@@ -21,8 +21,8 @@ class RecordsWriter {
 	}
 	
 	async close() {
-		await this.#gzip.close();
-		await this.#stream_out.close();
+		await end_safe(this.#gzip);
+		await end_safe(this.#stream_out);
 	}
 }
 
