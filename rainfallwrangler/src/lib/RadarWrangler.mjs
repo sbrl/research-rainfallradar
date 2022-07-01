@@ -27,7 +27,6 @@ class RadarWrangler {
 			
 			const result = this.make_sample(timestep_buffer);
 			if(result == null) continue;
-			
 			yield result;
 			
 			timestep_buffer.shift();
@@ -50,7 +49,7 @@ class RadarWrangler {
 			offset += channel_timestep_count;
 		}
 		
-		return grouped_timesteps;
+		return Promise.all(grouped_timesteps);
 	}
 }
 

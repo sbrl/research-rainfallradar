@@ -12,7 +12,6 @@ export default async function array2d_pool(channels, operator="max") {
 		const tensor = tf.tensor(channels);
 		return tf.max(tensor, 0, false);
 	});
-	
 	const result_array = await result_tensor.array();
 	result_tensor.dispose();
 	

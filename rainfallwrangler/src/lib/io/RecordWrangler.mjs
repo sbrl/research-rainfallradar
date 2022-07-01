@@ -6,6 +6,7 @@ import path from 'path';
 import RecordBuilder from '../record/RecordBuilder.mjs';
 import RecordsWriter from '../record/RecordsWriter.mjs';
 import pretty_ms from 'pretty-ms';
+import terrain50_analyse_frequencies from 'terrain50/src/static/Terrain50AnalyseFrequencies.mjs';
 
 class RecordWrangler {
 	#builder = new RecordBuilder();
@@ -13,6 +14,8 @@ class RecordWrangler {
 	constructor(dirpath, count_per_file) {
 		this.dirpath = dirpath;
 		this.count_per_file = count_per_file;
+		
+		this.display_interval = 2 * 1000;
 		
 		if(!fs.existsSync(this.dirpath))
 			fs.mkdirSync(this.dirpath);
@@ -22,24 +25,23 @@ class RecordWrangler {
 		// TODO: Shuffle stuff about in the *Python* data pipeline
 		
 		let writer = null;
-		let i = -1, i_file = 0, count_this_file = 0, time_start = new Date();
+		let i = 0, i_file = 0, count_this_file = 0, time_start = new Date(), time_display = time_start;
 		while(true) {
 			i++;
-			
-			console.log(`RecordWriter step ${i}`);
 			
 			// Start writing to a new file when necessary
 			if(writer == null || count_this_file > this.count_per_file) {
 				if(writer !== null) await writer.close();
 				const filepath_next = path.join(this.dirpath, `${i_file}.jsonl.gz`);
 				writer = new RecordsWriter(filepath_next);
-				console.log(`RecordWriter NEW FILE ${filepath_next}`);
 				i_file++;
+				count_this_file = 0;
 			}
+			
+			count_this_file++;
 			
 			const sample_radar = await reader_radar.next();
 			const sample_water = await reader_water.next();
-			
 			if(sample_radar.done || sample_water.done) break;
 			
 			const example_next = this.make_example(
@@ -49,14 +51,19 @@ class RecordWrangler {
 			
 			await writer.write(example_next);
 			
-			process.stderr.write(`Elapsed: ${pretty_ms(new Date() - time_start)}, Written ${count_this_file}/${i_file}/${i} examples/files/total\r`);
+			const time_now = new Date();
+			if(time_now - time_display > this.display_interval) {
+				const elapsed = new Date() - time_start;
+				process.stderr.write(`Elapsed: ${pretty_ms(elapsed, { keepDecimalsOnWholeSeconds: true })}, Written ${count_this_file}/${i_file}/${i} examples/files/total | ${(1000 / (elapsed / i)).toFixed(2)} batches/sec | ${this.count_per_file - count_this_file} left for this file\r`);
+				time_display = time_now;
+			}
 		}
 		
 	}
 	
 	make_example(sample_radar, sample_water) {
 		this.#builder.add("rainfallradar", sample_radar);
-		this.#builder.add("waterdepth", sample_water.flat);
+		this.#builder.add("waterdepth", sample_water);
 		return this.#builder.release();
 	}
 }

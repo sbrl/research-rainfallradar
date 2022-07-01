@@ -2,21 +2,22 @@
 
 import fs from 'fs';
 
-import SpawnStream from 'spawn-stream';
+import ChildProcess from 'duplex-child-process';
 
 import { write_safe, end_safe } from '../io/StreamHelpers.mjs';
 
 class RecordsWriter {
-	#stream_out = fs.createWriteStream(filepath);
-	#gzip = SpawnStream("gzip");
+	#stream_out = null;
+	#gzip = ChildProcess.spawn("gzip");
 	
 	constructor(filepath) {
+		this.#stream_out = fs.createWriteStream(filepath);
 		this.#gzip.pipe(this.#stream_out);
 	}
 	
 	async write(sample) {
-		console.log(sample);
-		await write_safe(this.#gzip, JSON.stringify(sample));
+		const str = JSON.stringify(Object.fromEntries(sample));
+		await write_safe(this.#gzip, str);
 	}
 	
 	async close() {
