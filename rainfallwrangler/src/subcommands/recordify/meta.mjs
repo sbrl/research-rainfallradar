@@ -1,7 +1,7 @@
 "use strict";
 
 export default function(cli) {
-	cli.subcommand("tfrecordify", "Converts rianfall radar and water depth data to a directory of tfrecord files.")
+	cli.subcommand("recordify", "Converts rainfall radar and water depth data to a directory of .jsonl.gz files.")
 		.argument("water", "Path to the water depths file, formatted as a stream of terrain50 objects. May or may not be gzipped.", null, "string")
 		.argument("rainfall", "Path to the rainfall radar data, formatted as jsonl. May or may not be gzipped.",  null, "string")
 		.argument("count-file", "The number of records to store in each TFRecord file. See the documentation for the optimal value of this number (default: 4096).", 64*64)

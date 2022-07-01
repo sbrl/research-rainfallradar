@@ -3,7 +3,7 @@
 import fs from 'fs';
 
 import settings from '../../settings.mjs';
-import TFRecordWriter from '../../lib/io/TFRecordWriter.mjs';
+import RecordWrangler from '../../lib/io/RecordWrangler.mjs';
 import RadarWrangler from '../../lib/RadarWrangler.mjs';
 import Terrain50StreamReader from '../../lib/io/Terrain50StreamReader.mjs';
 
@@ -22,7 +22,7 @@ export default async function() {
 		await fs.promises.mkdir(settings.output, { recursive: true });
 	
 	console.log("DEBUG", settings);
-	const writer = new TFRecordWriter(settings.output, settings.count_file);
+	const writer = new RecordWrangler(settings.output, settings.count_file);
 	const reader_radar = new RadarWrangler(settings.rainfall_pattern);
 	const reader_water = new Terrain50StreamReader();
 	

@@ -3,11 +3,12 @@
 import fs from 'fs';
 import path from 'path';
 
-import tfrecord from 'tfrecord-stream';
+import RecordBuilder from '../record/RecordBuilder.mjs';
+import RecordsWriter from '../record/RecordsWriter.mjs';
 import pretty_ms from 'pretty-ms';
 
-class TFRecordWriter {
-	#builder = tfrecord.createBuilder();
+class RecordWrangler {
+	#builder = new RecordBuilder();
 	
 	constructor(dirpath, count_per_file) {
 		this.dirpath = dirpath;
@@ -25,13 +26,14 @@ class TFRecordWriter {
 		while(true) {
 			i++;
 			
+			console.log(`RecordWriter step ${i}`);
+			
 			// Start writing to a new file when necessary
 			if(writer == null || count_this_file > this.count_per_file) {
 				if(writer !== null) await writer.close();
-				const filepath_next = path.join(this.dirpath, `${i_file}.tfrecord`);
-				writer = await tfrecord.Writer.createFromStream(
-					fs.createWriteStream(filepath_next)
-				);
+				const filepath_next = path.join(this.dirpath, `${i_file}.jsonl.gz`);
+				writer = new RecordsWriter(filepath_next);
+				console.log(`RecordWriter NEW FILE ${filepath_next}`);
 				i_file++;
 			}
 			
@@ -45,7 +47,7 @@ class TFRecordWriter {
 				sample_water.value
 			);
 			
-			await writer.writeExample(example_next);
+			await writer.write(example_next);
 			
 			process.stderr.write(`Elapsed: ${pretty_ms(new Date() - time_start)}, Written ${count_this_file}/${i_file}/${i} examples/files/total\r`);
 		}
@@ -53,16 +55,10 @@ class TFRecordWriter {
 	}
 	
 	make_example(sample_radar, sample_water) {
-		console.log(`SAMPLE WATER ${sample_water.flat().length} RAINFALL ${sample_radar.flat().length}`);
-		const sample_radar_flat1 = sample_radar.flat();
-		this.#builder.setFloats("rainfallradar", sample_radar_flat1.flat());
-		this.#builder.setInteger("rainfallradar_width", sample_radar[0].length);
-		this.#builder.setInteger("rainfallradar_channelsize", sample_radar_flat1[0].length);
-		this.#builder.setFloats("waterdepth", sample_water.flat());
-		this.#builder.setInteger("waterdepth_width", sample_water[0].length);
-		
-		return this.#builder.releaseExample();
+		this.#builder.add("rainfallradar", sample_radar);
+		this.#builder.add("waterdepth", sample_water.flat);
+		return this.#builder.release();
 	}
 }
 
-export default TFRecordWriter;
+export default RecordWrangler;
