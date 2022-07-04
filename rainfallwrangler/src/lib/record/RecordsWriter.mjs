@@ -17,7 +17,7 @@ class RecordsWriter {
 	
 	async write(sample) {
 		const str = JSON.stringify(Object.fromEntries(sample));
-		await write_safe(this.#gzip, str);
+		await write_safe(this.#gzip, str+"\n");
 	}
 	
 	async close() {
