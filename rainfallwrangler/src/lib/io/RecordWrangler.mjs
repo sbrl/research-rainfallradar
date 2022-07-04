@@ -7,6 +7,7 @@ import RecordBuilder from '../record/RecordBuilder.mjs';
 import RecordsWriter from '../record/RecordsWriter.mjs';
 import pretty_ms from 'pretty-ms';
 import terrain50_analyse_frequencies from 'terrain50/src/static/Terrain50AnalyseFrequencies.mjs';
+import { end_safe } from './StreamHelpers.mjs';
 
 class RecordWrangler {
 	#builder = new RecordBuilder();
@@ -58,7 +59,9 @@ class RecordWrangler {
 				time_display = time_now;
 			}
 		}
+		await writer.close();
 		
+		console.log(`\nComplete! ${i_file}/${i} files/records_total written in ${pretty_ms(new Date() - time_start)}`);
 	}
 	
 	make_example(sample_radar, sample_water) {
