@@ -38,10 +38,13 @@ class RecordUniqManager {
 	}
 	
 	async deduplicate(dirpath_source, dirpath_target) {
+		await this.init();
 		const time_start = new Date();
 		this.hashes.clear();
 		
-		const files = (await fs.promises.readdir(dirpath_source)).map(filename => path.join(dirpath_source, filename));
+		const files = (await fs.promises.readdir(dirpath_source))
+			.filter(filename => filename.endsWith(".jsonl.gz"))
+			.map(filename => path.join(dirpath_source, filename));
 		
 		l.log(`STEP [1 / 5]: Hashing files`);
 		await p_map(files, this.#do_single_hash.bind(this), { concurrency: this.worker_count + 10 });
@@ -54,15 +57,17 @@ class RecordUniqManager {
 		
 		l.log(`STEP [ 3 / 5 ]: Assemble deletion lists`);
 		const deletion_lists = this.assemble_deletion_lists(dupes);
-		l.log(`STEP [ 3 / 5 ]: ${deletion_lists.values().reduce((acc, next) => next.length + acc, 0)} duplicates to be deleted.`);
+		l.log(`STEP [ 3 / 5 ]: ${[...deletion_lists.values()].reduce((acc, next) => next.length + acc, 0)} duplicates to be deleted.`);
 		
 		l.log(`STEP [ 4 / 5 ]: Delete duplicates`);
+		l.error(`DEBUG There's a bug here where we somehow pass in the deletion list multiple times?????`);
 		await p_map(
 			deletion_lists.entries(),
 			async (args) => await this.#do_single_delete(...args),
 			{ concurrency: this.worker_count + 10 }
 		);
 		l.log(`STEP [ 4 / 5 ]: Duplicates deleted.`);
+		throw new Error("Error: NOTE: We need to fix the bug with the duplicate deletion before we can do anything else.");
 		
 		l.log(`STEP [ 5 / 5 ]: Recompress files`);
 		const { recompress_lines, recompress_files } = await records_recompress(
@@ -88,7 +93,7 @@ class RecordUniqManager {
 				if(hash === hash_inner) dupes_group.push( { id: id_inner, hash: hash_inner });
 			}
 			if(dupes_group.length > 1) {
-				result.push(result);
+				result.push(dupes_group);
 			}
 		}
 		
@@ -101,7 +106,7 @@ class RecordUniqManager {
 			for(const dupe of dupe_group.slice(1)) { // Keep the first one
 				const [ filename, i ] = dupe.id.split(`|`, 2);
 				if(!result.has(filename)) result.set(filename, []);
-				result.get(filename).push(i);
+				result.get(filename).push(parseInt(i, 10));
 			}
 		}
 		return result;
@@ -123,10 +128,10 @@ class RecordUniqManager {
 		}
 	}
 	
-	async #do_single_delete(filename, deletion_list) {
-		const result = await p_reflect(this.proxy.delete_duplicates(filename, deletion_list));
+	async #do_single_delete(filename_source, deletion_list) {
+		const result = await p_reflect(this.proxy.delete_duplicates(filename_source, deletion_list));
 		if(result.isRejected) {
-			l.warn(`Got error from worker when deleting ${deletion_list.length} entries from ${filename}:`, result.reason);
+			l.warn(`Got error from worker when deleting ${deletion_list.length} entries from ${filename_source}:`, result.reason);
 			return;
 		}
 	}
