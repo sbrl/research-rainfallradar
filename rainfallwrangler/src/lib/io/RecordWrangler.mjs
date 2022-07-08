@@ -3,10 +3,11 @@
 import fs from 'fs';
 import path from 'path';
 
+import log from '../../lib/io/NamespacedLog.mjs'; const l = log("recordwrangler");
+
 import RecordBuilder from '../record/RecordBuilder.mjs';
 import RecordsWriter from '../record/RecordsWriter.mjs';
 import pretty_ms from 'pretty-ms';
-import terrain50_analyse_frequencies from 'terrain50/src/static/Terrain50AnalyseFrequencies.mjs';
 import { end_safe } from './StreamHelpers.mjs';
 
 class RecordWrangler {
@@ -43,7 +44,10 @@ class RecordWrangler {
 			
 			const sample_radar = await reader_radar.next();
 			const sample_water = await reader_water.next();
-			if(sample_radar.done || sample_water.done) break;
+			if(sample_radar.done || sample_water.done) {
+				l.log(`Done because ${sample_radar.done?"radar":"water"} reader is out of records`);
+				break;
+			}
 			
 			const example_next = this.make_example(
 				sample_radar.value,
@@ -61,7 +65,7 @@ class RecordWrangler {
 		}
 		await writer.close();
 		
-		console.log(`\nComplete! ${i_file}/${i} files/records_total written in ${pretty_ms(new Date() - time_start)}`);
+		console.log(`\nComplete! ${i_file}/${i} files/records_total written in ${pretty_ms(new Date() - time_start)}\n`);
 	}
 	
 	make_example(sample_radar, sample_water) {

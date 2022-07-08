@@ -2,17 +2,18 @@
 
 import fs from 'fs';
 
-import ChildProcess from 'duplex-child-process';
+import log from '../../lib/io/NamespacedLog.mjs'; const l = log("recordswriter");
 
+import GzipChildProcess from '../io/GzipChildProcess.mjs';
 import { write_safe, end_safe } from '../io/StreamHelpers.mjs';
 
 class RecordsWriter {
 	#stream_out = null;
-	#gzip = ChildProcess.spawn("gzip");
+	#gzip = new GzipChildProcess();
 	
 	constructor(filepath) {
 		this.#stream_out = fs.createWriteStream(filepath);
-		this.#gzip.pipe(this.#stream_out);
+		this.#gzip.stdout.pipe(this.#stream_out);
 	}
 	
 	/**
@@ -22,7 +23,7 @@ class RecordsWriter {
 	 */
 	async write(sample) {
 		const str = JSON.stringify(Object.fromEntries(sample));
-		await write_safe(this.#gzip, str+"\n");
+		await write_safe(this.#gzip.stdin, str+"\n");
 	}
 	
 	/**
@@ -31,7 +32,7 @@ class RecordsWriter {
 	 * @return	{Promise}
 	 */
 	async write_raw(line) {
-		await write_safe(this.#gzip, line+"\n");
+		await write_safe(this.#gzip.stdin, line+"\n");
 	}
 	
 	/**
@@ -40,8 +41,8 @@ class RecordsWriter {
 	 * @return	{Promise}
 	 */
 	async close() {
-		await end_safe(this.#gzip);
-		await end_safe(this.#stream_out);
+		await this.#gzip.close();
+		// Closing this.#stream_out causes a silent crash O.o 2022-07-08 @sbrl Node.js 18.4.0
 	}
 }
 

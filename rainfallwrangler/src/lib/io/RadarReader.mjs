@@ -140,8 +140,6 @@ class RadarReader {
 	}
 	
 	async close() {
-		if(this.stream_in !== null) this.stream_in.close();
-		if(this.stream_extractor !== null) await end_safe(this.stream_extractor);
 		if(this.reader !== null) this.reader.close();
 		
 		this.stream_in = null;

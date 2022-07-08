@@ -7,7 +7,7 @@ import RecordWrangler from '../../lib/io/RecordWrangler.mjs';
 import RadarWrangler from '../../lib/RadarWrangler.mjs';
 import Terrain50StreamReader from '../../lib/io/Terrain50StreamReader.mjs';
 
-import log from './NamespacedLog.mjs'; const l = log("recordify");
+import log from '../../lib/io/NamespacedLog.mjs'; const l = log("recordify");
 
 export default async function() {
 	if(typeof settings.water !== "string")
@@ -29,7 +29,7 @@ export default async function() {
 	
 	await writer.write(reader_radar.iterate(settings.rainfall), reader_water.iterate(settings.water));
 	
-	l.log("Closing reader reader")
+	l.log("Closing radar reader")
 	await reader_radar.close();
 	l.log("Closing water depth data reader")
 	await reader_water.close();
