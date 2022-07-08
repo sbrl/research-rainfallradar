@@ -10,7 +10,7 @@ import Terrain50 from 'terrain50';
 
 import log from './NamespacedLog.mjs'; const l = log("reader:terrain50stream");
 import array2d_classify_convert_bin from '../manip/array2d_classify_convert_bin.mjs';
-import { end_safe }
+import { end_safe } from './StreamHelpers.mjs';
 
 class Terrain50StreamReader {	
 	constructor(threshold = 0.1, tolerant = false) {
