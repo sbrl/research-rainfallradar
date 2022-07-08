@@ -9,6 +9,7 @@ import gunzip from 'gunzip-maybe';
 import log from './NamespacedLog.mjs'; const l = log("reader:radar");
 import interpolate from '../manip/array2d_interpolate.mjs';
 import transpose from '../manip/array2d_transpose.mjs';
+import { end_safe } from './StreamHelpers.mjs';
 
 /**
  * Reads data in order from a directory of .jsonl.gz files.
@@ -23,6 +24,10 @@ class RadarReader {
 		this.do_interpolate = do_interpolate;
 		
 		// this.writer_interp_stats = [];
+		
+		this.reader = null;
+		this.stream_in = null;
+		this.stream_extractor = null;
 	}
 	
 	/**
@@ -36,18 +41,17 @@ class RadarReader {
 		if(!fs.existsSync(filename))
 			throw new Error(`RadarReader/Error: Can't read from '${filename}' as it doesn't exist.`);
 		
-		let read = fs.createReadStream(filename),
-			extractor = gunzip();
-		read.pipe(extractor);
+		this.stream_in = fs.createReadStream(filename),
+		this.stream_extractor = this.stream_in.pipe(gunzip());
 		
-		let reader = nexline({
-			input: new Readable().wrap(extractor) // Wrap the stream so that nexline likes it
+		this.reader = nexline({
+			input: new Readable().wrap(this.stream_extractor) // Wrap the stream so that nexline likes it
 		});
 		
 		let i = -1;
 		let prev = null
 		while(true) {
-			let next_line = await reader.next();
+			let next_line = await this.reader.next();
 			if(next_line == null)
 				break;
 			
@@ -133,6 +137,16 @@ class RadarReader {
 				next_timestamp.getSeconds() + (this.time_step_interval * this.stride)
 			);
 		} while(b.timestamp - next_timestamp >= this.time_step_interval * 1000 * this.stride);
+	}
+	
+	async close() {
+		if(this.stream_in !== null) this.stream_in.close();
+		if(this.stream_extractor !== null) await end_safe(this.stream_extractor);
+		if(this.reader !== null) this.reader.close();
+		
+		this.stream_in = null;
+		this.stream_extractor = null;
+		this.reader = null;
 	}
 }
 

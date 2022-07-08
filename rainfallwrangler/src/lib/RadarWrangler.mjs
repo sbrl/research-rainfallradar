@@ -51,6 +51,10 @@ class RadarWrangler {
 		
 		return Promise.all(grouped_timesteps);
 	}
+	
+	async close() {
+		await this.reader.close();
+	}
 }
 
 export default RadarWrangler;
