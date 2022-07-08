@@ -2,9 +2,11 @@
 
 import fs from 'fs';
 import path from 'path';
+import { Readable } from 'stream';
 
 import nexline from 'nexline';
 import pretty_ms from 'pretty-ms';
+import gunzip from 'gunzip-maybe';
 
 import RecordsWriter from './RecordsWriter.mjs';
 
@@ -12,7 +14,7 @@ async function records_recompress(dirpath_source, dirpath_target, items_per_file
 	const files = (await fs.promises.readdir(dirpath_source)).map(filename => path.join(dirpath_source, filename));
 	
 	const reader = nexline({
-		input: files.map(filepath => fs.createReadStream(filepath).pipe(gunzip()))
+		input: files.map(filepath => new Readable().wrap(fs.createReadStream(filepath).pipe(gunzip())))
 	});
 	
 	
@@ -37,7 +39,7 @@ async function records_recompress(dirpath_source, dirpath_target, items_per_file
 		
 		if(new Date() - time_display > 2000) {
 			const elapsed = new Date() - time_start;
-			process.stdout.write(`${pretty_ms(elapsed, { keepDecimalsOnWholeSeconds: true })} elapsed | ${i_file}/${i_this_file}/${i} files/this file/total |  ${(1000 / (elapsed / i)).toFixed(2)} lines/sec | ${this.items_per_file - i_this_file} left for this file\r`)
+			process.stdout.write(`${pretty_ms(elapsed, { keepDecimalsOnWholeSeconds: true })} elapsed | ${i_file}/${i_this_file}/${i} files/this file/total |  ${(1000 / (elapsed / i)).toFixed(2)} lines/sec | ${items_per_file - i_this_file} left for this file\r`)
 		}
 	}
 	await writer.close();

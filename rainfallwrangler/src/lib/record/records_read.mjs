@@ -1,6 +1,7 @@
 "use strict";
 
 import fs from 'fs';
+import { Readable } from 'stream';
 
 import nexline from 'nexline';
 import gunzip from 'gunzip-maybe';
@@ -12,7 +13,7 @@ import gunzip from 'gunzip-maybe';
  */
 function records_read(filename) {
 	return nexline({
-		input: fs.createReadStream(filename).pipe(gunzip())
+		input: new Readable().wrap(fs.createReadStream(filename).pipe(gunzip()))
 	});
 }
 

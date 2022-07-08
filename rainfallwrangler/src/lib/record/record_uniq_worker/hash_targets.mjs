@@ -4,13 +4,13 @@ import crypto from 'crypto';
 
 import records_read from "../records_read.mjs";
 
-import log from '../io/NamespacedLog.mjs'; const l = log("recorduniq:worker");
+import log from '../../io/NamespacedLog.mjs'; const l = log("recorduniq:worker");
 
-export default async function(filename) {
+export default async function(filepath) {
 	const result = [];
 	
 	let i = -1;
-	for await(const line of records_read(filename)) {
+	for await(const line of records_read(filepath)) {
 		i++;
 		if(line === "") continue;
 		
