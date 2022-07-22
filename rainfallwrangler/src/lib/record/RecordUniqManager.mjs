@@ -47,20 +47,22 @@ class RecordUniqManager {
 			.filter(filename => filename.endsWith(".jsonl.gz"))
 			.map(filename => path.join(dirpath_source, filename));
 		
-		l.log(`STEP [1 / 5]: Hashing files`);
+		l.log(`STEP [1 / 5]: Hashing ${files.length} files`);
+		const time_start_hash = new Date();
 		await p_map(files, this.#do_single_hash.bind(this), { concurrency: this.worker_count + 10 });
-		l.log(`STEP [1 / 5]: ${this.hashes.size} hashes gathered in total.`);
+		const time_per_hash = (new Date() - time_start_hash) / this.hashes.size;
+		l.log(`STEP [1 / 5]: ${this.hashes.size} hashes gathered in total, averaging ${(1000/time_per_hash).toFixed(2)} hashes/sec.`);
 		
-		l.log(`STEP [ 2 / 5 ]: Identify duplicates`);
+		// l.log(`STEP [ 2 / 5 ]: Identify duplicates`);
 		const dupes = this.find_duplicates();
 		this.hashes.clear(); // Save memory
 		l.log(`STEP [ 2 / 5 ]: ${dupes.length} duplicate groups identified`);
 		
-		l.log(`STEP [ 3 / 5 ]: Assemble deletion lists`);
+		// l.log(`STEP [ 3 / 5 ]: Assemble deletion lists`);
 		const deletion_lists = this.assemble_deletion_lists(dupes);
 		l.log(`STEP [ 3 / 5 ]: ${[...deletion_lists.values()].reduce((acc, next) => next.length + acc, 0)} duplicates to be deleted.`);
 		
-		l.log(`STEP [ 4 / 5 ]: Delete duplicates`);
+		// l.log(`STEP [ 4 / 5 ]: Delete duplicates`);
 		await p_map(
 			deletion_lists.entries(),
 			async (args) => await this.#do_single_delete(...args),
@@ -138,6 +140,10 @@ class RecordUniqManager {
 		}
 		
 		this.items_deleted += result.value;
+	}
+	
+	close() {
+		this.pool.terminate();
 	}
 }
 

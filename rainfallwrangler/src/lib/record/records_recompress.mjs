@@ -37,9 +37,10 @@ async function records_recompress(dirpath_source, dirpath_target, items_per_file
 		i++;
 		i_this_file++;
 		
-		if(new Date() - time_display > 2000) {
+		if(new Date() - time_display > 500) {
 			const elapsed = new Date() - time_start;
-			process.stdout.write(`${pretty_ms(elapsed, { keepDecimalsOnWholeSeconds: true })} elapsed | ${i_file}/${i_this_file}/${i} files/this file/total |  ${(1000 / (elapsed / i)).toFixed(2)} lines/sec | ${items_per_file - i_this_file} left for this file\r`)
+			process.stdout.write(`${pretty_ms(elapsed, { keepDecimalsOnWholeSeconds: true })} elapsed | ${i_file}/${i_this_file}/${i} files/thisfile/total |  ${(1000 / (elapsed / i)).toFixed(2)} lines/sec | ${items_per_file - i_this_file} left for this file    \r`);
+			time_display = new Date();
 		}
 	}
 	await writer.close();

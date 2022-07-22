@@ -15,4 +15,5 @@ export default async function() {
 	
 	const uniq_manager = new RecordUniqManager(settings.count_file);
 	await uniq_manager.deduplicate(settings.source, settings.target);
+	uniq_manager.close(); // Terminate the workerpool nowt hat we're done
 }

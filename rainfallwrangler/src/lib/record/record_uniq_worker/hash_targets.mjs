@@ -8,7 +8,6 @@ import log from '../../io/NamespacedLog.mjs'; const l = log("recorduniq:worker:h
 
 export default async function(filepath) {
 	const result = [];
-	
 	let i = -1;
 	for await(const line of records_read(filepath)) {
 		i++;
