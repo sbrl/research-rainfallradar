@@ -58,7 +58,6 @@ class RecordUniqManager {
 		
 		l.log(`STEP [ 3 / 5 ]: Assemble deletion lists`);
 		const deletion_lists = this.assemble_deletion_lists(dupes);
-		console.log(deletion_lists);
 		l.log(`STEP [ 3 / 5 ]: ${[...deletion_lists.values()].reduce((acc, next) => next.length + acc, 0)} duplicates to be deleted.`);
 		
 		l.log(`STEP [ 4 / 5 ]: Delete duplicates`);
