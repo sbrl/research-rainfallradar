@@ -41,6 +41,7 @@ class RecordUniqManager {
 		await this.init();
 		const time_start = new Date();
 		this.hashes.clear();
+		this.items_deleted = 0;
 		
 		const files = (await fs.promises.readdir(dirpath_source))
 			.filter(filename => filename.endsWith(".jsonl.gz"))
@@ -57,17 +58,16 @@ class RecordUniqManager {
 		
 		l.log(`STEP [ 3 / 5 ]: Assemble deletion lists`);
 		const deletion_lists = this.assemble_deletion_lists(dupes);
+		console.log(deletion_lists);
 		l.log(`STEP [ 3 / 5 ]: ${[...deletion_lists.values()].reduce((acc, next) => next.length + acc, 0)} duplicates to be deleted.`);
 		
 		l.log(`STEP [ 4 / 5 ]: Delete duplicates`);
-		l.error(`DEBUG There's a bug here where we somehow pass in the deletion list multiple times?????`);
 		await p_map(
 			deletion_lists.entries(),
 			async (args) => await this.#do_single_delete(...args),
 			{ concurrency: this.worker_count + 10 }
 		);
-		l.log(`STEP [ 4 / 5 ]: Duplicates deleted.`);
-		throw new Error("Error: NOTE: We need to fix the bug with the duplicate deletion before we can do anything else.");
+		l.log(`STEP [ 4 / 5 ]: ${this.items_deleted} duplicates deleted.`);
 		
 		l.log(`STEP [ 5 / 5 ]: Recompress files`);
 		const { recompress_lines, recompress_files } = await records_recompress(
@@ -86,12 +86,15 @@ class RecordUniqManager {
 	
 	find_duplicates() {
 		const result = [];
+		const hashes_seen = [];
 		for(const [ id, hash ] of this.hashes.entries()) {
+			if(hashes_seen.includes(hash)) continue;
 			const dupes_group = [ { id, hash } ];
 			for(const [ id_inner, hash_inner ] of this.hashes.entries()) {
 				if(id === id_inner) continue;
 				if(hash === hash_inner) dupes_group.push( { id: id_inner, hash: hash_inner });
 			}
+			hashes_seen.push(hash);
 			if(dupes_group.length > 1) {
 				result.push(dupes_group);
 			}
@@ -116,7 +119,7 @@ class RecordUniqManager {
 		if(filepath.includes("|")) throw new Error(`Filepath contains bar character: ${filepath}`);
 		const filename = path.basename(filepath);
 		
-		l.log(`Hashing ${path.basename(filepath)}`);
+		// l.log(`Hashing ${path.basename(filepath)}`);
 		const result = await p_reflect(this.proxy.hash_targets(filepath));
 		if(result.isRejected) {
 			l.warn(`Got error from worker when hashing ${filename}:`, result.reason);
@@ -132,8 +135,10 @@ class RecordUniqManager {
 		const result = await p_reflect(this.proxy.delete_duplicates(filename_source, deletion_list));
 		if(result.isRejected) {
 			l.warn(`Got error from worker when deleting ${deletion_list.length} entries from ${filename_source}:`, result.reason);
-			return;
+			return null;
 		}
+		
+		this.items_deleted += result.value;
 	}
 }
 
