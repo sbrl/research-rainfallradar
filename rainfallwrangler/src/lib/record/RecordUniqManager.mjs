@@ -79,7 +79,7 @@ class RecordUniqManager {
 		l.log(`Done in ${pretty_ms(new Date() - time_start)}, thank you :D`);
 	}
 	
-	#adjacent_dir(dir, target="deduped") {
+	#adjacent_dir(dir, tag="deduped") {
 		const dirname = path.dirname(dir);
 		const basename = path.basename(dir);
 		return path.join(dirname, `${basename}-${tag}`);
