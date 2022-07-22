@@ -33,5 +33,5 @@ echo ">>> Settings";
 echo "INPUT $INPUT";
 
 echo ">>> Uniquifying dataset";
-/usr/bin/env time -v src/index.mjs --verbose --source "${INPUT}" --count-file "${COUNT_FILE}";
+/usr/bin/env time -v src/index.mjs uniq --verbose --source "${INPUT}" --count-file "${COUNT_FILE}";
 echo ">>> exited with code $?";
