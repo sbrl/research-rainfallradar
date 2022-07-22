@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+#SBATCH -J RainUniq
+#SBATCH -N 1
+#SBATCH -n 28
+#SBATCH -o %j.%N.%a.out
+#SBATCH -e %j.%N.%a.err
+#SBATCH -p compute
+#SBATCH --time=3-00:00:00
+
+module load utilities/multi
+module load readline/7.0
+module load gcc/10.2.0
+
+module load python/anaconda/4.6/miniconda/3.7
+
+# TODO: expand this to pull this dynamically from the model
+INPUT="${INPUT:-$HOME/rainfallwater_records}";
+COUNT_FILE="${COUNT_FILE:4000}"
+
+if [[ -z "${INPUT}" ]]; then
+	echo "Error: No input directory specified in the INPUT environment variable.";
+	exit 1;
+fi
+if [[ ! -d "${INPUT}" ]]; then
+	echo "Error: That input directory either doesn't exist, isn't a directory, or we don't have permission to access it.";
+	exit 3;
+fi
+
+export PATH=$HOME/software/bin:$PATH;
+
+echo ">>> Settings";
+
+echo "INPUT $INPUT";
+
+echo ">>> Uniquifying dataset";
+/usr/bin/env time -v src/index.mjs --verbose --source "${INPUT}" --count-file "${COUNT_FILE}";
+echo ">>> exited with code $?";
