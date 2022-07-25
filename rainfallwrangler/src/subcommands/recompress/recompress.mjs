@@ -17,5 +17,5 @@ export default async function() {
 	if(!fs.existsSync(settings.target))
 		await fs.promises.mkdir(settings.target);
 	
-	await records_recompress(settings.source, settings.target);
+	await records_recompress(settings.source, settings.target, settings.count_file);
 }

@@ -15,10 +15,16 @@ async function records_recompress(dirpath_source, dirpath_target, items_per_file
 		.filter(filename => filename.endsWith(`.jsonl.gz`))
 		.map(filename => path.join(dirpath_source, filename));
 	
+	files.sort((a, b) => {
+		let ai = parseInt(a.split(".")[0], 10), bi = parseInt(b.split(".")[0], 10);
+		if(ai === bi) return 0;
+		else return ai > bi ? 1 : -1;
+	});
+	
+	
 	const reader = nexline({
 		input: files.map(filepath => new Readable().wrap(fs.createReadStream(filepath).pipe(gunzip())))
 	});
-	
 	
 	if(!fs.existsSync(dirpath_target))
 		await fs.promises.mkdir(dirpath_target, { recursive: true });
