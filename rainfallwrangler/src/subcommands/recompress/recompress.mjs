@@ -4,16 +4,18 @@ import fs from 'fs';
 
 import settings from "../../settings.mjs";
 
-import RecordUniqManager from '../../lib/record/RecordUniqManager.mjs';
+import records_recompress from '../../lib/record/records_recompress.mjs';
 
 export default async function() {
 	if(typeof settings.source !== "string")
 		throw new Error(`Error: No source directory specified (see the --source CLI argument)`);
+	if(typeof settings.target !== "string")
+		throw new Error(`Error: No target directory specified (see the --target CLI argument)`);
+	
 	if(!fs.existsSync(settings.source))
 		throw new Error(`Error: The source directory at '${settings.source}' doesn't exist or you haven't got permission to access it.`);
+	if(!fs.existsSync(settings.target))
+		await fs.promises.mkdir(settings.target);
 	
-	
-	const uniq_manager = new RecordUniqManager(settings.count_file);
-	await uniq_manager.deduplicate(settings.source, settings.target);
-	uniq_manager.close(); // Terminate the workerpool now that we're done
+	await records_recompress(settings.source, settings.target);
 }
