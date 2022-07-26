@@ -56,4 +56,7 @@ def dataset(dirpath_input, batch_size=64, train_percentage=0.8):
 
 
 if __name__ == "__main__":
-    dataset()
+	ds_train, ds_validate = dataset()
+	for thing in ds_validate():
+		as_str = str(thing)
+		print(thing[:100])
