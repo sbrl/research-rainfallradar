@@ -16,14 +16,7 @@ def main():
 		return
 	
 	imported_module = importlib.import_module(f"subcommands.{subcommand}")
-	# TODO: Support multiple subcommands here
-	match subcommand:
-		case "pretrain":
-			imported_module.pretrain(args)
-		case _:
-			sys.stderr.write(f"Error: The subcommand '{subcommand}' hasn't been registered in index.py yet.\nThis is a bug.\n")
-			exit(1)
-	
+	imported_module.run(args)	
 	
 
 if __name__ == "__main__":
