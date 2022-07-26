@@ -29,7 +29,7 @@ def make_dataset(filepaths, batch_size, shuffle_buffer_size=128, parallel_reads_
 	return tf.data.TextLineDataset(
 		filenames=tf.data.Dataset.from_tensor_slices(filepaths).shuffle(len(filepaths), reshuffle_each_iteration=True),
 		compression_type=tf.constant("GZIP"),
-		num_parallel_reads=math.ceil(os.cpu_count() * parallel_reads_multiplier) # iowait can cause issues - especially in Viper
+		num_parallel_reads=math.ceil(os.cpu_count() * parallel_reads_multiplier) # iowait can cause issues - especially on Viper
 	).map(tf.py_function(parse_line), num_parallel_calls=tf.data.AUTOTUNE) \
 		.filter(lambda item : item is not None) \
 		.shuffle(shuffle_buffer_size) \
