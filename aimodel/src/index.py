@@ -16,7 +16,7 @@ def main():
 		return
 	
 	imported_module = importlib.import_module(f"subcommands.{subcommand}")
-	imported_module.run(args)	
+	imported_module.run(args)
 	
 
 if __name__ == "__main__":
