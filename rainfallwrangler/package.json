@@ -17,7 +17,6 @@
     "applause-cli": "^1.8.1",
     "gunzip-maybe": "^1.4.2",
     "nexline": "^1.2.2",
-    "p-debounce": "^4.0.0",
     "p-map": "^5.5.0",
     "p-reflect": "^3.0.0",
     "pretty-ms": "^8.0.0",
