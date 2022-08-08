@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+#SBATCH -J Json2TfR
+#SBATCH -N 1
+#SBATCH -n 28
+#SBATCH -o %j.%N.%a.out
+#SBATCH -e %j.%N.%a.err
+#SBATCH -p gpu05,gpu
+#SBATCH --time=3-00:00:00
+
+module load utilities/multi
+module load readline/7.0
+module load gcc/10.2.0
+module load cuda/11.5.0
+
+module load python/anaconda/4.6/miniconda/3.7
+
+INPUT="${INPUT:-$HOME/rainfallwater_records}";
+OUTPUT="${OUTPUT:-$HOME/rainfallwater_records_tfrecord}";
+
+if [[ -z "${INPUT}" ]]; then
+	echo "Error: No input directory specified in the INPUT environment variable.";
+	exit 1;
+fi
+if [[ -z "${OUTPUT}" ]]; then
+	echo "Error: No output directory specified in the OUTPUT environment variable.";
+	exit 1;
+fi
+if [[ ! -d "${INPUT}" ]]; then
+	echo "Error: That input directory either doesn't exist, isn't a directory, or we don't have permission to access it.";
+	exit 3;
+fi
+
+export PATH=$HOME/software/bin:$PATH;
+
+echo ">>> Settings";
+
+echo "INPUT $INPUT";
+
+echo ">>> Converting dataset .jsonl.gz → .tfrecord.gz";
+/usr/bin/env time -v src/index.mjs jsonl2tfrecord --verbose --source "${INPUT}" --target "${OUTPUT}";
+echo ">>> exited with code $?";
