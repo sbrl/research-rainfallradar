@@ -6,6 +6,9 @@ import gzip
 import json
 import argparse
 
+from silence_tensorflow import silence_tensorflow
+if not os.environ.get("NO_SILENCE"):
+	silence_tensorflow()
 import tensorflow as tf
 
 # TO PARSE:
@@ -59,7 +62,7 @@ def convert(filepath_in, filepath_out):
 			## 3: Print shape definitions (required when parsing)
 			###
 			if i == 0:
-				print("SHAPES\t"+json.dumps({ "rainfallradar": rainfall.shape.as_list(), "waterdepth": water.shape.as_list() }))
+				print("SHAPES\t"+json.dumps({ "rainfallradar": rainfall.shape.as_list(), "waterdepth": water.shape.as_list() }), flush=True)
 			
 			###
 			## 4: Serialise tensors
@@ -76,7 +79,8 @@ def convert(filepath_in, filepath_out):
 			}))
 			writer.write(record.SerializeToString())
 			
-			print(i)
+			print(f"{i}", flush=True)
+			
 
 
 def main():
