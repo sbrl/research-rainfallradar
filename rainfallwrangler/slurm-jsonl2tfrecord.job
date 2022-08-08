@@ -2,7 +2,6 @@
 #SBATCH -J Json2TfR
 #SBATCH -N 1
 #SBATCH -n 28
-#SBATCH --gres=gpu:1
 #SBATCH -o %j.%N.%a.out
 #SBATCH -e %j.%N.%a.err
 #SBATCH -p compute
