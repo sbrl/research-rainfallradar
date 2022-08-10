@@ -11,10 +11,16 @@
  * @return	{function}	A debounced wrapper function around the specified function.
  */
 export default function(fn, interval) {
-	const time_last = 0;
+	if(typeof interval !== "number")
+		throw new Error(`Error: Expected interval to be of type number, but got value of type ${typeof interval}`);
+	
+	let time_last = 0;
 	return (...args) => {
 		const now = new Date();
-		if(now - time_last > interval)
+		// console.log(`DEBUG:debounce time since last`, now - time_last, `interval`, interval)
+		if(now - time_last > interval) {
+			time_last = now;
 			fn(...args);
+		}
 	}
 }

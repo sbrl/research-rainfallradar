@@ -6,7 +6,7 @@ import os from 'os';
 import p_map from 'p-map';
 import pretty_ms from 'pretty-ms';
 
-import debounce from '../async/debounce.mjs';
+import debounce from '../misc/debounce.mjs';
 import py_jsonl2tfrecord from '../python/py_jsonl2tfrecord.mjs';
 import log from '../../lib/io/NamespacedLog.mjs'; const l = log("jsonl2tf");
 
@@ -20,12 +20,12 @@ import log from '../../lib/io/NamespacedLog.mjs'; const l = log("jsonl2tf");
 export default async function(dirpath_source, dirpath_target) {
 	const files = await fs.promises.readdir(dirpath_source);
 	
-	let time_start = new Date(), lines_processed = 0, files_complete = 0;
+	let time_start = new Date(), lines_processed = 0, files_processed = 0;
 	
 	const update_progress_force = () => {
-		process.stdout.write(`${files_complete}/${lines_processed} files/lines complete | ${((new Date() - time_start) / lines_processed).toFixed(3)} lines/sec | ${((files_processed / files.length)*100).toFixed(2)}% complete\r`);
+		process.stdout.write(`${files_processed}/${lines_processed} files/lines complete | ${((new Date() - time_start) / lines_processed).toFixed(3)} lines/sec | ${((files_processed / files.length)*100).toFixed(2)}% complete\r`);
 	};
-	const update_progress = debounce(update_progress_force);
+	const update_progress = debounce(update_progress_force, 2000);
 	
 	await p_map(files, async (filename, i) => {
 		const filepath_source = path.join(dirpath_source, filename);
@@ -35,15 +35,15 @@ export default async function(dirpath_source, dirpath_target) {
 		let time_start = new Date(), lines_done = 0;
 		for await (let line_number of py_jsonl2tfrecord(filepath_source, filepath_dest, filepath_meta)) {
 			lines_processed++;
-			lines_done = line_number;
+			lines_done++;
 			update_progress();
 		}
-		files_complete++;
+		files_processed++;
 		l.info(`DEBUG lines_done`, lines_done);
 		
 		const time_per_line = (new Date() - time_start) / (lines_done === 0 ? 1 : lines_done);
 		l.log(`converted ${filename}: ${lines_done} lines @ ${pretty_ms(time_per_line)}/line`);
 	}, { concurrency: os.cpus().length });
 	update_progress_force();
-	l.log(`complete: ${lines_processed}/${files_complete} lines/files processed in ${pretty_ms(new Date() - time_start)}`);
+	l.log(`complete: ${lines_processed}/${files_processed} lines/files processed in ${pretty_ms(new Date() - time_start)}`);
 }
