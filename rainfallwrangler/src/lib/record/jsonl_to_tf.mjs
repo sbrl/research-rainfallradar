@@ -23,7 +23,7 @@ export default async function(dirpath_source, dirpath_target) {
 	let time_start = new Date(), lines_processed = 0, files_processed = 0;
 	
 	const update_progress_force = () => {
-		process.stdout.write(`${files_processed}/${lines_processed} files/lines complete | ${((new Date() - time_start) / lines_processed).toFixed(3)} lines/sec | ${((files_processed / files.length)*100).toFixed(2)}% complete\r`);
+		process.stdout.write(`${files_processed}/${lines_processed} files/lines complete | ${((new Date() - time_start) / lines_processed).toFixed(3)} lines/sec | ${((files_processed / files.length)*100).toFixed(2)}% complete | now: ${new Date().toISOString()}\r`);
 	};
 	const update_progress = debounce(update_progress_force, 2000);
 	
@@ -39,7 +39,6 @@ export default async function(dirpath_source, dirpath_target) {
 			update_progress();
 		}
 		files_processed++;
-		l.info(`DEBUG lines_done`, lines_done);
 		
 		const time_per_line = (new Date() - time_start) / (lines_done === 0 ? 1 : lines_done);
 		l.log(`converted ${filename}: ${lines_done} lines @ ${pretty_ms(time_per_line)}/line`);
