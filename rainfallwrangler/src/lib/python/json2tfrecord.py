@@ -71,6 +71,8 @@ def main():
 	
 	
 	convert(args.input, args.output)
+	sys.stderr.close()
+	sys.stdout.close()
 
 if __name__ == "__main__":
     main()
