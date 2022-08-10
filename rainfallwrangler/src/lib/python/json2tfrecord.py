@@ -11,27 +11,6 @@ if not os.environ.get("NO_SILENCE"):
 	silence_tensorflow()
 import tensorflow as tf
 
-# TO PARSE:
-@tf.function
-def parse_item(item):
-	parsed = tf.io.parse_single_example(item, features={
-		"rainfallradar": tf.io.FixedLenFeature([], tf.string),
-		"waterdepth": tf.io.FixedLenFeature([], tf.string)
-	})
-	rainfall = tf.io.parse_tensor(parsed["rainfallradar"], out_type=tf.float32)
-	water = tf.io.parse_tensor(parsed["waterdepth"], out_type=tf.float32)
-	
-	# TODO: The shape of the resulting tensor can't be statically determined, so we need to reshape here
-	
-	# TODO: Any other additional parsing here, since multiple .map() calls are not optimal
-	return rainfall, water
-
-def parse_example(filenames, compression_type="GZIP", parallel_reads_multiplier=1.5):
-	return tf.data.TFRecordDataset(filenames,
-		compression_type=compression_type,
-		num_parallel_reads=math.ceil(os.cpu_count() * parallel_reads_multiplier)
-	).map(parse_item, num_parallel_calls=tf.data.AUTOTUNE)
-
 def parse_args():
 	parser = argparse.ArgumentParser(description="Convert a generated .jsonl.gz file to a .tfrecord.gz file")
 	parser.add_argument("--input", "-i", help="Path to the input file to convert.", required=True)
