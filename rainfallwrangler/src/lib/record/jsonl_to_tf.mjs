@@ -39,7 +39,10 @@ export default async function(dirpath_source, dirpath_target) {
 			update_progress();
 		}
 		files_complete++;
-		l.log(`converted ${filename}: ${lines_done} lines @ ${pretty_ms((new Date() - time_start) / lines_done)}`);
+		l.info(`DEBUG lines_done`, lines_done);
+		
+		const time_per_line = (new Date() - time_start) / (lines_done === 0 ? 1 : lines_done);
+		l.log(`converted ${filename}: ${lines_done} lines @ ${pretty_ms(time_per_line)}/line`);
 	}, { concurrency: os.cpus().length });
 	update_progress_force();
 	l.log(`complete: ${lines_processed}/${files_complete} lines/files processed in ${pretty_ms(new Date() - time_start)}`);
