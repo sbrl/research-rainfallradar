@@ -1,0 +1,31 @@
+import io
+
+from loguru import logger
+
+
+def summarylogger(model):
+    """
+    Writes the summary for a model with the default logging context.
+    model (tf.keras.Model): The model to generate the summary from.
+    """
+    
+    def handle_line(line: str):
+        logger.info(line)
+    
+    model.summary(print_fn=handle_line)
+    
+
+def summarywriter(model, filepath_output, append=False):
+    """
+    Writes the summary for a model to a file in the specified location.
+    model (tf.keras.Model): The model to generate the summary from.
+    filepath_output (str):  The path to the file to write the summary to.
+    """
+    handle = io.open(filepath_output, "a" if append else "w")
+    
+    def handle_line(line: str):
+        handle.write(f"{line}\n")
+    
+    model.summary(print_fn=handle_line)
+    
+    handle.close()
