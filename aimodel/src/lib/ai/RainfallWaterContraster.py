@@ -6,6 +6,7 @@ import json
 
 import tensorflow as tf
 
+from ..io.find_paramsjson import find_paramsjson
 from ..io.readfile import readfile
 from ..io.writefile import writefile
 
@@ -36,19 +37,29 @@ class RainfallWaterContraster(object):
 			self.filepath_summary = os.path.join(self.dir_output, "summary.txt")
 			
 			summarywriter(self.model, self.filepath_summary)
-			writefile(os.path.join(self.dir_output, "params.json"), json.dumps(self.model.get_config()))
+			writefile(os.path.join(self.dir_output, "params.json"), self.get_config())
 		else:	
 			self.model = self.load_model(filepath_checkpoint)
 	
+	def get_config(self):
+		return {
+			"epochs": self.epochs,
+			"batch_size": self.batch_size,
+			**self.kwargs
+		}
 	
 	@staticmethod
-	def from_checkpoint(filepath_checkpoint, filepath_hyperparams):
+	def from_checkpoint(filepath_checkpoint, filepath_hyperparams=None):
+		if filepath_checkpoint is None:
+			filepath_checkpoint = find_paramsjson(filepath_checkpoint)
 		hyperparams = json.loads(readfile(filepath_hyperparams))
 		return RainfallWaterContraster(filepath_checkpoint=filepath_checkpoint, **hyperparams)
+	
 	
 	def make_model(self):
 		model = model_rainfallwater_contrastive(batch_size=self.batch_size, **self.kwargs)
 		return model
+	
 	
 	def load_model(self, filepath_checkpoint):
 		"""
@@ -77,9 +88,11 @@ class RainfallWaterContraster(object):
 		for batch in dataset:
 			i_batch += 1
 			result_batch = self.model(batch[0])
-			# Currently, the left and right should be the same
-			left, _ = tf.unstack(result_batch, axis=-2)
-			result_batch = tf.unstack(left, axis=0)
-			result.extend(result_batch)
+			rainfall, water = tf.unstack(result_batch, axis=-2)
+			
+			rainfall = tf.unstack(rainfall, axis=0)
+			water = tf.unstack(water, axis=0)
+			
+			result.extend(zip(rainfall, water))
 		
 		return result
