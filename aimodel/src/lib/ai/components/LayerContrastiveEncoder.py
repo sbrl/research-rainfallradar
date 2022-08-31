@@ -31,9 +31,10 @@ class LayerContrastiveEncoder(tf.keras.layers.Layer):
 		"""
 		self.encoder = ResNet50V2(
 			include_top=False,
-			input_shape=(self.param_input_width, self.param_input_height, self.param_channels),
+			input_shape=(self.param_channels, self.param_input_width, self.param_input_height),
 			weights=None,
-			pooling=None
+			pooling=None,
+			data_format="channels_first"
 		)
 		"""Small sequential stack of layers that control the size of the outputted feature dimension.
 		"""
