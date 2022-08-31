@@ -47,10 +47,10 @@ class LayerContrastiveEncoder(tf.keras.layers.Layer):
 		config["feature_dim"] = self.param_feature_dim
 		return config
 	
-	def build(self, input_shape):
-		# print("LAYER:build input_shape", input_shape)
-		super().build(input_shape=input_shape[0])
-		self.embedding.build(input_shape=tf.TensorShape([ *self.embedding_input_shape ]))
+	# def build(self, input_shape):
+	# 	# print("LAYER:build input_shape", input_shape)
+	# 	super().build(input_shape=input_shape[0])
+	# 	self.embedding.build(input_shape=tf.TensorShape([ *self.embedding_input_shape ]))
 	
 	def call(self, input_thing):
 		result = self.encoder(input_thing)

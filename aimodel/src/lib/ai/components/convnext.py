@@ -21,6 +21,8 @@ depths_dims = dict(
 	convnext_xlarge = (dict(depths=[3, 3, 27, 3],   dims=[256, 512, 1024, 2048])),
 )
 
+next_model_number = 0
+
 def make_convnext(input_shape, arch_name="convnext_tiny", **kwargs):
 	"""Makes a ConvNeXt model.
 	Returns a tf.keras.Model.
@@ -32,10 +34,13 @@ def make_convnext(input_shape, arch_name="convnext_tiny", **kwargs):
 		shape = input_shape
 	)
 	layer_out = convnext(layer_in, **depths_dims[arch_name], **kwargs)
-	return tf.keras.Model(
+	result = tf.keras.Model(
+		name=f"convnext{next_model_number}",
 		inputs	= layer_in,
 		outputs	= layer_out
 	)
+	next_model_number += 1
+	return result
 
 
 def convnext(
