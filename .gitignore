@@ -1,3 +1,6 @@
+*.err
+*.out
+*.log
 output
 # Created by https://www.toptal.com/developers/gitignore/api/python,node,git,visualstudiocode
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,node,git,visualstudiocode

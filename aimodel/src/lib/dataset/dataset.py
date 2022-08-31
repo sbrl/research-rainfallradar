@@ -20,6 +20,9 @@ def parse_item(item):
 	rainfall = tf.io.parse_tensor(parsed["rainfallradar"], out_type=tf.float32)
 	water = tf.io.parse_tensor(parsed["waterdepth"], out_type=tf.float32)
 	
+	# [width, height] → [width, height, channels]
+	water = tf.expand_dims(water, axis=-1)
+	
 	# TODO: The shape of the resulting tensor can't be statically determined, so we need to reshape here
 	
 	# TODO: Any other additional parsing here, since multiple .map() calls are not optimal

@@ -9,8 +9,11 @@ from .components.LossContrastive import LossContrastive
 def model_rainfallwater_contrastive(shape_rainfall, shape_water, feature_dim=200):
 	logger.info(shape_rainfall)
 	logger.info(shape_water)
-	rainfall_width, rainfall_height, rainfall_channels = shape_rainfall
-	water_width, water_height, water_channels = shape_water
+	
+	# Shapes come from what rainfallwrangler sees them as, but we add an extra dimension when reading the .tfrecord file
+	rainfall_width, rainfall_height, rainfall_channels = shape_rainfall # shape = [width, height, channels]
+	water_width, water_height = shape_water # shape = [width, height]
+	water_channels = 1 # added in dataset → make_dataset → parse_item
 	
 	input_rainfall = tf.keras.layers.Input(
 		shape=shape_rainfall
