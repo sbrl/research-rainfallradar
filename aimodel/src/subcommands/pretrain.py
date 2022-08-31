@@ -13,7 +13,7 @@ def parse_args():
 	# parser.add_argument("--config", "-c", help="Filepath to the TOML config file to load.", required=True)
 	parser.add_argument("--input", "-i", help="Path to input directory containing the .tfrecord.gz files to pretrain with", required=True)
 	parser.add_argument("--output", "-o", help="Path to output directory to write output to (will be automatically created if it doesn't exist)", required=True)
-	parser.add_argument("--feature-dim", help="The size of the output feature dimension of the model [default: 200].", type=int)
+	parser.add_argument("--feature-dim", help="The size of the output feature dimension of the model [default: 2048].", type=int)
 	parser.add_argument("--batch-size", help="Sets the batch size [default: 64].", type=int)
 	parser.add_argument("--reads-multiplier", help="Optional. The multiplier for the number of files we should read from at once. Defaults to 1.5, which means read ceil(NUMBER_OF_CORES * 1.5) files at once. Set to a higher number of systems with high read latency to avoid starving the GPU of data.")
 	
@@ -24,7 +24,7 @@ def run(args):
 	if (not hasattr(args, "batch_size")) or args.batch_size == None:
 		args.batch_size = 64
 	if (not hasattr(args, "feature_dim")) or args.feature_dim == None:
-		args.feature_dim = 200
+		args.feature_dim = 2048
 	if (not hasattr(args, "read_multiplier")) or args.read_multiplier == None:
 		args.read_multiplier = 1.5
 	

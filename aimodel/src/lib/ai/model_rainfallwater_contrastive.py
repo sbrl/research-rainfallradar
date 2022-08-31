@@ -6,7 +6,7 @@ from .components.LayerContrastiveEncoder import LayerContrastiveEncoder
 from .components.LayerCheeseMultipleOut import LayerCheeseMultipleOut
 from .components.LossContrastive import LossContrastive
 
-def model_rainfallwater_contrastive(shape_rainfall, shape_water, feature_dim=200):
+def model_rainfallwater_contrastive(shape_rainfall, shape_water, feature_dim=2048):
 	logger.info(shape_rainfall)
 	logger.info(shape_water)
 	
@@ -19,7 +19,7 @@ def model_rainfallwater_contrastive(shape_rainfall, shape_water, feature_dim=200
 		shape=shape_rainfall
 	)
 	input_water = tf.keras.layers.Input(
-		shape=shape_water
+		shape=(water_width, water_height, water_channels)
 	)
 	
 	

@@ -1,17 +1,17 @@
 import tensorflow as tf
 
-from tensorflow.keras.applications.resnet_v2 import ResNet50V2
-# from transformers import TFConvNextModel, ConvNextConfig
+# from tensorflow.keras.applications.resnet_v2 import ResNet50V2
 from ..helpers.summarywriter import summarylogger
+from .convnext import make_convnext
 
 class LayerContrastiveEncoder(tf.keras.layers.Layer):
 	
-	def __init__(self, input_width, input_height, channels, feature_dim=200, **kwargs):
+	def __init__(self, input_width, input_height, channels, feature_dim=2048, **kwargs):
 		"""Creates a new contrastive learning encoder layer.
+		Note that the input format MUST be channels_last. This is because Tensorflow/Keras' Dense layer does NOT support specifying an axis. Go complain to them, not me.
 		While this is intended for contrastive learning, this can (in theory) be used anywhere as it's just a generic wrapper layer.
 		The key feature here is that it does not care about the input size or the number of channels.
-		Currently it uses a ResNetV2 internally, but an upgrade to ConvNeXt is planned once Tensorflow Keras' implementation comes out of nightly and into stable.
-		We would use ResNetRS (as it's technically superior), but the implementation is bad and in places outright *wrong* O.o
+		Currently it uses a ConvNeXt internally, but an upgrade to Tensorflow's internal ConvNeXt implementation is planned once it comes out of nightly and into stable.
 		
 		Args:
 			feature_dim (int, optional): The size of the features dimension in the output shape. Note that there are *two* feature dimensions outputted - one for the left, and one for the right. They will both be in the form [ batch_size, feature_dim ]. Set to a low value (e.g. 25) to be able to plot a sensible a parallel coordinates graph. Defaults to 200.
@@ -26,20 +26,16 @@ class LayerContrastiveEncoder(tf.keras.layers.Layer):
 		self.param_channels		= channels
 		self.param_feature_dim	= feature_dim
 		
-		"""The main ResNet model that forms the encoder.
-		Note that both the left AND the right go through the SAME encoder!s
+		"""The main ConvNeXt model that forms the encoder.
 		"""
-		self.encoder = ResNet50V2(
-			include_top=False,
-			input_shape=(self.param_channels, self.param_input_width, self.param_input_height),
-			weights=None,
-			pooling=None,
-			data_format="channels_first"
+		self.encoder = make_convnext(
+			input_shape				= (self.param_input_width, self.param_input_height, self.param_channels),
+			classifier_activation	= tf.nn.relu, # this is not actually a classifier, but rather a feature encoder
+			num_classes				= self.param_feature_dim # size of the feature dimension, see the line above this one
 		)
-		"""Small sequential stack of layers that control the size of the outputted feature dimension.
-		"""
-		self.embedding = tf.keras.layers.Dense(self.param_feature_dim)
-		self.embedding_input_shape = [None, 2048] # The output shape of the above ResNet AFTER reshaping.
+		# """Small sequential stack of layers that control the size of the outputted feature dimension.
+		# """
+		# self.embedding = tf.keras.layers.Dense(self.param_feature_dim)
 		
 		summarylogger(self.encoder)
 	
@@ -59,9 +55,10 @@ class LayerContrastiveEncoder(tf.keras.layers.Layer):
 	def call(self, input_thing):
 		result = self.encoder(input_thing)
 		
-		shape_ksize = result.shape[1]
-		result = tf.nn.avg_pool(result, ksize=shape_ksize, strides=1, padding="VALID")
+		# The encoder is handled by the ConvNeXt model \o/
+		# shape_ksize = result.shape[1]
+		# result = tf.nn.avg_pool(result, ksize=shape_ksize, strides=1, padding="VALID")
 		
-		target_shape = [ -1, result.shape[-1] ]
-		result = self.embedding(tf.reshape(result, target_shape))
+		# target_shape = [ -1, result.shape[-1] ]
+		# result = self.embedding(tf.reshape(result, target_shape))
 		return result
