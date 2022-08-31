@@ -49,7 +49,7 @@ def dataset(dirpath_input, batch_size=64, train_percentage=0.8, parallel_reads_m
 	dataset_train = make_dataset(filepaths_train, batch_size=batch_size, parallel_reads_multiplier=parallel_reads_multiplier)
 	dataset_validate = make_dataset(filepaths_validate, batch_size=batch_size, parallel_reads_multiplier=parallel_reads_multiplier)
 	
-	return dataset_train, dataset_validate, filepaths
+	return dataset_train, dataset_validate #, filepaths
 
 def dataset_predict():
 	raise NotImplementedError("Not implemented yet")
