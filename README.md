@@ -4,7 +4,7 @@
 
 This is the 3rd major version of this model.
 
-Unfortunately using this model is rather complicated and involves a large number of steps. This README (will) explain it the best I can though.
+Unfortunately using this model is rather complicated and involves a large number of steps. There is no way around this. This README (will) explain it the best I can though.
 
 
 ## System Requirements
@@ -24,7 +24,7 @@ The process of using this model is as follows.
 3. Obtain a heightmap (or *Digital Elevation Model*, as it's sometimes known) from the Ordnance Survey (can't remember the link, please PR to add this)
 4. Use [`terrain50-cli`](https://www.npmjs.com/package/terrain50-cli) to slice the the output from steps #2 and #3 to be exactly the same size [TODO: Preprocess to extract just a single river basin from the data]
 5. Push through [HAIL-CAESAR](*https://github.com/sbrl/HAIL-CAESAR) (this fork has the ability to handle streams of .asc files rather than each time step having it's own filename)
-6. Use `rainfallwrangler` in this repository (finally!) to convert the output to .tfrecord files
+6. Use `rainfallwrangler` in this repository (finally!) to convert the output to .json.gz then .tfrecord files
 7. Pretrain a contrastive learning model
 8. Encode the rainfall radar data with the contrastive learning model you pretrained
 9. Train the *actual* model to predict water depth

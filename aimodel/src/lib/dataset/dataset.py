@@ -7,7 +7,7 @@ from loguru import logger
 
 import tensorflow as tf
 
-from shuffle import shuffle
+from .shuffle import shuffle
 
 
 # TO PARSE:
