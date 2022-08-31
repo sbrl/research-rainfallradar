@@ -33,8 +33,8 @@ def make_convnext(input_shape, arch_name="convnext_tiny", **kwargs):
 	)
 	layer_out = convnext(layer_in, **depths_dims[arch_name], **kwargs)
 	return tf.keras.Model(
-		input	= layer_in,
-		output	= layer_out
+		inputs	= layer_in,
+		outputs	= layer_out
 	)
 
 
