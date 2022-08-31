@@ -15,7 +15,7 @@ def parse_args():
 	parser.add_argument("--output", "-o", help="Path to output directory to write output to (will be automatically created if it doesn't exist)", required=True)
 	parser.add_argument("--feature-dim", help="The size of the output feature dimension of the model [default: 200].", type=int)
 	parser.add_argument("--batch-size", help="Sets the batch size [default: 64].", type=int)
-	parser.add_argument("--reads-multiplier", help="Optional. The multiplier for the number of files we should read from at once. Defaults to 1.5, which means read ceil(NUMBER_OF_CORES * 1.5). Set to a higher number of systems with high read latency to avoid starving the GPU of data.")
+	parser.add_argument("--reads-multiplier", help="Optional. The multiplier for the number of files we should read from at once. Defaults to 1.5, which means read ceil(NUMBER_OF_CORES * 1.5) files at once. Set to a higher number of systems with high read latency to avoid starving the GPU of data.")
 	
 	return parser
 
