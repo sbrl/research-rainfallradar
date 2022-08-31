@@ -1,4 +1,5 @@
-from pickletools import optimize
+
+from loguru import logger
 import tensorflow as tf
 
 from .components.LayerContrastiveEncoder import LayerContrastiveEncoder
@@ -6,6 +7,8 @@ from .components.LayerCheeseMultipleOut import LayerCheeseMultipleOut
 from .components.LossContrastive import LossContrastive
 
 def model_rainfallwater_contrastive(shape_rainfall, shape_water, feature_dim=200):
+	logger.info(shape_rainfall)
+	logger.info(shape_water)
 	rainfall_width, rainfall_height, rainfall_channels = shape_rainfall
 	water_width, water_height, water_channels = shape_water
 	
