@@ -12,7 +12,7 @@ class LayerCheeseMultipleOut(tf.keras.layers.Layer):
 		"""
 		super(LayerCheeseMultipleOut, self).__init__(**kwargs)
 		
-		self.weights_temperature = tf.Variable(name="loss_temperature", shape=1, initial_value=tf.constant([0.07]))
+		self.weight_temperature = tf.Variable(name="loss_temperature", shape=1, initial_value=tf.constant([0.07]))
 	
 	def get_config(self):
 		config = super(LayerCheeseMultipleOut, self).get_config()
