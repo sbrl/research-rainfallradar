@@ -11,6 +11,10 @@ if not os.environ.get("NO_SILENCE"):
 	silence_tensorflow()
 import tensorflow as tf
 
+# The maximum value allowed for the rainfall radar data. Used to normalise the data when converting to .tfrecord files
+# TODO: Enter the optimal value for this.
+RAINFALL_MAX_NUMBER = 100
+
 def parse_args():
 	parser = argparse.ArgumentParser(description="Convert a generated .jsonl.gz file to a .tfrecord.gz file")
 	parser.add_argument("--input", "-i", help="Path to the input file to convert.", required=True)
@@ -37,7 +41,8 @@ def convert(filepath_in, filepath_out):
 			rainfall = tf.constant(obj["rainfallradar"], dtype=tf.float32)
 			water = tf.constant(obj["waterdepth"], dtype=tf.float32)
 			
-			# TODO: cast float32 → divide by max_value → clip 0-1 (or -1 to +1? I don't know)
+			# Normalise the rainfall radar data (the water depth data is already normalised as it's just 0 or 1)
+			rainfall = tf.clip_by_value(rainfall / RAINFALL_MAX_NUMBER, 0, 1)
 			
 			###
 			## 3: Print shape definitions (required when parsing)
