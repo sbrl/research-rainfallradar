@@ -37,6 +37,8 @@ def convert(filepath_in, filepath_out):
 			rainfall = tf.constant(obj["rainfallradar"], dtype=tf.float32)
 			water = tf.constant(obj["waterdepth"], dtype=tf.float32)
 			
+			# TODO: cast float32 → divide by max_value → clip 0-1 (or -1 to +1? I don't know)
+			
 			###
 			## 3: Print shape definitions (required when parsing)
 			###
