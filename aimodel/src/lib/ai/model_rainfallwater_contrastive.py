@@ -16,19 +16,20 @@ def model_rainfallwater_contrastive(shape_rainfall, shape_water, batch_size=64, 
 	water_channels = 1 # added in dataset → make_dataset → parse_item
 	
 	input_rainfall = tf.keras.layers.Input(
-		shape=shape_rainfall
+		shape=(rainfall_width, rainfall_height, rainfall_channels)
 	)
 	input_water = tf.keras.layers.Input(
 		shape=(water_width, water_height, water_channels)
 	)
 	
-	
+	print("MAKE ENCODER rainfall")
 	rainfall = LayerContrastiveEncoder(
 		input_width=rainfall_width,
 		input_height=rainfall_height,
 		channels=rainfall_channels,
 		feature_dim=feature_dim
 	)(input_rainfall)
+	print("MAKE ENCODER water")
 	water = LayerContrastiveEncoder(
 		input_width=water_width,
 		input_height=water_height,
