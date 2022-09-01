@@ -48,5 +48,5 @@ def model_rainfallwater_contrastive(shape_rainfall, shape_water, feature_dim=204
 	
 	model.compile(
 		optimizer="Adam",
-		loss=LossContrastive(weights_temperature=weight_temperature)
+		loss=LossContrastive(weight_temperature=weight_temperature)
 	)
