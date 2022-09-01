@@ -30,6 +30,8 @@ def make_convnext(input_shape, arch_name="convnext_tiny", **kwargs):
 		input_shape (int[]): The input shape of the tensor that will be fed to the ConvNeXt model. This is necessary as we make the model using the functional API and thus we need to make an Input layer.
 		arch_name (str, optional): The name of the preset ConvNeXt model architecture to use. Defaults to "convnext_tiny".
 	"""
+	nonlocal next_model_number
+	
 	layer_in = tf.keras.layers.Input(
 		shape = input_shape
 	)
