@@ -52,8 +52,8 @@ class LayerContrastiveEncoder(tf.keras.layers.Layer):
 	# 	super().build(input_shape=input_shape[0])
 	# 	self.embedding.build(input_shape=tf.TensorShape([ *self.embedding_input_shape ]))
 	
-	def call(self, input_thing):
-		result = self.encoder(input_thing)
+	def call(self, input_thing, training=False):
+		result = self.encoder(input_thing, training=training)
 		
 		# The encoder is handled by the ConvNeXt model \o/
 		# shape_ksize = result.shape[1]

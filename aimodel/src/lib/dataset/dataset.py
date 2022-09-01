@@ -1,7 +1,6 @@
 import os
 import math
 import json
-from socket import if_nameindex
 
 from loguru import logger
 
@@ -28,7 +27,7 @@ def parse_item(item):
 	# TODO: The shape of the resulting tensor can't be statically determined, so we need to reshape here
 	
 	# TODO: Any other additional parsing here, since multiple .map() calls are not optimal
-	return rainfall, water
+	return ((rainfall, water), tf.ones(1))
 
 def make_dataset(filenames, compression_type="GZIP", parallel_reads_multiplier=1.5, shuffle_buffer_size=128, batch_size=64):
 	return tf.data.TFRecordDataset(filenames,
