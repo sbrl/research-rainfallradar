@@ -1,4 +1,5 @@
 import tensorflow as tf
+from loguru import logger
 
 # from tensorflow.keras.applications.resnet_v2 import ResNet50V2
 from ..helpers.summarywriter import summarylogger
@@ -20,6 +21,10 @@ class LayerContrastiveEncoder(tf.keras.layers.Layer):
 			channels (int): The number of channels in the input in pixels.
 		"""
 		super(LayerContrastiveEncoder, self).__init__(**kwargs)
+		
+		print(f"input_width: {input_width}")
+		print(f"input_height: {input_height}")
+		print(f"channels: {channels}")
 		
 		self.param_input_width	= input_width
 		self.param_input_height	= input_height
