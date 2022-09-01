@@ -6,7 +6,7 @@ from .components.LayerContrastiveEncoder import LayerContrastiveEncoder
 from .components.LayerCheeseMultipleOut import LayerCheeseMultipleOut
 from .components.LossContrastive import LossContrastive
 
-def model_rainfallwater_contrastive(shape_rainfall, shape_water, feature_dim=2048):
+def model_rainfallwater_contrastive(shape_rainfall, shape_water, batch_size=64, feature_dim=2048):
 	logger.info(shape_rainfall)
 	logger.info(shape_water)
 	
@@ -48,5 +48,5 @@ def model_rainfallwater_contrastive(shape_rainfall, shape_water, feature_dim=204
 	
 	model.compile(
 		optimizer="Adam",
-		loss=LossContrastive(weight_temperature=weight_temperature)
+		loss=LossContrastive(batch_size=batch_size, weight_temperature=weight_temperature)
 	)
