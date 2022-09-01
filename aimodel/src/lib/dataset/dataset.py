@@ -25,7 +25,7 @@ def parse_item(item):
 	water = tf.expand_dims(water, axis=-1)
 	
 	# TODO: The shape of the resulting tensor can't be statically determined, so we need to reshape here
-	
+	print("DEBUG:dataset ITEM rainfall:shape", rainfall.shape, "water:shape", water.shape)
 	# TODO: Any other additional parsing here, since multiple .map() calls are not optimal
 	return ((rainfall, water), tf.ones(1))
 
