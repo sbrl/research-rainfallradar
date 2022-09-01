@@ -37,8 +37,9 @@ def model_rainfallwater_contrastive(shape_rainfall, shape_water, feature_dim=204
 	)(input_water)
 	
 	
-	final = LayerCheeseMultipleOut()([ rainfall, water ])
-	weight_temperature = final.weight_temperature
+	layer_final = LayerCheeseMultipleOut()
+	final = layer_final([ rainfall, water ])
+	weight_temperature = layer_final.weight_temperature
 	
 	model = tf.keras.Model(
 		inputs = [ input_rainfall, input_water ],
