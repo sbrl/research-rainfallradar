@@ -50,3 +50,5 @@ def model_rainfallwater_contrastive(shape_rainfall, shape_water, batch_size=64, 
 		optimizer="Adam",
 		loss=LossContrastive(batch_size=batch_size, weight_temperature=weight_temperature)
 	)
+	
+	return model
