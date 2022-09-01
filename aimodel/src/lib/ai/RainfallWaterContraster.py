@@ -37,7 +37,7 @@ class RainfallWaterContraster(object):
 			self.filepath_summary = os.path.join(self.dir_output, "summary.txt")
 			
 			summarywriter(self.model, self.filepath_summary)
-			writefile(os.path.join(self.dir_output, "params.json"), self.get_config())
+			writefile(os.path.join(self.dir_output, "params.json"), json.dumps(self.get_config()))
 		else:	
 			self.model = self.load_model(filepath_checkpoint)
 	
