@@ -55,7 +55,7 @@ def convnext(
 	classifier_activation	= 'softmax'
 	# Note that we CAN'T add data_format here, 'cause Dense doesn't support specifying the axis
 ):
-	
+	print("convnext:shape IN x", x.shape)
 	assert len(depths) == len(dims)
 	
 	def forward_features(x):
