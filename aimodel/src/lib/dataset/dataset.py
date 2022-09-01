@@ -25,7 +25,7 @@ def parse_item(metadata):
 		rainfall = tf.transpose(rainfall, [1, 2, 0])
 		# [width, height] → [width, height, channels]
 		water = tf.expand_dims(water, axis=-1)
-		
+		# BUG: AttributeError: 'dict' object has no attribute 'waterdepth
 		rainfall = tf.image.resize(rainfall, tf.constant(metadata.waterdepth))
 		
 		# TODO: The shape of the resulting tensor can't be statically determined, so we need to reshape here
