@@ -2,12 +2,12 @@ import tensorflow as tf
 from loguru import logger
 
 # from tensorflow.keras.applications.resnet_v2 import ResNet50V2
-from ..helpers.summarywriter import summarylogger
+from ..helpers.summarywriter import summarywriter
 from .convnext import make_convnext
 
 class LayerContrastiveEncoder(tf.keras.layers.Layer):
 	
-	def __init__(self, input_width, input_height, channels, feature_dim=2048, **kwargs):
+	def __init__(self, input_width, input_height, channels, summary_file=None, feature_dim=2048, **kwargs):
 		"""Creates a new contrastive learning encoder layer.
 		Note that the input format MUST be channels_last. This is because Tensorflow/Keras' Dense layer does NOT support specifying an axis. Go complain to them, not me.
 		While this is intended for contrastive learning, this can (in theory) be used anywhere as it's just a generic wrapper layer.
@@ -42,7 +42,8 @@ class LayerContrastiveEncoder(tf.keras.layers.Layer):
 		# """
 		# self.embedding = tf.keras.layers.Dense(self.param_feature_dim)
 		
-		summarylogger(self.encoder)
+		if summary_file:
+			summarywriter(self.encoder, append=True)
 	
 	def get_config(self):
 		config = super(LayerContrastiveEncoder, self).get_config()
