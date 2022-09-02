@@ -6,6 +6,8 @@ from loguru import logger
 
 import tensorflow as tf
 
+from lib.dataset.read_metadata import read_metadata
+
 from ..io.readfile import readfile
 from .shuffle import shuffle
 
@@ -48,7 +50,6 @@ def make_dataset(filenames, metadata, compression_type="GZIP", parallel_reads_mu
 
 
 def dataset(dirpath_input, batch_size=64, train_percentage=0.8, parallel_reads_multiplier=1.5):
-	filepath_meta = os.path.join(dirpath_input, "metadata.json")
 	filepaths = shuffle(list(filter(
 		lambda filepath: str(filepath).endswith(".tfrecord.gz"),
 		[ file.path for file in os.scandir(dirpath_input) ] # .path on a DirEntry object yields the absolute filepath
@@ -59,7 +60,7 @@ def dataset(dirpath_input, batch_size=64, train_percentage=0.8, parallel_reads_m
 	filepaths_train = filepaths[:dataset_splitpoint]
 	filepaths_validate = filepaths[dataset_splitpoint:]
 	
-	metadata = json.loads(readfile(filepath_meta))
+	metadata = read_metadata(dirpath_input)
 	
 	dataset_train = make_dataset(filepaths_train, metadata, batch_size=batch_size, parallel_reads_multiplier=parallel_reads_multiplier)
 	dataset_validate = make_dataset(filepaths_validate, metadata, batch_size=batch_size, parallel_reads_multiplier=parallel_reads_multiplier)
