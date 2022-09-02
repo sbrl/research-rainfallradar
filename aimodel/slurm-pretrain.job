@@ -44,7 +44,7 @@ if [[ ! -d "${INPUT}" ]]; then
 fi
 
 
-CODE="$(date +"%Y-%m-%d")_pretrain_contrast";
+CODE="pretrain_contrast";
 
 if [[ -n "${POSTFIX}" ]]; then
 	echo -e ">>> Applying postfix of ${POSTFIX}" >&2;
