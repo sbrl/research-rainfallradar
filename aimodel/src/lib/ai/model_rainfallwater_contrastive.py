@@ -1,3 +1,4 @@
+import math
 
 from curses import meta
 from loguru import logger
@@ -13,7 +14,7 @@ def model_rainfallwater_contrastive(metadata, shape_water, batch_size=64, featur
 	water_width, water_height = shape_water # shape = [width, height]
 	water_channels = 1 # added in dataset → make_dataset → parse_item
 	
-	rainfall_width, rainfall_height = rainfall_width / 2, rainfall_height / 2
+	rainfall_width, rainfall_height = math.floor(rainfall_width / 2), math.floor(rainfall_height / 2)
 	
 	logger.info("SOURCE shape_rainfall " + str(metadata["rainfallradar"]))
 	logger.info("SOURCE shape_water " + str(metadata["waterdepth"]))
