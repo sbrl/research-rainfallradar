@@ -22,6 +22,9 @@ def parse_item(metadata):
 		water = tf.io.parse_tensor(parsed["waterdepth"], out_type=tf.float32)
 		# [channels, width, height] → [width, height, channels] - ref ConvNeXt does not support data_format=channels_first
 		
+		rainfall = tf.reshape(rainfall, tf.constant(metadata["rainfallradar"], dtype=tf.int32))
+		water = tf.reshape(water, tf.constant(metadata["waterdepth"], dtype=tf.int32))
+		
 		rainfall = tf.transpose(rainfall, [1, 2, 0])
 		# [width, height] → [width, height, channels]
 		water = tf.expand_dims(water, axis=-1)
