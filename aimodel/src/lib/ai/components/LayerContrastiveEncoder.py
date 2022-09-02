@@ -45,7 +45,7 @@ class LayerContrastiveEncoder(tf.keras.layers.Layer):
 		# self.embedding = tf.keras.layers.Dense(self.param_feature_dim)
 		
 		if summary_file:
-			summarywriter(self.encoder, append=True)
+			summarywriter(self.encoder, summary_file, append=True)
 	
 	def get_config(self):
 		config = super(LayerContrastiveEncoder, self).get_config()
