@@ -39,11 +39,12 @@ def run(args):
 	)
 	dataset_metadata = read_metadata(args.input)
 	
-	# for items in dataset_train.repeat(10):
-	# 	print("ITEMS", len(items))
-	# 	print("LEFT", [ item.shape for item in items[0] ])
+	# for (items, label) in dataset_train:
+	# 	print("ITEMS", len(items), [ item.shape for item in items ])
+	# 	print("LABEL", label.shape)
 	# print("ITEMS DONE")
 	# exit(0)
+
 	
 	ai = RainfallWaterContraster(
 		dir_output=args.output,
