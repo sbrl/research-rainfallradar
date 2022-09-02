@@ -28,14 +28,15 @@ class RainfallWaterContraster(object):
 		
 		
 		if filepath_checkpoint == None:
-			writefile(self.filepath_summary, "") # Empty the file ahead of time
-			self.model = self.make_model()
 			if self.dir_output == None:
 				raise Exception("Error: dir_output was not specified, and since no checkpoint was loaded training mode is activated.")
 			if not os.path.exists(self.dir_output):
 				os.mkdir(self.dir_output)
 			
 			self.filepath_summary = os.path.join(self.dir_output, "summary.txt")
+			
+			writefile(self.filepath_summary, "") # Empty the file ahead of time
+			self.model = self.make_model()
 			
 			summarywriter(self.model, self.filepath_summary, append=True)
 			writefile(os.path.join(self.dir_output, "params.json"), json.dumps(self.get_config()))
