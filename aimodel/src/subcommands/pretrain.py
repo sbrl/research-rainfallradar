@@ -1,3 +1,4 @@
+import math
 import sys
 import argparse
 from asyncio.log import logger
@@ -52,7 +53,7 @@ def run(args):
 		feature_dim=args.feature_dim,
 		
 		shape_rainfall=dataset_metadata["rainfallradar"],
-		shape_water=dataset_metadata["waterdepth"]
+		shape_water=[ math.floor(value * 0.75) for value in dataset_metadata["waterdepth"] ]
 	)
 	
 	ai.train(dataset_train, dataset_validate)
