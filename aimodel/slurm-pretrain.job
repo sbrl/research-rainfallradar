@@ -62,5 +62,5 @@ echo ">>> Installing requirements";
 conda run -n py38 pip install -r requirements.txt;
 echo ">>> Training model";
 #shellcheck disable=SC2086
-/usr/bin/env time -v conda run -n py38 src/index.py --input "${CONFIG}" --output "${dir_output}" ${ARGS};
+/usr/bin/env time -v conda run -n py38 src/index.py pretrain --input "${CONFIG}" --output "${dir_output}" ${ARGS};
 echo ">>> exited with code $?";
