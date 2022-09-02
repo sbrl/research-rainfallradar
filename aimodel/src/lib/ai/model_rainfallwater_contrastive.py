@@ -1,4 +1,5 @@
 
+from curses import meta
 from loguru import logger
 import tensorflow as tf
 
@@ -6,14 +7,19 @@ from .components.LayerContrastiveEncoder import LayerContrastiveEncoder
 from .components.LayerCheeseMultipleOut import LayerCheeseMultipleOut
 from .components.LossContrastive import LossContrastive
 
-def model_rainfallwater_contrastive(shape_rainfall, shape_water, batch_size=64, feature_dim=2048, summary_file=None):
-	logger.info(shape_rainfall)
-	logger.info(shape_water)
-	
+def model_rainfallwater_contrastive(metadata, shape_water, batch_size=64, feature_dim=2048, summary_file=None):
 	# Shapes come from what rainfallwrangler sees them as, but we add an extra dimension when reading the .tfrecord file
-	rainfall_channels, rainfall_width, rainfall_height = shape_rainfall # shape = [channels, width, height]
+	rainfall_channels, rainfall_width, rainfall_height = metadata["rainfallradar"] # shape = [channels, width, height]
 	water_width, water_height = shape_water # shape = [width, height]
 	water_channels = 1 # added in dataset → make_dataset → parse_item
+	
+	rainfall_width, rainfall_height = rainfall_width / 2, rainfall_height / 2
+	
+	logger.info("SOURCE shape_rainfall " + str(metadata["rainfallradar"]))
+	logger.info("SOURCE shape_water " + str(metadata["waterdepth"]))
+	logger.info("TARGET shape_water" + str(shape_water))
+	logger.info("TARGET shape_rainfall" + str([ rainfall_width, rainfall_height, rainfall_channels ]))
+	
 	
 	input_rainfall = tf.keras.layers.Input(
 		shape=(rainfall_width, rainfall_height, rainfall_channels)

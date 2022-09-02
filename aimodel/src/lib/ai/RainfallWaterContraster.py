@@ -59,7 +59,11 @@ class RainfallWaterContraster(object):
 	
 	
 	def make_model(self):
-		return model_rainfallwater_contrastive(batch_size=self.batch_size, summary_file=self.filepath_summary, **self.kwargs)
+		return model_rainfallwater_contrastive(
+			batch_size=self.batch_size,
+			summary_file=self.filepath_summary,
+			**self.kwargs
+		)
 	
 	
 	def load_model(self, filepath_checkpoint):

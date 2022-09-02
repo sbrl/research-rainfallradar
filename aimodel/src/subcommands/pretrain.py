@@ -52,8 +52,8 @@ def run(args):
 		batch_size=args.batch_size,
 		feature_dim=args.feature_dim,
 		
-		shape_rainfall=dataset_metadata["rainfallradar"],
-		shape_water=[ math.ceil(value * 0.5) + 1 for value in dataset_metadata["waterdepth"] ]
+		metadata = read_metadata(args.input),
+		shape_water=[ 100, 100 ] # The DESIRED
 	)
 	
 	ai.train(dataset_train, dataset_validate)
