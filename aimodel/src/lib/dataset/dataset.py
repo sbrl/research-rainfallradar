@@ -20,13 +20,13 @@ def parse_item(metadata):
 		})
 		rainfall = tf.io.parse_tensor(parsed["rainfallradar"], out_type=tf.float32)
 		water = tf.io.parse_tensor(parsed["waterdepth"], out_type=tf.float32)
-		
 		# [channels, width, height] → [width, height, channels] - ref ConvNeXt does not support data_format=channels_first
+		
 		rainfall = tf.transpose(rainfall, [1, 2, 0])
 		# [width, height] → [width, height, channels]
 		water = tf.expand_dims(water, axis=-1)
 		# BUG: AttributeError: 'dict' object has no attribute 'waterdepth
-		rainfall = tf.image.resize(rainfall, tf.constant(metadata.waterdepth))
+		rainfall = tf.image.resize(rainfall, tf.constant(metadata["waterdepth"]))
 		
 		# TODO: The shape of the resulting tensor can't be statically determined, so we need to reshape here
 		print("DEBUG:dataset ITEM rainfall:shape", rainfall.shape, "water:shape", water.shape)
