@@ -34,8 +34,8 @@ def parse_item(metadata, shape_water_desired):
 		rainfall = tf.transpose(rainfall, [1, 2, 0])
 		rainfall = tf.image.resize(rainfall, tf.cast(tf.constant(metadata["waterdepth"]) / 2, dtype=tf.int32))
 		
-		water = tf.image.crop_to_bounding_box(water, water_offset_x, water_offset_y, water_width_target, water_height_target)
 		water = tf.expand_dims(water, axis=-1) # [width, height] → [width, height, channels]
+		water = tf.image.crop_to_bounding_box(water, water_offset_x, water_offset_y, water_width_target, water_height_target)
 		
 		# TODO: The shape of the resulting tensor can't be statically determined, so we need to reshape here
 		print("DEBUG:dataset ITEM rainfall:shape", rainfall.shape, "water:shape", water.shape)
