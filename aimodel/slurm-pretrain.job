@@ -29,10 +29,10 @@ show_help() {
 	exit;
 }
 
-CONFIG="${CONFIG:-configs/clip.toml}";
+INPUT="${INPUT:-$HOME/rainfallwater_records_tfrecord}";
 
-if [[ -z "${CONFIG}" ]]; then
-	echo -e "Error: No CONFIG environment variable specified.\n" >&2;
+if [[ -z "${INPUT}" ]]; then
+	echo -e "Error: No INPUT environment variable specified.\n" >&2;
 	show_help;
 	exit 0;
 fi
@@ -44,8 +44,7 @@ if [[ ! -d "${INPUT}" ]]; then
 fi
 
 
-CODE="$(basename "${CONFIG}")";
-CODE="${CODE%.*}";
+CODE="$(date +"%Y-%m-%d")_pretrain_contrast";
 
 if [[ -n "${POSTFIX}" ]]; then
 	echo -e ">>> Applying postfix of ${POSTFIX}" >&2;
