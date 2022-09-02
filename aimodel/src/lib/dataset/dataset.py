@@ -31,7 +31,7 @@ def parse_item(metadata):
 		rainfall = tf.image.resize(rainfall, tf.cast(tf.constant(metadata["waterdepth"]) / 2, dtype=tf.int32))
 		# [width, height] → [width, height, channels]
 		water = tf.expand_dims(water, axis=-1)
-		water = tf.image.central_crop(water, 0.75) # Predict for only the centre 75% of the water data
+		water = tf.image.central_crop(water, 0.5) # Predict for only the centre 75% of the water data
 		
 		# TODO: The shape of the resulting tensor can't be statically determined, so we need to reshape here
 		print("DEBUG:dataset ITEM rainfall:shape", rainfall.shape, "water:shape", water.shape)
