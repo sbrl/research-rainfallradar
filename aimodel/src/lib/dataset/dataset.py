@@ -51,7 +51,7 @@ def make_dataset(filenames, metadata, shape_watch_desired=[100,100], compression
 		num_parallel_reads=math.ceil(os.cpu_count() * parallel_reads_multiplier)
 	).shuffle(shuffle_buffer_size) \
 		.map(parse_item(metadata, shape_water_desired=shape_watch_desired), num_parallel_calls=tf.data.AUTOTUNE) \
-		.batch(batch_size) \
+		.batch(batch_size, drop_remainder=True) \
 		.prefetch(0 if "NO_PREFETCH" in os.environ else tf.data.AUTOTUNE)
 
 
