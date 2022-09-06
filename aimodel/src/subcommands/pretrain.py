@@ -55,7 +55,7 @@ def run(args):
 		feature_dim=args.feature_dim,
 		
 		metadata = read_metadata(args.input),
-		shape_water=[ args.shape_water, args.shape_water ] # The DESIRED output shape. the actual data will be cropped to match this.
+		shape_water=[ args.water_size, args.water_size ] # The DESIRED output shape. the actual data will be cropped to match this.
 	)
 	
 	ai.train(dataset_train, dataset_validate)
