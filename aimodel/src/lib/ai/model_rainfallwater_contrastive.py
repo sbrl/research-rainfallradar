@@ -63,4 +63,9 @@ def model_rainfallwater_contrastive(metadata, shape_water, batch_size=64, featur
 		loss=LossContrastive(batch_size=batch_size, weight_temperature=weight_temperature)
 	)
 	
-	return model
+	model_predict = tf.keras.Model(
+		inputs = input_rainfall,
+		outputs = rainfall
+	)
+	
+	return model, model_predict

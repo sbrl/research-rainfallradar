@@ -36,12 +36,12 @@ class RainfallWaterContraster(object):
 			self.filepath_summary = os.path.join(self.dir_output, "summary.txt")
 			
 			writefile(self.filepath_summary, "") # Empty the file ahead of time
-			self.model = self.make_model()
+			self.make_model()
 			
 			summarywriter(self.model, self.filepath_summary, append=True)
 			writefile(os.path.join(self.dir_output, "params.json"), json.dumps(self.get_config()))
 		else:	
-			self.model = self.load_model(filepath_checkpoint)
+			self.load_model(filepath_checkpoint)
 	
 	def get_config(self):
 		return {
@@ -59,7 +59,7 @@ class RainfallWaterContraster(object):
 	
 	
 	def make_model(self):
-		return model_rainfallwater_contrastive(
+		self.model, self.model_predict = model_rainfallwater_contrastive(
 			batch_size=self.batch_size,
 			summary_file=self.filepath_summary,
 			**self.kwargs
@@ -72,7 +72,7 @@ class RainfallWaterContraster(object):
 		filepath_checkpoint (string): The filepath to load the saved model from.
 		"""
 		
-		return tf.keras.models.load_model(filepath_checkpoint, custom_objects={
+		self.model_predict = tf.keras.models.load_model(filepath_checkpoint, custom_objects={
 			"LayerContrastiveEncoder": LayerContrastiveEncoder,
 			"LayerCheeseMultipleOut": LayerCheeseMultipleOut
 		})
@@ -84,7 +84,8 @@ class RainfallWaterContraster(object):
 			dataset_train,
 			validation_data=dataset_validate,
 			epochs=self.epochs,
-			callbacks=make_callbacks(self.dir_output)
+			callbacks=make_callbacks(self.dir_output, self.model_predict),
+			steps_per_epoch=10 # For testing
 		)
 	
 	def embed(self, dataset):
@@ -92,7 +93,7 @@ class RainfallWaterContraster(object):
 		i_batch = -1
 		for batch in dataset:
 			i_batch += 1
-			result_batch = self.model(batch[0])
+			result_batch = self.model(batch[0]) # ((rainfall, water), dummy_label)
 			rainfall, water = tf.unstack(result_batch, axis=-2)
 			
 			rainfall = tf.unstack(rainfall, axis=0)
@@ -100,4 +101,11 @@ class RainfallWaterContraster(object):
 			
 			result.extend(zip(rainfall, water))
 		
+		return result
+	
+	def embed_rainfall(self, dataset):
+		result = []
+		for batch in dataset:
+			result_batch = self.model_predict(batch)
+			result.extend(tf.unstack(result_batch, axis=0))
 		return result

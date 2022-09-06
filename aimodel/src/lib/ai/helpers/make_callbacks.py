@@ -2,7 +2,9 @@ import os
 
 import tensorflow as tf
 
-def make_callbacks(dirpath):
+from ..components.CallbackCustomModelCheckpoint import CallbackCustomModelCheckpoint
+
+def make_callbacks(dirpath, model_predict):
 	dirpath_checkpoints = os.path.join(dirpath, "checkpoints")
 	filepath_metrics = os.path.join(dirpath, "metrics.tsv")
 	
@@ -10,7 +12,8 @@ def make_callbacks(dirpath):
 		os.mkdir(dirpath_checkpoints)
 	
 	return [
-		tf.keras.callbacks.ModelCheckpoint(
+		CallbackCustomModelCheckpoint(
+			model_to_checkpoint=model_predict,
 			filepath=os.path.join(
 				dirpath_checkpoints,
 				"checkpoint_weights_e{epoch:d}_loss{loss:.3f}.hdf5"
