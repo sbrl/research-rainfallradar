@@ -47,7 +47,7 @@ def run(args):
 	# 	print("LABEL", label.shape)
 	# print("ITEMS DONE")
 	# exit(0)
-
+	
 	
 	ai = RainfallWaterContraster(
 		dir_output=args.output,
