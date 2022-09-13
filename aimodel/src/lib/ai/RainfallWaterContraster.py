@@ -89,7 +89,6 @@ class RainfallWaterContraster(object):
 		)
 	
 	def embed(self, dataset):
-		result = []
 		i_batch = -1
 		for batch in dataset:
 			i_batch += 1
@@ -98,10 +97,9 @@ class RainfallWaterContraster(object):
 			
 			rainfall = tf.unstack(rainfall, axis=0)
 			water = tf.unstack(water, axis=0)
-			
-			result.extend(zip(rainfall, water))
+			for step in zip(rainfall, water):
+				yield step
 		
-		return result
 	
 	def embed_rainfall(self, dataset):
 		result = []

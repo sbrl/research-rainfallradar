@@ -52,12 +52,11 @@ def run(args):
 	
 	sys.stderr.write(f"\n\n>>> This is TensorFlow {tf.__version__}\n\n\n")
 	
-	dataset_train, filepaths, filepaths_length = dataset_predict(
+	dataset = dataset_predict(
 		dirpath_input=args.input,
 		batch_size=ai.batch_size,
 		parallel_reads_multiplier=args.read_multiplier
 	)
-	filepaths = filepaths[0:filepaths_length]
 	
 	# for items in dataset_train.repeat(10):
 	# 	print("ITEMS", len(items))
@@ -69,18 +68,17 @@ def run(args):
 	if filepath_output != "-":
 		handle = io.open(filepath_output, "w")
 	
-	embeddings = ai.embed(dataset_train)[0:filepaths_length] # Trim off the padding
-	result = list(zip(filepaths, embeddings))
-	for filepath, embedding in result:
+	for rainfall, water in ai.embed(dataset):
 		handle.write(json.dumps({
-			"filepath": filepath,
-			"embedding": embedding.numpy().tolist()
+			"rainfall": rainfall.numpy().tolist(),
+			"water": water.numpy().tolist()
 		}, separators=(',', ':'))+"\n") # Ref https://stackoverflow.com/a/64710892/1460422
 	
 	if filepath_output != "-":
+		handle.close()
+		
 		sys.stderr.write(">>> Plotting with UMAP\n")
 		filepath_output_umap = os.path.splitext(filepath_output)[0]+'.png'
-		labels = [ os.path.basename(os.path.dirname(filepath)) for filepath in filepaths ]
-		vis_embeddings(filepath_output_umap, np.array([ embedding.numpy() for embedding in embeddings ]), np.array(labels))
+		vis_embeddings(filepath_output_umap, np.array([ embedding.numpy() for embedding in embeddings ]))
 	
 	sys.stderr.write(">>> Complete\n")

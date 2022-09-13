@@ -43,10 +43,10 @@ def parse_item(metadata, shape_water_desired):
 	
 	return tf.function(parse_item_inner)
 
-def make_dataset(filenames, metadata, shape_watch_desired=[100,100], compression_type="GZIP", parallel_reads_multiplier=1.5, shuffle_buffer_size=128, batch_size=64):
+def make_dataset(filepaths, metadata, shape_watch_desired=[100,100], compression_type="GZIP", parallel_reads_multiplier=1.5, shuffle_buffer_size=128, batch_size=64):
 	if "NO_PREFETCH" in os.environ:
 		logger.info("disabling data prefetching.")
-	return tf.data.TFRecordDataset(filenames,
+	return tf.data.TFRecordDataset(filepaths,
 		compression_type=compression_type,
 		num_parallel_reads=math.ceil(os.cpu_count() * parallel_reads_multiplier)
 	).shuffle(shuffle_buffer_size) \
@@ -55,11 +55,14 @@ def make_dataset(filenames, metadata, shape_watch_desired=[100,100], compression
 		.prefetch(0 if "NO_PREFETCH" in os.environ else tf.data.AUTOTUNE)
 
 
-def dataset(dirpath_input, batch_size=64, train_percentage=0.8, parallel_reads_multiplier=1.5):
-	filepaths = shuffle(list(filter(
+def get_filepaths(dirpath_input):
+	return shuffle(list(filter(
 		lambda filepath: str(filepath).endswith(".tfrecord.gz"),
 		[ file.path for file in os.scandir(dirpath_input) ] # .path on a DirEntry object yields the absolute filepath
 	)))
+
+def dataset(dirpath_input, batch_size=64, train_percentage=0.8, parallel_reads_multiplier=1.5):
+	filepaths = get_filepaths(dirpath_input)
 	filepaths_count = len(filepaths)
 	dataset_splitpoint = math.floor(filepaths_count * train_percentage)
 	
@@ -73,9 +76,18 @@ def dataset(dirpath_input, batch_size=64, train_percentage=0.8, parallel_reads_m
 	
 	return dataset_train, dataset_validate #, filepaths
 
-def dataset_predict():
-	raise NotImplementedError("Not implemented yet")
-
+def dataset_predict(dirpath_input, batch_size=64, parallel_reads_multiplier=1.5):
+	filepaths = get_filepaths(dirpath_input)
+	filepaths_count = len(filepaths)
+	for i in range(len(filepaths)):
+		filepaths.append(filepaths[-1])
+	
+	return make_dataset(
+		filepaths=filepaths,
+		metadata=read_metadata(dirpath_input),
+		batch_size=batch_size,
+		parallel_reads_multiplier=parallel_reads_multiplier
+	), filepaths[0:filepaths_count], filepaths_count
 
 if __name__ == "__main__":
 	ds_train, ds_validate = dataset("/mnt/research-data/main/rainfallwater_records-viperfinal/")
