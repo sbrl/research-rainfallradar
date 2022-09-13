@@ -74,11 +74,6 @@ def run(args):
 			"water": water.numpy().tolist()
 		}, separators=(',', ':'))+"\n") # Ref https://stackoverflow.com/a/64710892/1460422
 	
-	if filepath_output != "-":
-		handle.close()
-		
-		sys.stderr.write(">>> Plotting with UMAP\n")
-		filepath_output_umap = os.path.splitext(filepath_output)[0]+'.png'
-		vis_embeddings(filepath_output_umap, np.array([ embedding.numpy() for embedding in embeddings ]))
+	handle.close()
 	
 	sys.stderr.write(">>> Complete\n")
