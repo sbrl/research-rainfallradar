@@ -17,7 +17,9 @@ This program trains, manipulates, visualises, and manages a contrastive learning
 It functions by first finding relationships between the rainfall radar data and the water depth + heightmap data (the 'pretrain' subcommand). After this, a decoder model to predict water depth (modelled as an image segmentation task), can then be trained.
 
 Available subcommands:
-	pretrain	Pretrain a contrastive learning model as an encoder.
+	pretrain			Pretrain a contrastive learning model as an encoder.
+	pretrain-predict	Make predictions using a trained contrastive learning encoder.
+	pretrain-plot		Plot using embeddings predicted using pretrain-predict.
 
 For more information, do src/index.py <subcommand> --help.
 """)
