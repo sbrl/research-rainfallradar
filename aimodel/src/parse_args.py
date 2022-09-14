@@ -11,7 +11,7 @@ def parse_args():
 	"""Defines and parses the CLI arguments."""
 	
 	
-	if len(sys.argv) < 2:
+	if len(sys.argv) < 2 or sys.argv[1] == "--help":
 		sys.stderr.write("""
 This program trains, manipulates, visualises, and manages a contrastive learning based rainfall radar → water depth prediction model.
 It functions by first finding relationships between the rainfall radar data and the water depth + heightmap data (the 'pretrain' subcommand). After this, a decoder model to predict water depth (modelled as an image segmentation task), can then be trained.
