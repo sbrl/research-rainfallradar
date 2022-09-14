@@ -47,7 +47,7 @@ def run(args):
 	filepath_output = args.output if hasattr(args, "output") and args.output != None else "-"
 	
 	
-	ai = RainfallWaterContraster.from_checkpoint(args.checkpoint)
+	ai = RainfallWaterContraster.from_checkpoint(args.checkpoint, **json.loads(readfile(args.params)))
 	
 	sys.stderr.write(f"\n\n>>> This is TensorFlow {tf.__version__}\n\n\n")
 	
