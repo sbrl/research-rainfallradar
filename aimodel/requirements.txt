@@ -2,3 +2,8 @@ tensorflow>=2.4
 tensorflow_addons
 silence_tensorflow
 loguru
+umap-learn[plot]
+seaborn
+latplotlib
+numpy
+pandas
