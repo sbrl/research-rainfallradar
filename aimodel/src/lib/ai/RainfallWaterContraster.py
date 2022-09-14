@@ -52,7 +52,7 @@ class RainfallWaterContraster(object):
 	
 	@staticmethod
 	def from_checkpoint(filepath_checkpoint, filepath_hyperparams=None):
-		if filepath_checkpoint is None:
+		if not filepath_checkpoint:
 			filepath_checkpoint = find_paramsjson(filepath_checkpoint)
 		hyperparams = json.loads(readfile(filepath_hyperparams))
 		return RainfallWaterContraster(filepath_checkpoint=filepath_checkpoint, **hyperparams)
