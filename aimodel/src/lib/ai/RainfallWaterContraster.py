@@ -88,7 +88,7 @@ class RainfallWaterContraster(object):
 		i_batch = -1
 		for batch in dataset:
 			i_batch += 1
-			result_batch = self.model(batch[0]) # ((rainfall, water), dummy_label)
+			result_batch = self.model_predict(batch[0]) # ((rainfall, water), dummy_label)
 			rainfall, water = tf.unstack(result_batch, axis=-2)
 			
 			rainfall = tf.unstack(rainfall, axis=0)
