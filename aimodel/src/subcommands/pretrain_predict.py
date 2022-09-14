@@ -68,11 +68,16 @@ def run(args):
 	if filepath_output != "-":
 		handle = io.open(filepath_output, "w")
 	
+	i = 0
 	for rainfall, water in ai.embed(dataset):
 		handle.write(json.dumps({
 			"rainfall": rainfall.numpy().tolist(),
 			"water": water.numpy().tolist()
 		}, separators=(',', ':'))+"\n") # Ref https://stackoverflow.com/a/64710892/1460422
+		
+		if i == 0 or i % 1000 == 0:
+			sys.stderr.write(f"[pretrain:predict] STEP {i}\r")
+		i += 1
 	
 	handle.close()
 	

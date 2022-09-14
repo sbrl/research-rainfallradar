@@ -25,7 +25,7 @@ For more information, do src/index.py <subcommand> --help.
 """)
 		exit(0)
 	
-	subcommand = re.sub(r'[^a-z0-9-]', '', sys.argv[1])
+	subcommand = re.sub(r'-', '_', re.sub(r'[^a-z0-9-]', '', sys.argv[1]))
 	
 	subcommand_argparser = importlib.import_module(f"subcommands.{subcommand}").parse_args
 	
