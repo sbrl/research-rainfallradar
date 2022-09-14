@@ -4,6 +4,6 @@ silence_tensorflow
 loguru
 umap-learn[plot]
 seaborn
-latplotlib
+matplotlib
 numpy
 pandas
