@@ -1,9 +1,7 @@
 import os
-import io
-import re
-import sys
 import json
 
+from loguru import logger
 import tensorflow as tf
 
 from ..io.find_paramsjson import find_paramsjson
@@ -52,6 +50,7 @@ class RainfallWaterContraster(object):
 	
 	@staticmethod
 	def from_checkpoint(filepath_checkpoint, **hyperparams):
+		logger.info(f"Loading from checkpoint: {filepath_checkpoint}")
 		return RainfallWaterContraster(filepath_checkpoint=filepath_checkpoint, **hyperparams)
 	
 	
