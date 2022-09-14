@@ -25,8 +25,6 @@ def parse_args():
 	parser.add_argument("--reads-multiplier", help="Optional. The multiplier for the number of files we should read from at once. Defaults to 1.5, which means read ceil(NUMBER_OF_CORES * 1.5). Set to a higher number of systems with high read latency to avoid starving the GPU of data.")
 	parser.add_argument("--no-vis",
 		help="Don't also plot a visualisation of the resulting embeddings.", action="store_true")
-	parser.add_argument("--only-gpu",
-		help="If the GPU is not available, exit with an error (useful on shared HPC systems to avoid running out of memory & affecting other users)", action="store_true")
 	
 	return parser
 

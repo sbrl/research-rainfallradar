@@ -15,8 +15,6 @@ def parse_args():
 	# parser.add_argument("--config", "-c", help="Filepath to the TOML config file to load.", required=True)
 	parser.add_argument("--input", "-i", help="Path to input file containing the content to plot.", required=True)
 	parser.add_argument("--output", "-o", help="Path to output file to write the resulting image to.", required=True)
-	parser.add_argument("--only-gpu",
-		help="If the GPU is not available, exit with an error (useful on shared HPC systems to avoid running out of memory & affecting other users)", action="store_true")
 	
 	return parser
 
