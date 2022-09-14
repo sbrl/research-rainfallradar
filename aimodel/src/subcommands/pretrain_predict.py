@@ -8,8 +8,8 @@ import re
 from loguru import logger
 import tensorflow as tf
 import numpy as np
-from aimodel.src.lib.io.handle_open import handle_open
 
+from lib.io.handle_open import handle_open
 from lib.ai.RainfallWaterContraster import RainfallWaterContraster
 from lib.dataset.dataset import dataset_predict
 from lib.io.find_paramsjson import find_paramsjson
