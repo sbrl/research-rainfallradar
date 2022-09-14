@@ -88,18 +88,15 @@ class RainfallWaterContraster(object):
 		i_batch = -1
 		for batch in dataset:
 			i_batch += 1
-			result_batch = self.model_predict(batch[0]) # ((rainfall, water), dummy_label)
-			rainfall, water = tf.unstack(result_batch, axis=-2)
+			rainfall = self.model_predict(batch) # ((rainfall, water), dummy_label)
 			
-			rainfall = tf.unstack(rainfall, axis=0)
-			water = tf.unstack(water, axis=0)
-			for step in zip(rainfall, water):
+			for step in tf.unstack(rainfall, axis=0):
 				yield step
 		
 	
-	def embed_rainfall(self, dataset):
-		result = []
-		for batch in dataset:
-			result_batch = self.model_predict(batch)
-			result.extend(tf.unstack(result_batch, axis=0))
-		return result
+	# def embed_rainfall(self, dataset):
+	# 	result = []
+	# 	for batch in dataset:
+	# 		result_batch = self.model_predict(batch)
+	# 		result.extend(tf.unstack(result_batch, axis=0))
+	# 	return result
