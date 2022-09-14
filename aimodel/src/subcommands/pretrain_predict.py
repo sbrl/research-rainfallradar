@@ -8,6 +8,7 @@ import re
 from loguru import logger
 import tensorflow as tf
 import numpy as np
+from aimodel.src.lib.io.handle_open import handle_open
 
 from lib.ai.RainfallWaterContraster import RainfallWaterContraster
 from lib.dataset.dataset import dataset_predict
@@ -64,7 +65,7 @@ def run(args):
 	
 	handle = sys.stdout
 	if filepath_output != "-":
-		handle = io.open(filepath_output, "w")
+		handle = handle_open(filepath_output, "w")
 	
 	i = 0
 	for rainfall, water in ai.embed(dataset):
