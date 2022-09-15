@@ -54,9 +54,10 @@ def make_dataset(filepaths, metadata, shape_watch_desired=[100,100], compression
 		compression_type=compression_type,
 		num_parallel_reads=math.ceil(os.cpu_count() * parallel_reads_multiplier)
 	).shuffle(shuffle_buffer_size) \
-		.map(parse_item(metadata, shape_water_desired=shape_watch_desired, dummy_label=dummy_label), num_parallel_calls=tf.data.AUTOTUNE) \
-		.batch(batch_size, drop_remainder=True)
-	
+		.map(parse_item(metadata, shape_water_desired=shape_watch_desired, dummy_label=dummy_label), num_parallel_calls=tf.data.AUTOTUNE)
+		
+	if batch_size != None:
+		dataset = dataset.batch(batch_size, drop_remainder=True)
 	if prefetch:
 		dataset = dataset.prefetch(0 if "NO_PREFETCH" in os.environ else tf.data.AUTOTUNE)
 	
@@ -84,7 +85,7 @@ def dataset(dirpath_input, batch_size=64, train_percentage=0.8, parallel_reads_m
 	
 	return dataset_train, dataset_validate #, filepaths
 
-def dataset_predict(dirpath_input, batch_size=64, parallel_reads_multiplier=1.5, prefetch=False):
+def dataset_predict(dirpath_input, parallel_reads_multiplier=1.5, prefetch=True):
 	filepaths = get_filepaths(dirpath_input)
 	filepaths_count = len(filepaths)
 	for i in range(len(filepaths)):
@@ -93,8 +94,8 @@ def dataset_predict(dirpath_input, batch_size=64, parallel_reads_multiplier=1.5,
 	return make_dataset(
 		filepaths=filepaths,
 		metadata=read_metadata(dirpath_input),
-		batch_size=batch_size,
 		parallel_reads_multiplier=parallel_reads_multiplier,
+		batch_size=None,
 		dummy_label=False,
 		prefetch=prefetch
 	), filepaths[0:filepaths_count], filepaths_count

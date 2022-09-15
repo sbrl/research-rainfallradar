@@ -4,6 +4,8 @@ import json
 from loguru import logger
 import tensorflow as tf
 
+from ..dataset.batched_iterator import batched_iterator
+
 from ..io.find_paramsjson import find_paramsjson
 from ..io.readfile import readfile
 from ..io.writefile import writefile
@@ -86,9 +88,9 @@ class RainfallWaterContraster(object):
 	
 	def embed(self, dataset):
 		i_batch = -1
-		for batch in dataset:
+		for batch in batched_iterator(dataset, batch_size=self.batch_size):
 			i_batch += 1
-			rainfall = self.model_predict.predict_on_batch(batch[0]) # ((rainfall, water), dummy_label)
+			rainfall = self.model_predict.predict(batch[0]) # ((rainfall, water), dummy_label)
 			
 			for step in tf.unstack(rainfall, axis=0):
 				yield step
