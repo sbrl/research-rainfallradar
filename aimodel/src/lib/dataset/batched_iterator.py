@@ -10,7 +10,8 @@ def batched_iterator(dataset, tensors_in_item=1, batch_size=64):
 		if tensors_in_item == 1:
 			item = [ item ]
 			
-		for i_tensor, tensor in item:
+		
+		for i_tensor, tensor in enumerate(item):
 			acc[i_tensor].append(tensor)
 		
 		if i_item >= batch_size:
