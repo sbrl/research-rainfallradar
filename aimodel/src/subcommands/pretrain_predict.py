@@ -53,7 +53,6 @@ def run(args):
 	
 	dataset = dataset_predict(
 		dirpath_input=args.input,
-		batch_size=ai.batch_size,
 		parallel_reads_multiplier=args.read_multiplier
 	)
 	
