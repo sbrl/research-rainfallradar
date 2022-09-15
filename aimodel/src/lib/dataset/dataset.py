@@ -84,7 +84,7 @@ def dataset(dirpath_input, batch_size=64, train_percentage=0.8, parallel_reads_m
 	
 	return dataset_train, dataset_validate #, filepaths
 
-def dataset_predict(dirpath_input, batch_size=64, parallel_reads_multiplier=1.5, pretrain=False):
+def dataset_predict(dirpath_input, batch_size=64, parallel_reads_multiplier=1.5, prefetch=False):
 	filepaths = get_filepaths(dirpath_input)
 	filepaths_count = len(filepaths)
 	for i in range(len(filepaths)):
@@ -96,7 +96,7 @@ def dataset_predict(dirpath_input, batch_size=64, parallel_reads_multiplier=1.5,
 		batch_size=batch_size,
 		parallel_reads_multiplier=parallel_reads_multiplier,
 		dummy_label=False,
-		pretrain=pretrain
+		prefetch=prefetch
 	), filepaths[0:filepaths_count], filepaths_count
 
 if __name__ == "__main__":
