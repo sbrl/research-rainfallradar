@@ -20,7 +20,6 @@ def vis_embeddings(filepath_output, features):
 	
 	# 1: UMAP
 	umap.plot.points(dimreducer,
-		color_key_cmap="brg", # color_key_cmap="jet",
 		ax=figure.get_axes()[0]
 	)
 	plt.title(f"UMAP Dimensionality Reduction", fontsize=20)
@@ -41,5 +40,5 @@ def vis_embeddings(filepath_output, features):
 	
 	plt.title(f"Parallel coordinates plot", fontsize=20)
 	
-	plt.suptitle(f"ContrastiveE1 embeddings | ResNetV2 | {len(features)} items", fontsize=28, weight="bold")
+	plt.suptitle(f"RainfallContrastive embeddings | rainfall | E2 ConvNeXt | {len(features)} items", fontsize=28, weight="bold")
 	plt.savefig(filepath_output)
