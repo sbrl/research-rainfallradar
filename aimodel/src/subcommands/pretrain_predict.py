@@ -70,7 +70,7 @@ def run(args):
 	for rainfall in ai.embed(dataset):
 		handle.write(json.dumps(rainfall.numpy().tolist(), separators=(',', ':'))+"\n") # Ref https://stackoverflow.com/a/64710892/1460422
 		
-		if i == 0 or i % 1000 == 0:
+		if i == 0 or i % 100 == 0:
 			sys.stderr.write(f"[pretrain:predict] STEP {i}\r")
 		i += 1
 	
