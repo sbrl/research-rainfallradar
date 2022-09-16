@@ -88,7 +88,7 @@ class RainfallWaterContraster(object):
 	
 	def embed(self, dataset):
 		i_batch = -1
-		for batch in batched_iterator(dataset, batch_size=self.batch_size):
+		for batch in batched_iterator(dataset, tensors_in_item=2, batch_size=self.batch_size):
 			i_batch += 1
 			rainfall = self.model_predict.predict(batch[0]) # ((rainfall, water), dummy_label)
 			
