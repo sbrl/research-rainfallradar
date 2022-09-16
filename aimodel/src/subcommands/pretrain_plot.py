@@ -29,6 +29,7 @@ def run(args):
 	filepath_input = args.input
 	
 	stem, ext = os.path.splitext(args.output)
+	stem.replace(".", "")
 	filepath_output_rainfall = f"{stem}-rainfall.{ext}"
 	filepath_output_water = f"{stem}-water.{ext}"
 	
