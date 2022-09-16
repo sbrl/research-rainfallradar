@@ -36,7 +36,7 @@ if [[ -z "${INPUT}" ]]; then
 	exit 0;
 fi
 
-if [[ ! -d "${INPUT}" ]]; then
+if [[ ! -r "${INPUT}" ]]; then
 	echo -e "Error: The input filepath at '${INPUT}' containing the input .tfrecord dataset either doesn't exist or isn't a directory.";
 	show_help;
 	exit 1;
