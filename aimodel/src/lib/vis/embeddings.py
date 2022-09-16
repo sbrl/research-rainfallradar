@@ -27,9 +27,9 @@ def vis_embeddings(filepath_output, features):
 	
 	# 2: Parallel coordinates
 	figure.add_subplot(1, 2, 2)
-	# CHEESE: This won't produce a terribly accurate result, as we're just ignoring the most of CLIP's embedded features.
 	dataframe = pandas.DataFrame(features)
-	dataframe["Label"] = range(len(features))
+	dataframe["Label"] = [1] * len(features)
+	# dataframe["Label"] = range(len(features)) # used when we actually have labels. In this case we don't though
 	pandas.plotting.parallel_coordinates(
 		dataframe,
 		"Label",
