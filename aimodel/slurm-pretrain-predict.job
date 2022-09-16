@@ -71,3 +71,6 @@ echo ">>> Training model";
 #shellcheck disable=SC2086
 /usr/bin/env time -v conda run -n py38 src/index.py pretrain-predict --input "${INPUT}" --output "${filepath_output}" -c "${CHECKPOINT}"
 echo ">>> exited with code $?";
+
+INPUT="${filepath_output}" POSTFIX="${POSTFIX}" sbatch slurm-pretrain-plot.job
+echo ">>> Queued UMAP plot"
