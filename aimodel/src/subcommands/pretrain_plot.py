@@ -39,19 +39,19 @@ def run(args):
 	with handle_open(filepath_input, "r") as handle:
 		for line in handle:
 			obj = json.loads(line)
-			embeddings.append(obj["rainfall"])
+			embeddings.append(obj)
 	
 	logger.info(">>> Plotting rainfall with UMAP\n")
 	vis_embeddings(filepath_output_rainfall, np.array(embeddings))
 	
+	# the model doesn't save the water encoder at this time
+	# embeddings = []
+	# with handle_open(filepath_input, "r") as handle:
+	# 	for line in handle:
+	# 		obj = json.loads(line)
+	# 		embeddings.append(obj["water"])
 	
-	embeddings = []
-	with handle_open(filepath_input, "r") as handle:
-		for line in handle:
-			obj = json.loads(line)
-			embeddings.append(obj["water"])
-	
-	logger.info(">>> Plotting water with UMAP\n")
-	vis_embeddings(filepath_output_water, np.array(embeddings))
+	# logger.info(">>> Plotting water with UMAP\n")
+	# vis_embeddings(filepath_output_water, np.array(embeddings))
 	
 	sys.stderr.write(">>> Complete\n")
