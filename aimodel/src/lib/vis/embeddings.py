@@ -7,7 +7,9 @@ import matplotlib.pylab as plt
 import pandas
 
 def vis_embeddings(filepath_output, features):
-	dimreducer = umap.UMAP(min_dist=0.05).fit(features)
+	dimreducer = umap.UMAP(
+		# min_dist=0.05
+	).fit(features)
 	
 	px = 1 / plt.rcParams['figure.dpi'] # matplotlib sizes are in inches :-( :-( :-(
 	width = 1920
