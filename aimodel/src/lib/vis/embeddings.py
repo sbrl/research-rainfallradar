@@ -12,17 +12,17 @@ def vis_embeddings(filepath_output, features):
 	).fit(features)
 	
 	px = 1 / plt.rcParams['figure.dpi'] # matplotlib sizes are in inches :-( :-( :-(
-	width = 1920
+	width = 3840
 	height = 768
 	
 	plt.rc("font", size=20)
 	plt.rc("font", family="Ubuntu")
-	figure = plt.figure(figsize=(width*px, height*px))
-	figure.add_subplot(1, 2, 1)
+	figure, axes = plt.subplot_mosaic("ABBBB", figsize=(width*px, height*px))
+	# figure.add_subplot(1, 2, 1)
 	
 	# 1: UMAP
 	umap.plot.points(dimreducer,
-		ax=figure.get_axes()[0]
+		ax=axes["A"]
 	)
 	plt.title(f"UMAP Dimensionality Reduction", fontsize=20)
 	
@@ -34,7 +34,7 @@ def vis_embeddings(filepath_output, features):
 	pandas.plotting.parallel_coordinates(
 		dataframe,
 		"Label",
-		ax=figure.get_axes()[1],
+		ax=axes["B"],
 		use_columns=False,
 		axvlines=False,
 		sort_labels=True
