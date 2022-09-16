@@ -87,9 +87,6 @@ def dataset(dirpath_input, batch_size=64, train_percentage=0.8, parallel_reads_m
 
 def dataset_predict(dirpath_input, parallel_reads_multiplier=1.5, prefetch=True):
 	filepaths = get_filepaths(dirpath_input)
-	filepaths_count = len(filepaths)
-	for i in range(len(filepaths)):
-		filepaths.append(filepaths[-1])
 	
 	return make_dataset(
 		filepaths=filepaths,
@@ -98,7 +95,7 @@ def dataset_predict(dirpath_input, parallel_reads_multiplier=1.5, prefetch=True)
 		batch_size=None,
 		dummy_label=False,
 		prefetch=prefetch
-	), filepaths[0:filepaths_count], filepaths_count
+	)
 
 if __name__ == "__main__":
 	ds_train, ds_validate = dataset("/mnt/research-data/main/rainfallwater_records-viperfinal/")
