@@ -20,11 +20,9 @@ def model_rainfallwater_segmentation(metadata, feature_dim_in, shape_water_out, 
 	
 	layer_next = do_convnext_inverse(layer_next, arch_name="convnext_i_tiny")
 	
-	# TODO: An attention layer here instead of a dense layer, with a skip connection?
+	# TODO: An attention layer here instead of a dense layer, with a skip connection perhaps?
 	layer_next = tf.keras.layers.Dense(32)(layer_next)
-	layer_next = tf.keras.layers.Conv2D(out_water_channels, 7, activation="softmax", padding="same")(layer_next)
-	
-	# TODO: Implement projection head here
+	layer_next = tf.keras.layers.Conv2D(out_water_channels, kernel_size=1, activation="softmax", padding="same")(layer_next)
 	
 	model = tf.keras.Model(
 		inputs = layer_input,
