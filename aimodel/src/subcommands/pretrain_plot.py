@@ -36,7 +36,7 @@ def run(args):
 	sys.stderr.write(f"\n\n>>> This is TensorFlow {tf.__version__}\n\n\n")
 	
 	embeddings = []
-	with handle_open(filepath_input, "w") as handle:
+	with handle_open(filepath_input, "r") as handle:
 		for line in handle:
 			obj = json.loads(line)
 			embeddings.append(obj["rainfall"])
@@ -46,7 +46,7 @@ def run(args):
 	
 	
 	embeddings = []
-	with handle_open(filepath_input, "w") as handle:
+	with handle_open(filepath_input, "r") as handle:
 		for line in handle:
 			obj = json.loads(line)
 			embeddings.append(obj["water"])
