@@ -64,7 +64,7 @@ def run(args):
 	
 	handle = sys.stdout
 	if filepath_output != "-":
-		handle = handle_open(filepath_output, "w")
+		handle = handle_open(filepath_output, "wt" if filepath_output.endswith(".gz") else "w")
 	
 	i = 0
 	for rainfall in ai.embed(dataset):
