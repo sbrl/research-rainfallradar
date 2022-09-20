@@ -27,7 +27,6 @@ def vis_embeddings(filepath_output, features):
 	plt.title(f"UMAP Dimensionality Reduction", fontsize=20)
 	
 	# 2: Parallel coordinates
-	figure.add_subplot(1, 2, 2)
 	dataframe = pandas.DataFrame(features)
 	dataframe["Label"] = [1] * len(features)
 	# dataframe["Label"] = range(len(features)) # used when we actually have labels. In this case we don't though
