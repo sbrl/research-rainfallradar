@@ -59,15 +59,21 @@ if [[ -n "${POSTFIX}" ]]; then
 	CODE="${CODE}_${POSTFIX}";
 fi
 
-echo -e ">>> Input dirpath: ${INPUT}" >&2;
-echo -e ">>> Code: ${CODE}" >&2;
-echo -e ">>> Additional args: ${ARGS}";
 
 if [[ -n "${OUTPUT}" ]]; then
 	filepath_output="${OUTPUT}";
 else
 	filepath_output="output/rainfallwater_records_embed_$(date -u --rfc-3339=date)${CODE}.jsonl.gz";
 fi
+
+echo -e ">>> Input dirpath: ${INPUT}" >&2;
+echo -e ">>> Output path: ${filepath_output}" >&2;
+echo -e ">>> Postfix: ${POSTFIX}" >&2;
+echo -e ">>> Checkpoint: ${CHECKPOINT}" >&2;
+echo -e ">>> Code: ${CODE}" >&2;
+echo -e ">>> Additional args: ${ARGS}";
+
+
 
 export PATH=$HOME/software/bin:$PATH;
 
