@@ -72,6 +72,7 @@ class RainfallWaterContraster(object):
 		
 		self.model_predict = tf.keras.models.load_model(filepath_checkpoint, custom_objects={
 			"LayerContrastiveEncoder": LayerContrastiveEncoder,
+			"LayerConvNeXtGamma": LayerConvNeXtGamma,
 			"LayerCheeseMultipleOut": LayerCheeseMultipleOut
 		})
 	
