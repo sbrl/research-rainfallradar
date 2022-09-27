@@ -8,7 +8,7 @@ import re
 from loguru import logger
 import tensorflow as tf
 import numpy as np
-from aimodel.src.lib.io.writefile import writefile
+from lib.io.writefile import writefile
 
 from lib.io.handle_open import handle_open
 from lib.ai.RainfallWaterContraster import RainfallWaterContraster
