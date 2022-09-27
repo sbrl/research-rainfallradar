@@ -26,7 +26,7 @@ def parse_args():
 	# parser.add_argument("--config", "-c", help="Filepath to the TOML config file to load.", required=True)
 	parser.add_argument("--input", "-i", help="Path to input directory containing the .tfrecord(.gz) files to predict for. If a single file is passed instead, then only that file will be converted.", required=True)
 	parser.add_argument("--output", "-o", help="Path to output file to write output to. If the file extension .tfrecord.gz is used instead of .jsonl.gz, then a tfrecord file is written.")
-	parser.add_argument("--records-per-file", help="Optional. If specified, this limits the number of records written to each file. When using this option, you MUST have the string '$d' (without quotes) somewhere in your output filepath.", type=int)
+	parser.add_argument("--records-per-file", help="Optional. If specified, this limits the number of records written to each file. When using this option, you MUST have the string '+d' (without quotes) somewhere in your output filepath.", type=int)
 	parser.add_argument("--checkpoint", "-c", help="Checkpoint file to load model weights from.", required=True)
 	parser.add_argument("--params", "-p", help="Optional. The file containing the model hyperparameters (usually called 'params.json'). If not specified, it's location will be determined automatically.")
 	parser.add_argument("--reads-multiplier", help="Optional. The multiplier for the number of files we should read from at once. Defaults to 1.5, which means read ceil(NUMBER_OF_CORES * 1.5). Set to a higher number of systems with high read latency to avoid starving the GPU of data.")
@@ -81,7 +81,7 @@ def run(args):
 	filepath_params = None
 	if filepath_output != "-":
 		handle = handle_open(
-			filepath_output if args.records_per_file <= 0 else filepath_output.replace("$d", str(0)),
+			filepath_output if args.records_per_file <= 0 else filepath_output.replace("+d", str(0)),
 			write_mode
 		)
 		filepath_params = os.path.join(os.path.dirname(filepath_output), "params.json")
@@ -98,7 +98,7 @@ def run(args):
 			i_file = 0
 			handle.close()
 			logger.write(f"PROGRESS:file {files_done}")
-			handle = handle_open(filepath_output.replace("$d", str(files_done+1)), write_mode)
+			handle = handle_open(filepath_output.replace("+d", str(files_done+1)), write_mode)
 		
 		if output_mode == MODE_JSONL:
 			handle.write(json.dumps(step_rainfall.numpy().tolist(), separators=(',', ':'))+"\n") # Ref https://stackoverflow.com/a/64710892/1460422
