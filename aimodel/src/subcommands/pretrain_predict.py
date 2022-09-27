@@ -98,7 +98,7 @@ def run(args):
 			files_done += 1
 			i_file = 0
 			handle.close()
-			logger.write(f"PROGRESS:file {files_done}")
+			logger.info(f"PROGRESS:file {files_done}")
 			handle = handle_open(filepath_output.replace("+d", str(files_done+1)), write_mode)
 		
 		if output_mode == MODE_JSONL:
