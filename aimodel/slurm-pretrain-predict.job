@@ -68,7 +68,7 @@ export PATH=$HOME/software/bin:$PATH;
 
 echo ">>> Installing requirements";
 conda run -n py38 pip install -r requirements.txt;
-echo ">>> Training model";
+echo ">>> Making predictions";
 #shellcheck disable=SC2086
 conda run -n py38 /usr/bin/env time -v src/index.py pretrain-predict --input "${INPUT}" --output "${filepath_output}" -c "${CHECKPOINT}" ${ARGS}
 echo ">>> exited with code $?";
