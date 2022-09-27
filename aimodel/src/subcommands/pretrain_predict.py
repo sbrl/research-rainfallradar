@@ -72,6 +72,7 @@ def run(args):
 	output_mode = MODE_TFRECORD if filepath_output.endswith(".tfrecord") or filepath_output.endswith(".tfrecord.gz") else MODE_JSONL
 	
 	logger.info("Output mode is "+("TFRECORD" if output_mode == MODE_TFRECORD else "JSONL"))
+	logger.info(f"Records per file: {args.records_per_file}")
 	
 	write_mode = "wt" if filepath_output.endswith(".gz") else "w"
 	if output_mode == MODE_TFRECORD:
