@@ -71,6 +71,8 @@ def run(args):
 	
 	output_mode = MODE_TFRECORD if filepath_output.endswith(".tfrecord") or filepath_output.endswith(".tfrecord.gz") else MODE_JSONL
 	
+	logger.info("Output mode is "+("TFRECORD" if output_mode == MODE_TFRECORD else "JSONL"))
+	
 	write_mode = "wt" if filepath_output.endswith(".gz") else "w"
 	if output_mode == MODE_TFRECORD:
 		write_mode = "wb"
@@ -79,11 +81,13 @@ def run(args):
 	filepath_params = None
 	if filepath_output != "-":
 		handle = handle_open(
-			filepath_output if args.records_per_file <= 0 else filepath_output.replace("$d", 0),
+			filepath_output if args.records_per_file <= 0 else filepath_output.replace("$d", str(0)),
 			write_mode
 		)
 		filepath_params = os.path.join(os.path.dirname(filepath_output), "params.json")
 	
+	logger.info("filepath_output: {filepath_output}")
+	logger.info("filepath_params: {filepath_params}")
 	
 	i = 0
 	i_file = i
