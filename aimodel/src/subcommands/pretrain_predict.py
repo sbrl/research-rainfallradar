@@ -82,7 +82,7 @@ def run(args):
 			filepath_output if args.records_per_file <= 0 else filepath_output.replace("$d", 0),
 			write_mode
 		)
-		filepath_params = os.path.join(os.path.dirname(filepath_output), "/params.json")
+		filepath_params = os.path.join(os.path.dirname(filepath_output), "params.json")
 	
 	
 	i = 0
