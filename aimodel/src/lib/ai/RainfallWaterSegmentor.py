@@ -10,17 +10,15 @@ from ..io.find_paramsjson import find_paramsjson
 from ..io.readfile import readfile
 from ..io.writefile import writefile
 
-from .model_rainfallwater_contrastive import model_rainfallwater_contrastive
+from .model_rainfallwater_segmentation import model_rainfallwater_segmentation
 from .helpers import make_callbacks
 from .helpers import summarywriter
-from .components.LayerContrastiveEncoder import LayerContrastiveEncoder
 from .components.LayerConvNeXtGamma import LayerConvNeXtGamma
-from .components.LayerCheeseMultipleOut import LayerCheeseMultipleOut
 from .helpers.summarywriter import summarywriter
 
-class RainfallWaterContraster(object):
+class RainfallWaterSegmenter(object):
 	def __init__(self, dir_output=None, filepath_checkpoint=None, epochs=50, batch_size=64, **kwargs):
-		super(RainfallWaterContraster, self).__init__()
+		super(RainfallWaterSegmenter, self).__init__()
 		
 		self.dir_output = dir_output
 		self.epochs = epochs
@@ -54,11 +52,11 @@ class RainfallWaterContraster(object):
 	@staticmethod
 	def from_checkpoint(filepath_checkpoint, **hyperparams):
 		logger.info(f"Loading from checkpoint: {filepath_checkpoint}")
-		return RainfallWaterContraster(filepath_checkpoint=filepath_checkpoint, **hyperparams)
+		return RainfallWaterSegmenter(filepath_checkpoint=filepath_checkpoint, **hyperparams)
 	
 	
 	def make_model(self):
-		self.model, self.model_predict = model_rainfallwater_contrastive(
+		self.model = model_rainfallwater_segmentation(
 			batch_size=self.batch_size,
 			summary_file=self.filepath_summary,
 			**self.kwargs
@@ -71,10 +69,8 @@ class RainfallWaterContraster(object):
 		filepath_checkpoint (string): The filepath to load the saved model from.
 		"""
 		
-		self.model_predict = tf.keras.models.load_model(filepath_checkpoint, custom_objects={
-			"LayerContrastiveEncoder": LayerContrastiveEncoder,
+		self.model = tf.keras.models.load_model(filepath_checkpoint, custom_objects={
 			"LayerConvNeXtGamma": LayerConvNeXtGamma,
-			"LayerCheeseMultipleOut": LayerCheeseMultipleOut
 		})
 	
 	
@@ -92,11 +88,10 @@ class RainfallWaterContraster(object):
 		i_batch = -1
 		for batch in batched_iterator(dataset, tensors_in_item=2, batch_size=self.batch_size):
 			i_batch += 1
-			rainfall = self.model_predict(batch[0], training=False) # ((rainfall, water), dummy_label)
-			rainfall = tf.unstack(rainfall, axis=0)
-			water = tf.unstack(batch[1], axis=0)
-			for step_rainfall, step_water in zip(rainfall, water):
-				yield step_rainfall, step_water
+			rainfall = self.model(batch[0], training=False) # ((rainfall, water), dummy_label)
+			
+			for step in tf.unstack(rainfall, axis=0):
+				yield step
 		
 	
 	# def embed_rainfall(self, dataset):

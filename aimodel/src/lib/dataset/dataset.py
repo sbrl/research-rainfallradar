@@ -46,15 +46,17 @@ def parse_item(metadata, shape_water_desired, dummy_label=True):
 	
 	return tf.function(parse_item_inner)
 
-def make_dataset(filepaths, metadata, shape_watch_desired=[100,100], compression_type="GZIP", parallel_reads_multiplier=1.5, shuffle_buffer_size=128, batch_size=64, dummy_label=True, prefetch=True):
+def make_dataset(filepaths, metadata, shape_watch_desired=[100,100], compression_type="GZIP", parallel_reads_multiplier=1.5, shuffle_buffer_size=128, batch_size=64, dummy_label=True, prefetch=True, shuffle=True):
 	if "NO_PREFETCH" in os.environ:
 		logger.info("disabling data prefetching.")
 	
 	dataset = tf.data.TFRecordDataset(filepaths,
 		compression_type=compression_type,
 		num_parallel_reads=math.ceil(os.cpu_count() * parallel_reads_multiplier)
-	).shuffle(shuffle_buffer_size) \
-		.map(parse_item(metadata, shape_water_desired=shape_watch_desired, dummy_label=dummy_label), num_parallel_calls=tf.data.AUTOTUNE)
+	)
+	if shuffle:
+		dataset = dataset.shuffle(shuffle_buffer_size)
+	dataset = dataset.map(parse_item(metadata, shape_water_desired=shape_watch_desired, dummy_label=dummy_label), num_parallel_calls=tf.data.AUTOTUNE)
 		
 	if batch_size != None:
 		dataset = dataset.batch(batch_size, drop_remainder=True)
@@ -86,7 +88,7 @@ def dataset(dirpath_input, batch_size=64, train_percentage=0.8, parallel_reads_m
 	return dataset_train, dataset_validate #, filepaths
 
 def dataset_predict(dirpath_input, parallel_reads_multiplier=1.5, prefetch=True):
-	filepaths = get_filepaths(dirpath_input)
+	filepaths = get_filepaths(dirpath_input) if os.path.isdir(dirpath_input) else [ dirpath_input ]
 	
 	return make_dataset(
 		filepaths=filepaths,
@@ -94,7 +96,8 @@ def dataset_predict(dirpath_input, parallel_reads_multiplier=1.5, prefetch=True)
 		parallel_reads_multiplier=parallel_reads_multiplier,
 		batch_size=None,
 		dummy_label=False,
-		prefetch=prefetch
+		prefetch=prefetch,
+		shuffle=False #even with shuffle=False we're not gonna get them all in the same order since we're reading in parallel
 	)
 
 if __name__ == "__main__":
