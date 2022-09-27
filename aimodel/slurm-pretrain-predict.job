@@ -81,6 +81,7 @@ echo ">>> Installing requirements";
 conda run -n py38 pip install -r requirements.txt;
 echo ">>> Making predictions";
 #shellcheck disable=SC2086
+echo COMMAND: conda run -n py38 /usr/bin/env time -v src/index.py pretrain-predict --input "${INPUT}" --output "${filepath_output}" -c "${CHECKPOINT}" ${ARGS}
 conda run -n py38 /usr/bin/env time -v src/index.py pretrain-predict --input "${INPUT}" --output "${filepath_output}" -c "${CHECKPOINT}" ${ARGS}
 echo ">>> exited with code $?";
 
