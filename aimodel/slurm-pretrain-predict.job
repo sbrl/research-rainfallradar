@@ -24,6 +24,7 @@ show_help() {
 	echo -e "    INPUT       The path to the input file (.jsonl.gz) containing the embedded data to plot (see the pretrain-predict subcommand for embedding data)" >&2;
 	echo -e "    CHECKPOINT  The filepath to the checkpoint (.hdf5) file to load" >&2;
 	echo -e "    POSTFIX     Arbitrary string to add to filename." >&2;
+	echo -e "    ARGS	     Any additional args to pass to pretrain-plot." >&2;
 	echo -e "" >&2;
 	echo -e "The code used to identify the run is taken automatically from the filename of the config file." >&2;
 	exit;
@@ -69,7 +70,7 @@ echo ">>> Installing requirements";
 conda run -n py38 pip install -r requirements.txt;
 echo ">>> Training model";
 #shellcheck disable=SC2086
-conda run -n py38 /usr/bin/env time -v src/index.py pretrain-predict --input "${INPUT}" --output "${filepath_output}" -c "${CHECKPOINT}"
+conda run -n py38 /usr/bin/env time -v src/index.py pretrain-predict --input "${INPUT}" --output "${filepath_output}" -c "${CHECKPOINT}" ${ARGS}
 echo ">>> exited with code $?";
 
 INPUT="${filepath_output}" POSTFIX="${POSTFIX}" sbatch slurm-pretrain-plot.job
