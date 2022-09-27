@@ -86,8 +86,8 @@ def run(args):
 		)
 		filepath_params = os.path.join(os.path.dirname(filepath_output), "params.json")
 	
-	logger.info("filepath_output: {filepath_output}")
-	logger.info("filepath_params: {filepath_params}")
+	logger.info(f"filepath_output: {filepath_output}")
+	logger.info(f"filepath_params: {filepath_params}")
 	
 	i = 0
 	i_file = i
