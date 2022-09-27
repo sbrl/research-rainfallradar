@@ -14,6 +14,7 @@ from .model_rainfallwater_contrastive import model_rainfallwater_contrastive
 from .helpers import make_callbacks
 from .helpers import summarywriter
 from .components.LayerContrastiveEncoder import LayerContrastiveEncoder
+from .components.LayerConvNeXtGamma import LayerConvNeXtGamma
 from .components.LayerCheeseMultipleOut import LayerCheeseMultipleOut
 from .helpers.summarywriter import summarywriter
 
