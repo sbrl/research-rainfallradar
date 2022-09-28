@@ -15,7 +15,7 @@ from .shuffle import shuffle
 
 # TO PARSE:
 def parse_item(metadata, shape_water_desired, water_threshold=0.1):
-	water_width_source, water_height_source, _water_channels_source = metadata["waterdepth"]
+	water_width_source, water_height_source = metadata["waterdepth"]
 	water_width_target, water_height_target = shape_water_desired
 	water_offset_x = math.ceil((water_width_source - water_width_target) / 2)
 	water_offset_y = math.ceil((water_height_source - water_height_target) / 2)
