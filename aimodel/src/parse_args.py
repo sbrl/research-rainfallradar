@@ -20,6 +20,7 @@ Available subcommands:
 	pretrain			Pretrain a contrastive learning model as an encoder.
 	pretrain-predict	Make predictions using a trained contrastive learning encoder.
 	pretrain-plot		Plot using embeddings predicted using pretrain-predict.
+	train				Train an image segmentation head on the output of pretrain-predict. YOU MUST TRAIN A CONTRASTIVE LEARNING MODEL FIRST.
 
 For more information, do src/index.py <subcommand> --help.
 """)
