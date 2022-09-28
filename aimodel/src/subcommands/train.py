@@ -52,7 +52,7 @@ def run(args):
 	ai = RainfallWaterSegmenter(
 		dir_output=args.output,
 		batch_size=args.batch_size,
-		feature_dim=args.feature_dim,
+		feature_dim_in=args.feature_dim,
 		
 		metadata = read_metadata(args.input),
 		shape_water=[ args.water_size, args.water_size ] # The DESIRED output shape. the actual data will be cropped to match this.
