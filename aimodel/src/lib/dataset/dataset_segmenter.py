@@ -14,7 +14,7 @@ from .shuffle import shuffle
 
 
 # TO PARSE:
-def parse_item(metadata, shape_water_desired):
+def parse_item(metadata, shape_water_desired, water_threshold=0.1):
 	water_width_source, water_height_source, _water_channels_source = metadata["waterdepth"]
 	water_width_target, water_height_target = shape_water_desired
 	water_offset_x = math.ceil((water_width_source - water_width_target) / 2)
@@ -33,6 +33,8 @@ def parse_item(metadata, shape_water_desired):
 		# SHAPES:
 		# rainfall = [ feature_dim ]
 		# water = [ width, height, 1 ]
+		
+		water = tf.cast(tf.math.greater_equal(water, water_threshold), dtype=tf.int32)
 		
 		water = tf.image.crop_to_bounding_box(water, water_offset_x, water_offset_y, water_width_target, water_height_target)
 		
@@ -70,7 +72,7 @@ def get_filepaths(dirpath_input):
 		[ file.path for file in os.scandir(dirpath_input) ] # .path on a DirEntry object yields the absolute filepath
 	)))
 
-def dataset_segmenter(dirpath_input, batch_size=64, train_percentage=0.8, parallel_reads_multiplier=1.5):
+def dataset_segmenter(dirpath_input, batch_size=64, train_percentage=0.8, parallel_reads_multiplier=1.5, water_threshold=0.1):
 	filepaths = get_filepaths(dirpath_input)
 	filepaths_count = len(filepaths)
 	dataset_splitpoint = math.floor(filepaths_count * train_percentage)
@@ -80,12 +82,12 @@ def dataset_segmenter(dirpath_input, batch_size=64, train_percentage=0.8, parall
 	
 	metadata = read_metadata(dirpath_input)
 	
-	dataset_train = make_dataset(filepaths_train, metadata, batch_size=batch_size, parallel_reads_multiplier=parallel_reads_multiplier)
-	dataset_validate = make_dataset(filepaths_validate, metadata, batch_size=batch_size, parallel_reads_multiplier=parallel_reads_multiplier)
+	dataset_train = make_dataset(filepaths_train, metadata, batch_size=batch_size, parallel_reads_multiplier=parallel_reads_multiplier, water_threshold=water_threshold)
+	dataset_validate = make_dataset(filepaths_validate, metadata, batch_size=batch_size, parallel_reads_multiplier=parallel_reads_multiplier, water_threshold=water_threshold)
 	
 	return dataset_train, dataset_validate #, filepaths
 
-def dataset_predict(dirpath_input, parallel_reads_multiplier=1.5, prefetch=True):
+def dataset_predict(dirpath_input, parallel_reads_multiplier=1.5, prefetch=True, water_threshold=0.1):
 	filepaths = get_filepaths(dirpath_input) if os.path.isdir(dirpath_input) else [ dirpath_input ]
 	
 	return make_dataset(
@@ -94,7 +96,8 @@ def dataset_predict(dirpath_input, parallel_reads_multiplier=1.5, prefetch=True)
 		parallel_reads_multiplier=parallel_reads_multiplier,
 		batch_size=None,
 		prefetch=prefetch,
-		shuffle=False #even with shuffle=False we're not gonna get them all in the same order since we're reading in parallel
+		shuffle=False, #even with shuffle=False we're not gonna get them all in the same order since we're reading in parallel
+		water_threshold=water_threshold
 	)
 
 if __name__ == "__main__":

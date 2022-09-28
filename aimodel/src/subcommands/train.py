@@ -18,6 +18,7 @@ def parse_args():
 	parser.add_argument("--batch-size", help="Sets the batch size [default: 64].", type=int)
 	parser.add_argument("--reads-multiplier", help="Optional. The multiplier for the number of files we should read from at once. Defaults to 1.5, which means read ceil(NUMBER_OF_CORES * 1.5) files at once. Set to a higher number of systems with high read latency to avoid starving the GPU of data.")
 	parser.add_argument("--water-size", help="The width and height of the square of pixels that the model will predict. Smaller values crop the input more [default: 100].", type=int)
+	parser.add_argument("--water-threshold", help="The threshold at which a water cell should be considered water. Water depth values lower than this will be set to 0 (no water). Value unit is metres [default: 0.1].", type=int)
 	
 	return parser
 
@@ -30,6 +31,8 @@ def run(args):
 		args.feature_dim = 512
 	if (not hasattr(args, "read_multiplier")) or args.read_multiplier == None:
 		args.read_multiplier = 1.5
+	if (not hasattr(args, "water_threshold")) or args.water_threshold == None:
+		args.water_threshold = 1.5
 	
 	
 	# TODO: Validate args here.
@@ -39,6 +42,7 @@ def run(args):
 	dataset_train, dataset_validate = dataset_segmenter(
 		dirpath_input=args.input,
 		batch_size=args.batch_size,
+		water_threshold=args.water_threshold,
 	)
 	dataset_metadata = read_metadata(args.input)
 	
@@ -55,7 +59,7 @@ def run(args):
 		feature_dim_in=args.feature_dim,
 		
 		metadata = read_metadata(args.input),
-		shape_water_out=[ args.water_size, args.water_size ] # The DESIRED output shape. the actual data will be cropped to match this.
+		shape_water_out=[ args.water_size, args.water_size ], # The DESIRED output shape. the actual data will be cropped to match this.
 	)
 	
 	ai.train(dataset_train, dataset_validate)
