@@ -46,7 +46,7 @@ def parse_item(metadata, shape_water_desired, water_threshold=0.1):
 	
 	return tf.function(parse_item_inner)
 
-def make_dataset(filepaths, metadata, shape_watch_desired=[100,100], compression_type="GZIP", parallel_reads_multiplier=1.5, shuffle_buffer_size=128, batch_size=64, prefetch=True, shuffle=True):
+def make_dataset(filepaths, metadata, shape_watch_desired=[100,100], water_threshold=0.1, compression_type="GZIP", parallel_reads_multiplier=1.5, shuffle_buffer_size=128, batch_size=64, prefetch=True, shuffle=True):
 	if "NO_PREFETCH" in os.environ:
 		logger.info("disabling data prefetching.")
 	
@@ -56,7 +56,7 @@ def make_dataset(filepaths, metadata, shape_watch_desired=[100,100], compression
 	)
 	if shuffle:
 		dataset = dataset.shuffle(shuffle_buffer_size)
-	dataset = dataset.map(parse_item(metadata, shape_water_desired=shape_watch_desired), num_parallel_calls=tf.data.AUTOTUNE)
+	dataset = dataset.map(parse_item(metadata, shape_water_desired=shape_watch_desired, water_threshold=water_threshold), num_parallel_calls=tf.data.AUTOTUNE)
 		
 	if batch_size != None:
 		dataset = dataset.batch(batch_size, drop_remainder=True)
