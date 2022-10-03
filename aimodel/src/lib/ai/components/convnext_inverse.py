@@ -29,6 +29,8 @@ def convnext_inverse(layer_in, depths, dims):
 	for depth, dim in zip(depths, dims):
 		layer_next = block_upscale(layer_next, i, depth=depth, dim=dim)
 		i += 1
+	
+	return layer_next
 
 
 def block_upscale(layer_in, block_number, depth, dim):
@@ -36,5 +38,7 @@ def block_upscale(layer_in, block_number, depth, dim):
 	for i in range(depth):
 		layer_next = add_convnext_block(layer_next, dim=dim, prefix=f"cns.stage{block_number}.block.{i}")
 	
-	layer_next = tf.keras.layers.LayerNormalization(name=f"cns.stage{block_number}.end.norm", epsilon=1e-6)(layer_next)
 	layer_next = tf.keras.layers.Conv2DTranspose(name=f"cns.stage{block_number}.end.convtp", filters=dim, kernel_size=4, padding="same")(layer_next)
+	layer_next = tf.keras.layers.LayerNormalization(name=f"cns.stage{block_number}.end.norm", epsilon=1e-6)(layer_next)
+	
+	return layer_next
