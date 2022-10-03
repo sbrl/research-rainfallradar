@@ -80,7 +80,7 @@ class RainfallWaterSegmenter(object):
 			dataset_train,
 			validation_data=dataset_validate,
 			epochs=self.epochs,
-			callbacks=make_callbacks(self.dir_output, self.model_predict),
+			callbacks=make_callbacks(self.dir_output, self.model),
 			steps_per_epoch=10 # For testing
 		)
 	
