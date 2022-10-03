@@ -36,6 +36,7 @@ def convnext_inverse(layer_in, depths, dims):
 def block_upscale(layer_in, block_number, depth, dim):
 	layer_next = layer_in
 	
+	# Ref https://machinelearningmastery.com/upsampling-and-transpose-convolution-layers-for-generative-adversarial-networks/ to understand Conv2DTranspose
 	layer_next = tf.keras.layers.Conv2DTranspose(
 		name=f"cns.stage{block_number}.end.convtp",
 		filters=dim,
