@@ -40,7 +40,7 @@ def block_upscale(layer_in, block_number, depth, dim):
 		name=f"cns.stage{block_number}.end.convtp",
 		filters=dim,
 		kernel_size=4,
-		stride=2
+		strides=2
 	)(layer_next)
 	layer_next = tf.keras.layers.LayerNormalization(name=f"cns.stage{block_number}.end.norm", epsilon=1e-6)(layer_next)
 	
