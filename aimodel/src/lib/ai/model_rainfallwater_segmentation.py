@@ -14,11 +14,17 @@ def model_rainfallwater_segmentation(metadata, feature_dim_in, shape_water_out, 
 	)
 	
 	# BEGIN
-	layer_next = tf.keras.layers.Dense(name="cns.stage.begin.dense", units=feature_dim_in)(layer_input)
+	layer_next = tf.keras.layers.Dense(name="cns.stage.begin.dense1", units=feature_dim_in)(layer_input)
+	layer_next = tf.keras.layers.ReLU(name="cns.stage_begin.relu1")(layer_next)
 	layer_next = tf.keras.layers.LayerNormalization(name="cns.stage_begin.norm", epsilon=1e-6)(layer_next)
-	layer_next = tf.keras.layers.ReLU(name="cns.stage_begin.relu")(layer_next)
 	
-	layer_next = tf.keras.layers.Reshape((1, 1, feature_dim_in), name="cns.stable_begin.reshape")(layer_next)
+	layer_next = tf.keras.layers.Reshape((4, 4, feature_dim_in/(4*4)), name="cns.stable_begin.reshape")(layer_next)
+	layer_next = tf.keras.layers.Dense(name="cns.stage.begin.dense2", units=feature_dim_in)(layer_next)
+	layer_next = tf.keras.layers.ReLU(name="cns.stage_begin.relu2")(layer_next)
+	layer_next = tf.keras.layers.LayerNormalization(name="cns.stage_begin.norm", epsilon=1e-6)(layer_next)
+	
+	
+	# layer_next = tf.keras.layers.Reshape((1, 1, feature_dim_in), name="cns.stable_begin.reshape")(layer_next)
 	
 	layer_next = do_convnext_inverse(layer_next, arch_name="convnext_i_tiny")
 	
