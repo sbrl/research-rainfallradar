@@ -85,5 +85,6 @@ echo COMMAND: conda run -n py38 /usr/bin/env time -v src/index.py pretrain-predi
 conda run -n py38 /usr/bin/env time -v src/index.py pretrain-predict --input "${INPUT}" --output "${filepath_output}" -c "${CHECKPOINT}" ${ARGS}
 echo ">>> exited with code $?";
 
-INPUT="${filepath_output}" POSTFIX="${POSTFIX}" sbatch slurm-pretrain-plot.job
+dirpath_output="$(dirname "${filepath_output}")";
+INPUT="${dirpath_output}" POSTFIX="${POSTFIX}" sbatch slurm-pretrain-plot.job
 echo ">>> Queued UMAP plot"
