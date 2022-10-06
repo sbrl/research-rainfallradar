@@ -129,7 +129,7 @@ def convnext(
 
 def add_convnext_block(y, dim, drop_prob=0, prefix=""):
 	skip = y
-		
+	
 	y = tf.keras.layers.DepthwiseConv2D(
 		kernel_size=7,
 		padding='same',
