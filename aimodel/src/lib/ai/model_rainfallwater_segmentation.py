@@ -29,7 +29,7 @@ def model_rainfallwater_segmentation(metadata, feature_dim_in, shape_water_out, 
 	layer_next = do_convnext_inverse(layer_next, arch_name="convnext_i_tiny")
 	
 	# TODO: An attention layer here instead of a dense layer, with a skip connection perhaps?
-	logger.warn("Warning: TODO implement attention from https://ieeexplore.ieee.org/document/9076883")
+	logger.warning("Warning: TODO implement attention from https://ieeexplore.ieee.org/document/9076883")
 	layer_next = tf.keras.layers.Dense(32)(layer_next)
 	layer_next = tf.keras.layers.Conv2D(1, kernel_size=1, activation="softmax", padding="same")(layer_next)
 	
