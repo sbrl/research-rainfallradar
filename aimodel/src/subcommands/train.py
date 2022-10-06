@@ -33,6 +33,8 @@ def run(args):
 		args.read_multiplier = 1.5
 	if (not hasattr(args, "water_threshold")) or args.water_threshold == None:
 		args.water_threshold = 1.5
+	if (not hasattr(args, "water_size")) or args.water_size == None:
+		args.water_size = 1.5
 	
 	
 	# TODO: Validate args here.
@@ -43,6 +45,7 @@ def run(args):
 		dirpath_input=args.input,
 		batch_size=args.batch_size,
 		water_threshold=args.water_threshold,
+		shape_water_desired=[args.water_size, args.water_size]
 	)
 	dataset_metadata = read_metadata(args.input)
 	
