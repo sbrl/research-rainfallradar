@@ -7,6 +7,8 @@
 #SBATCH -e %j.%N.%a.err.log
 #SBATCH -p gpu05
 #SBATCH --time=5-00:00:00
+#SBATCH --mem=61440
+# 61440 = 60GiB memory required
 
 module load utilities/multi
 module load readline/7.0
