@@ -111,7 +111,7 @@ def run(args):
 			i_file = 0
 			handle.close()
 			logger.info(f"PROGRESS:file {files_done}")
-			handle = handle_open_modeset(filepath_output.replace("+d", str(files_done+1)), write_mode, hand_mode=output_mode)
+			handle = handle_open_modeset(filepath_output.replace("+d", str(files_done+1)), write_mode, handle_mode=output_mode)
 		
 		if output_mode == MODE_JSONL:
 			handle.write(json.dumps(step_rainfall.numpy().tolist(), separators=(',', ':'))+"\n") # Ref https://stackoverflow.com/a/64710892/1460422
