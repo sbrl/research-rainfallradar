@@ -85,6 +85,8 @@ echo COMMAND: conda run -n py38 /usr/bin/env time -v src/index.py pretrain-predi
 conda run -n py38 /usr/bin/env time -v src/index.py pretrain-predict --input "${INPUT}" --output "${filepath_output}" -c "${CHECKPOINT}" ${ARGS}
 echo ">>> exited with code $?";
 
-# dirpath_output="$(dirname "${filepath_output}")";
-INPUT="${filepath_output}" POSTFIX="${POSTFIX}" sbatch slurm-pretrain-plot.job
-echo ">>> Queued UMAP plot"
+if [[ "${filepath_output}" != *.tfrecord* ]]; then
+	# dirpath_output="$(dirname "${filepath_output}")";
+	INPUT="${filepath_output}" POSTFIX="${POSTFIX}" sbatch slurm-pretrain-plot.job
+	echo ">>> No tfrecord output detected, queued UMAP plot"
+fi
