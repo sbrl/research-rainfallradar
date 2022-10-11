@@ -19,7 +19,7 @@ def parse_args():
 	parser.add_argument("--reads-multiplier", help="Optional. The multiplier for the number of files we should read from at once. Defaults to 1.5, which means read ceil(NUMBER_OF_CORES * 1.5) files at once. Set to a higher number of systems with high read latency to avoid starving the GPU of data.")
 	parser.add_argument("--water-size", help="The width and height of the square of pixels that the model will predict. Smaller values crop the input more [default: 100].", type=int)
 	parser.add_argument("--water-threshold", help="The threshold at which a water cell should be considered water. Water depth values lower than this will be set to 0 (no water). Value unit is metres [default: 0.1].", type=int)
-	parser.add_argument("--arch", help="Next fo the underlying convnext model to use [default: 0.1].", type=int)
+	parser.add_argument("--arch", help="Next fo the underlying convnext model to use [default: 0.1].")
 	
 	
 	return parser
