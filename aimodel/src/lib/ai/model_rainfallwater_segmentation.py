@@ -5,7 +5,7 @@ import tensorflow as tf
 
 from .components.convnext_inverse import do_convnext_inverse
 
-def model_rainfallwater_segmentation(metadata, feature_dim_in, shape_water_out, batch_size=64, summary_file=None):
+def model_rainfallwater_segmentation(metadata, feature_dim_in, shape_water_out, model_arch="convnext_i_xtiny", batch_size=64, summary_file=None):
 	out_water_width, out_water_height = shape_water_out
 	
 	

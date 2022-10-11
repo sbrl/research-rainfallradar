@@ -15,7 +15,7 @@ depths_dims = dict(
 )
 
 
-def do_convnext_inverse(layer_in, arch_name="convnext_tiny"):
+def do_convnext_inverse(layer_in, arch_name="convnext_i_xtiny"):
 	return convnext_inverse(layer_in,
 		depths=depths_dims[arch_name]["depths"],
 		dims=depths_dims[arch_name]["dims"]
