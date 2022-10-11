@@ -65,7 +65,7 @@ def run(args):
 		batch_size=args.batch_size,
 		feature_dim_in=args.feature_dim,
 		
-		model_arch=args.model_arch,
+		model_arch=args.arch,
 		metadata = read_metadata(args.input),
 		shape_water_out=[ args.water_size, args.water_size ], # The DESIRED output shape. the actual data will be cropped to match this.
 	)
