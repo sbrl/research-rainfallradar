@@ -16,7 +16,7 @@ def make_callbacks(dirpath, model_predict):
 			model_to_checkpoint=model_predict,
 			filepath=os.path.join(
 				dirpath_checkpoints,
-				"checkpoint_weights_e{epoch:d}_loss{loss:.3f}.hdf5"
+				"checkpoint_e{epoch:d}_loss{loss:.3f}.hdf5"
 			),
 			monitor="loss"
 		),
