@@ -6,20 +6,18 @@ import tensorflow as tf
 from .components.convnext_inverse import do_convnext_inverse
 
 
-def model_rainfallwater_segmentation(metadata, shape_water_out, model_arch="convnext_i_xtiny", batch_size=64, summary_file=None, water_bins=2):
+def model_rainfallwater_segmentation(metadata, shape_water_out, model_arch="convnext_i_xtiny", batch_size=64, water_bins=2):
 	"""Makes a new rainfall / waterdepth segmentation head model.
 
 	Args:
 		metadata (dict): A dictionary of metadata about the dataset to use to build the model with.
-		feature_dim_in (int): The size of the feature dimension 
-		shape_water_out (_type_): _description_
-		model_arch (str, optional): _description_. Defaults to "convnext_i_xtiny".
-		batch_size (int, optional): _description_. Defaults to 64.
-		summary_file (_type_, optional): _description_. Defaults to None.
-		water_bins (int, optional): _description_. Defaults to 2.
+		shape_water_out (int[]): The width and height (in that order) that should dictate the output shape of the segmentation head. CURRENTLY NOT USED.
+		model_arch (str, optional): The architecture code for the underlying (inverted) ConvNeXt model. Defaults to "convnext_i_xtiny".
+		batch_size (int, optional): The batch size. Reduce to save memory. Defaults to 64.
+		water_bins (int, optional): The number of classes that the water depth output oft he segmentation head should be binned into. Defaults to 2.
 
 	Returns:
-		_type_: _description_
+		tf.keras.Model: The new model, freshly compiled for your convenience! :D
 	"""
 	out_water_width, out_water_height = shape_water_out
 	feature_dim_in = metadata["rainfallradar"][0]
