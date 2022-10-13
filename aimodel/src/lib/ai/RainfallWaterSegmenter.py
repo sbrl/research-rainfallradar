@@ -58,7 +58,6 @@ class RainfallWaterSegmenter(object):
 	def make_model(self):
 		self.model = model_rainfallwater_segmentation(
 			batch_size=self.batch_size,
-			summary_file=self.filepath_summary,
 			**self.kwargs
 		)
 	
