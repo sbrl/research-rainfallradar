@@ -3,14 +3,11 @@ import math
 import json
 
 from loguru import logger
-
 import tensorflow as tf
 
 from lib.dataset.read_metadata import read_metadata
-
 from ..io.readfile import readfile
 from .shuffle import shuffle
-
 
 
 # TO PARSE:
