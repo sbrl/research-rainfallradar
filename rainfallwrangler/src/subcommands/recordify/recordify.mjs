@@ -23,6 +23,8 @@ export default async function() {
 		await fs.promises.mkdir(settings.output, { recursive: true });
 	
 	console.log("DEBUG", settings);
+	
+	// Recordify CLEAN, does NOT shuffle
 	const writer = new RecordWrangler(settings.output, settings.count_file);
 	const reader_radar = new RadarWrangler(settings.rainfall_pattern);
 	const reader_water = new Terrain50StreamReader();

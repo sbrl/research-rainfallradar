@@ -17,5 +17,6 @@ export default async function() {
 	if(!fs.existsSync(settings.target))
 		await fs.promises.mkdir(settings.target);
 	
+	// Reordering CLEAN, does NOT shuffle
 	await jsonl_to_tf(settings.source, settings.target);
 }
