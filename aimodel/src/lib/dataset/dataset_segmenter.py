@@ -49,7 +49,7 @@ def make_dataset(filepaths, metadata, shape_water_desired=[100,100], water_thres
 	
 	dataset = tf.data.TFRecordDataset(filepaths,
 		compression_type=compression_type,
-		num_parallel_reads=math.ceil(os.cpu_count() * parallel_reads_multiplier)
+		num_parallel_reads=math.ceil(os.cpu_count() * parallel_reads_multiplier) if parallel_reads_multiplier > 0 else None
 	)
 	if shuffle:
 		dataset = dataset.shuffle(shuffle_buffer_size)
@@ -85,6 +85,18 @@ def dataset_segmenter(dirpath_input, batch_size=64, train_percentage=0.8, parall
 	return dataset_train, dataset_validate #, filepaths
 
 def dataset_predict(dirpath_input, parallel_reads_multiplier=1.5, prefetch=True, water_threshold=0.1):
+	"""Creates a tf.data.Dataset() for prediction using the image segmentation head model.
+	Note that this WILL MANGLE THE ORDERING if you set parallel_reads_multiplier to anything other than 0!!
+	
+	Args:
+		dirpath_input (string): The path to the directory containing the input (.tfrecord.gz) files
+		parallel_reads_multiplier (float, optional): The number of files to read in parallel. Defaults to 1.5.
+		prefetch (bool, optional): Whether to prefetch data into memory or not. Defaults to True.
+		water_threshold (float, optional): The water depth threshold to consider cells to contain water, in metres. Defaults to 0.1.
+
+	Returns:
+		tf.data.Dataset: A tensorflow Dataset for the given input files.
+	"""
 	filepaths = get_filepaths(dirpath_input) if os.path.isdir(dirpath_input) else [ dirpath_input ]
 	
 	return make_dataset(
