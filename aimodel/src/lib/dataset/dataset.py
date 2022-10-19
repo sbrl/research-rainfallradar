@@ -66,11 +66,17 @@ def make_dataset(filepaths, metadata, shape_watch_desired=[100,100], compression
 	return dataset
 
 
-def get_filepaths(dirpath_input):
-	return shuffle(list(filter(
+def get_filepaths(dirpath_input, shuffle=True):
+	result = list(filter(
 		lambda filepath: str(filepath).endswith(".tfrecord.gz"),
 		[ file.path for file in os.scandir(dirpath_input) ] # .path on a DirEntry object yields the absolute filepath
-	)))
+	))
+	if shuffle:
+		result = shuffle(result)
+	else:
+		result = sorted(result, key=lambda filepath: int(filepath.split(".", 1)[0]))
+	
+	return result
 
 def dataset(dirpath_input, batch_size=64, train_percentage=0.8, parallel_reads_multiplier=1.5):
 	filepaths = get_filepaths(dirpath_input)
@@ -99,7 +105,7 @@ def dataset_predict(dirpath_input, parallel_reads_multiplier=1.5, prefetch=True)
 	Returns:
 		tf.data.Dataset: A tensorflow Dataset for the given input files.
 	"""
-	filepaths = get_filepaths(dirpath_input) if os.path.isdir(dirpath_input) else [ dirpath_input ]
+	filepaths = get_filepaths(dirpath_input, shuffle=False) if os.path.isdir(dirpath_input) else [ dirpath_input ]
 	
 	return make_dataset(
 		filepaths=filepaths,
