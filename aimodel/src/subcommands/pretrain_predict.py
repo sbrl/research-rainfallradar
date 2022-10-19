@@ -29,7 +29,7 @@ def parse_args():
 	parser.add_argument("--records-per-file", help="Optional. If specified, this limits the number of records written to each file. When using this option, you MUST have the string '+d' (without quotes) somewhere in your output filepath.", type=int)
 	parser.add_argument("--checkpoint", "-c", help="Checkpoint file to load model weights from.", required=True)
 	parser.add_argument("--params", "-p", help="Optional. The file containing the model hyperparameters (usually called 'params.json'). If not specified, it's location will be determined automatically.")
-	parser.add_argument("--reads-multiplier", help="Optional. The multiplier for the number of files we should read from at once. Defaults to 1.5, which means read ceil(NUMBER_OF_CORES * 1.5). Set to a higher number of systems with high read latency to avoid starving the GPU of data.")
+	parser.add_argument("--reads-multiplier", help="Optional. The multiplier for the number of files we should read from at once. Defaults to 0. If using this start at a value of 1.5, which means read ceil(NUMBER_OF_CORES * 1.5). Set to a higher number of systems with high read latency to avoid starving the GPU of data. CAUTION: If this is set to greater than 0, then it will SCRAMBLE THE INPUTS!")
 	
 	return parser
 
@@ -47,7 +47,7 @@ def run(args):
 	if (not hasattr(args, "params")) or args.params == None:
 		args.params = find_paramsjson(args.checkpoint)
 	if (not hasattr(args, "read_multiplier")) or args.read_multiplier == None:
-		args.read_multiplier = 1.5
+		args.read_multiplier = 0
 	if (not hasattr(args, "records_per_file")) or args.records_per_file == None:
 		args.records_per_file = 0 # 0 = unlimited
 	
