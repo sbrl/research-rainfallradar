@@ -92,7 +92,8 @@ def do_png(args, ai, dataset, model_code):
 	
 	i = 0
 	gen = batched_iterator(dataset, tensors_in_item=2, batch_size=model_params["batch_size"])
-	for rainfall, water in gen:
+	for item in gen:
+		rainfall, water = item
 		water_predict_batch = ai.embed(rainfall)
 		for water_predict in water_predict_batch:
 			# [ width, height, softmax_probabilities ] → [ batch, width, height ]
