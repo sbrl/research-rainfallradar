@@ -11,7 +11,7 @@ import tensorflow as tf
 from lib.vis.segmentation_plot import segmentation_plot
 from lib.io.handle_open import handle_open
 from lib.ai.RainfallWaterContraster import RainfallWaterContraster
-from lib.dataset.dataset import dataset_predict
+from lib.dataset.dataset_segmenter import dataset_predict
 from lib.io.find_paramsjson import find_paramsjson
 from lib.io.readfile import readfile
 from lib.vis.segmentation_plot import segmentation_plot
