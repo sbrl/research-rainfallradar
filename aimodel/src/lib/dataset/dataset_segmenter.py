@@ -71,7 +71,7 @@ def get_filepaths(dirpath_input, shuffle=True):
 	if shuffle:
 		result = shuffle(result)
 	else:
-		result = sorted(result, key=lambda filepath: int(filepath.split(".", 1)[0]))
+		result = sorted(result, key=lambda filepath: int(os.path.basename(filepath).split(".", 1)[0]))
 	return result
 
 def dataset_segmenter(dirpath_input, batch_size=64, train_percentage=0.8, parallel_reads_multiplier=1.5, water_threshold=0.1, shape_water_desired=[100,100]):

@@ -74,7 +74,7 @@ def get_filepaths(dirpath_input, shuffle=True):
 	if shuffle:
 		result = shuffle(result)
 	else:
-		result = sorted(result, key=lambda filepath: int(filepath.split(".", 1)[0]))
+		result = sorted(result, key=lambda filepath: int(os.path.basename(filepath).split(".", 1)[0]))
 	
 	return result
 
