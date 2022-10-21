@@ -21,7 +21,7 @@ def segmentation_plot(water_actual, water_predict, model_code, filepath_output):
 	
 	
 	axes["B"].imshow(water_predict)
-	axes["A"].set_title(f"Predicted", fontsize=20)
+	axes["B"].set_title(f"Predicted", fontsize=20)
 	
 	
 	plt.suptitle(f"Rainfall → Water depth prediction | {model_code}", fontsize=28, weight="bold")
