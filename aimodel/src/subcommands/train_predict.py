@@ -118,7 +118,7 @@ def do_png(args, ai, dataset, model_code):
 			i += 1
 			
 			if i % 100 == 0:
-				sys.stderr.write(f"Processed {i} items")
+				sys.stderr.write(f"Processed {i} items\r")
 
 def do_jsonl(args, ai, dataset):
 	write_mode = "wt" if args.output.endswith(".gz") else "w"

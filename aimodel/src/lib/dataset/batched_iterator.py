@@ -16,5 +16,6 @@ def batched_iterator(dataset, tensors_in_item=1, batch_size=64):
 		
 		if i_item >= batch_size:
 			yield [ tf.stack(tensors) for tensors in acc ]
+			i_item = 0
 			for arr in acc:
 				arr.clear()
