@@ -26,3 +26,4 @@ def segmentation_plot(water_actual, water_predict, model_code, filepath_output):
 	
 	plt.suptitle(f"Rainfall → Water depth prediction | {model_code}", fontsize=28, weight="bold")
 	plt.savefig(filepath_output)
+	plt.close()
