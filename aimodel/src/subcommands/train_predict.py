@@ -59,7 +59,7 @@ def run(args):
 			os.mkdir(dirpath_output)
 	
 	
-	ai = RainfallWaterContraster.from_checkpoint(args.checkpoint, **json.loads(readfile(args.params)))
+	ai = RainfallWaterSegmenter.from_checkpoint(args.checkpoint, **json.loads(readfile(args.params)))
 	
 	sys.stderr.write(f"\n\n>>> This is TensorFlow {tf.__version__}\n\n\n")
 	
