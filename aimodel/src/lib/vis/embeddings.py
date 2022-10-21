@@ -43,3 +43,4 @@ def vis_embeddings(filepath_output, features):
 	
 	plt.suptitle(f"RainfallContrastive embeddings | rainfall | E2 ConvNeXt | {len(features)} items", fontsize=28, weight="bold")
 	plt.savefig(filepath_output)
+	plt.close()
