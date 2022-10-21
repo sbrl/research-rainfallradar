@@ -94,19 +94,24 @@ def do_png(args, ai, dataset, model_code):
 	gen = batched_iterator(dataset, tensors_in_item=2, batch_size=model_params["batch_size"])
 	for item in gen:
 		rainfall, water = item
+		
 		water_predict_batch = ai.embed(rainfall)
+		water = tf.unstack(tf.squeeze(water), axis=0)
+		
+		i_batch = 0
 		for water_predict in water_predict_batch:
 			# [ width, height, softmax_probabilities ] → [ batch, width, height ]
 			water_predict = tf.math.argmax(water_predict, axis=-1) 
 			# [ width, height ]
-			water = tf.squeeze(water)
+			water_item = water[i_batch]
 			
 			segmentation_plot(
-				water, water_predict,
+				water_item, water_predict,
 				model_code,
 				args.output.replace("+d", str(i))
 			)
 			
+			i_batch += 1
 			i += 1
 			
 			if i % 100 == 0:

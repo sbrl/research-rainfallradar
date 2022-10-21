@@ -83,14 +83,11 @@ class RainfallWaterSegmenter(object):
 			steps_per_epoch=10 # For testing
 		)
 	
-	def embed(self, dataset):
-		i_batch = -1
-		for batch in batched_iterator(dataset, tensors_in_item=2, batch_size=self.batch_size):
-			i_batch += 1
-			rainfall = self.model(batch[0], training=False) # (rainfall_embed, water)
-			
-			for step in tf.unstack(rainfall, axis=0):
-				yield step
+	def embed(self, rainfall_embed):
+		rainfall = self.model(rainfall_embed, training=False) # (rainfall_embed, water)
+		
+		for step in tf.unstack(rainfall, axis=0):
+			yield step
 		
 	
 	# def embed_rainfall(self, dataset):
