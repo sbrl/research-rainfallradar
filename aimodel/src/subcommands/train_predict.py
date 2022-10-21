@@ -99,7 +99,7 @@ def do_png(args, ai, dataset, model_code):
 		rainfall, water = item
 		
 		water_predict_batch = ai.embed(rainfall)
-		water = tf.unstack(tf.squeeze(water), axis=0)
+		water = tf.squeeze(tf.unstack(water, axis=0))
 		
 		i_batch = 0
 		for water_predict in water_predict_batch:
