@@ -88,6 +88,9 @@ def run(args):
 	sys.stderr.write(">>> Complete\n")
 
 def do_png(args, ai, dataset, model_code):
+	if not os.path.exists(args.output):
+		os.mkdir(os.path.dirname(args.output))
+	
 	model_params = json.loads(readfile(args.params))
 	
 	i = 0
