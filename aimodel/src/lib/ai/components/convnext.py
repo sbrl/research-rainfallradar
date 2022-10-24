@@ -11,6 +11,7 @@ kernel_initial = tf.keras.initializers.TruncatedNormal(stddev=0.2)
 bias_initial   = tf.keras.initializers.Constant(value=0)
 
 depths_dims = dict(
+	convnext_shallow= (dict(depths=[1, 3, 1],    dims=[66, 132, 192])),
 	convnext_xtiny  = (dict(depths=[3, 3, 6, 3],    dims=[66, 132, 264, 528])),
 	# architectures from: https://github.com/facebookresearch/ConvNeXt
 	# A ConvNet for the 2020s: https://arxiv.org/abs/2201.03545

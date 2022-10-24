@@ -44,7 +44,7 @@ def model_rainfallwater_contrastive(metadata, shape_water, batch_size=64, featur
 		input_height=water_height,
 		input_channels=water_channels,
 		feature_dim=feature_dim,
-		arch_name="convnext_xtiny",
+		arch_name="convnext_shallow",
 		summary_file=summary_file
 	)(input_water)
 	
