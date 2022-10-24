@@ -89,7 +89,7 @@ def dataset_segmenter(dirpath_input, batch_size=64, train_percentage=0.8, parall
 	
 	return dataset_train, dataset_validate #, filepaths
 
-def dataset_predict(dirpath_input, parallel_reads_multiplier=1.5, prefetch=True, water_threshold=0.1):
+def dataset_predict(dirpath_input, parallel_reads_multiplier=0, prefetch=True, water_threshold=0.1, shape_water_desired=[100,100]):
 	"""Creates a tf.data.Dataset() for prediction using the image segmentation head model.
 	Note that this WILL MANGLE THE ORDERING if you set parallel_reads_multiplier to anything other than 0!!
 	
@@ -111,7 +111,8 @@ def dataset_predict(dirpath_input, parallel_reads_multiplier=1.5, prefetch=True,
 		batch_size=None,
 		prefetch=prefetch,
 		shuffle=False, #even with shuffle=False we're not gonna get them all in the same order since we're reading in parallel
-		water_threshold=water_threshold
+		water_threshold=water_threshold,
+		shape_water_desired=shape_water_desired
 	)
 
 if __name__ == "__main__":
