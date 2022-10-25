@@ -4,7 +4,7 @@ from loguru import logger
 import tensorflow as tf
 
 from .components.convnext_inverse import do_convnext_inverse
-
+from .components.LayerStack2Image import LayerStack2Image
 
 def model_rainfallwater_segmentation(metadata, shape_water_out, model_arch="convnext_i_xtiny", batch_size=64, water_bins=2):
 	"""Makes a new rainfall / waterdepth segmentation head model.
@@ -31,7 +31,8 @@ def model_rainfallwater_segmentation(metadata, shape_water_out, model_arch="conv
 	layer_next = tf.keras.layers.ReLU(name="cns.stage_begin.relu1")(layer_next)
 	layer_next = tf.keras.layers.LayerNormalization(name="cns.stage_begin.norm1", epsilon=1e-6)(layer_next)
 	
-	layer_next = tf.keras.layers.Reshape((4, 4, math.floor(feature_dim_in/(4*4))), name="cns.stable_begin.reshape")(layer_next)
+	layer_next = LayerStack2Image(target_width=4, target_height=4)(layer_next)
+	# layer_next = tf.keras.layers.Reshape((4, 4, math.floor(feature_dim_in/(4*4))), name="cns.stable_begin.reshape")(layer_next)
 	layer_next = tf.keras.layers.Dense(name="cns.stage.begin.dense2", units=feature_dim_in)(layer_next)
 	layer_next = tf.keras.layers.ReLU(name="cns.stage_begin.relu2")(layer_next)
 	layer_next = tf.keras.layers.LayerNormalization(name="cns.stage_begin.norm2", epsilon=1e-6)(layer_next)
