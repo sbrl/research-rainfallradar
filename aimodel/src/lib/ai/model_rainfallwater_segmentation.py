@@ -44,7 +44,7 @@ def model_rainfallwater_segmentation(metadata, shape_water_out, model_arch="conv
 	# TODO: An attention layer here instead of a dense layer, with a skip connection perhaps?
 	logger.warning("Warning: TODO implement attention from https://ieeexplore.ieee.org/document/9076883")
 	layer_next = tf.keras.layers.Dense(32)(layer_next)
-	layer_next = tf.keras.layers.Conv2D(water_bins, kernel_size=1, activation="softmax", padding="same")(layer_next)
+	layer_next = tf.keras.layers.Conv2D(water_bins, kernel_size=1, padding="same")(layer_next)
 	layer_next = tf.keras.layers.Softmax(axis=-1)(layer_next)
 	
 	model = tf.keras.Model(
