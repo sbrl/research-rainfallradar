@@ -49,7 +49,7 @@ def model_rainfallwater_contrastive(metadata, shape_water, batch_size=64, featur
 	)(input_water)
 	
 	
-	layer_final = LayerCheeseMultipleOut()
+	layer_final = LayerCheeseMultipleOut(batch_size=batch_size, feature_dim=feature_dim)
 	final = layer_final([ rainfall, water ])
 	weight_temperature = layer_final.weight_temperature
 	
