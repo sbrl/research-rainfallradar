@@ -19,8 +19,7 @@ class LayerStack2Image(tf.keras.layers.Layer):
 		return config
 	
 	def call(self, input_thing, **kwargs):
-		result = tf.stack([ input_thing for i in range(self.param_target_width) ], axis=-1)
-		result = tf.stack([ result for i in range(self.param_target_height) ], axis=-1)
-		result = tf.stack([ result ], axis=-1) # channel dimension
+		result = tf.stack([ input_thing for i in range(self.param_target_width) ], axis=-2)
+		result = tf.stack([ result for i in range(self.param_target_height) ], axis=-2)
 		return result
 	
