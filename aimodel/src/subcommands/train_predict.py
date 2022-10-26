@@ -152,7 +152,7 @@ def do_jsonl(args, ai, dataset, model_params):
 		i_batch = 0
 		for water_predict in water_predict_batch:
 			# [ width, height, softmax_probabilities ] → [ batch, width, height ]
-			water_predict = tf.math.argmax(water_predict, axis=-1) 
+			# water_predict = tf.math.argmax(water_predict, axis=-1) 
 			# [ width, height ]
 			water_actual = tf.squeeze(water_actual_batch[i_batch])
 			
