@@ -165,11 +165,11 @@ def do_jsonl(args, ai, dataset, model_params):
 			
 			item_obj = {}
 			if "rainfall_actual" in args.log:
-				item_obj["rainfall_actual"] = rainfall_actual_batch[i_batch].numpy().list()
+				item_obj["rainfall_actual"] = rainfall_actual_batch[i_batch].numpy().tolist()
 			if "water_actual" in args.log:
-				item_obj["water_actual"] = water_actual.numpy().list()
+				item_obj["water_actual"] = water_actual.numpy().tolist()
 			if "water_predict" in args.log:
-				item_obj["water_predict"] = water_predict.numpy().list()
+				item_obj["water_predict"] = water_predict.numpy().tolist()
 			
 			handle.write(json.dumps(item_obj, separators=(',', ':'))+"\n") # Ref https://stackoverflow.com/a/64710892/1460422
 			
