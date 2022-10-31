@@ -46,6 +46,10 @@ class LossContrastive(tf.keras.losses.Loss):
 		loss = (loss_rainfall + loss_water) / 2
 		
 		print("LOSS", loss)
+		
+		loss = tf.math.reduce_mean(loss)
+		
+		print("LOSS FINAL", loss)
 		# cosine_similarity results in tensor of range -1 - 1, but tf.sparse.eye has range 0 - 1
 		# print("LABELS", labels)
 		# print("LOSS_rainfall", loss_rainfall)
