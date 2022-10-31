@@ -48,8 +48,8 @@ def run(args):
 		batch_size=args.batch_size,
 	)
 	
-	print("BATCHES_TRAIN", count_batches(dataset_train))
-	print("BATCHES_VALIDATE", count_batches(dataset_validate))
+	# print("BATCHES_TRAIN", count_batches(dataset_train)) # 18500 for the full 2006-2020 dataset
+	# print("BATCHES_VALIDATE", count_batches(dataset_validate)) # 4653 for the full 2006-2020 dataset
 	
 	
 	
