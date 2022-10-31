@@ -24,5 +24,5 @@ def make_callbacks(dirpath, model_predict):
 			filename=filepath_metrics,
 			separator="\t"
 		),
-		tf.keras.callbacks.ProgbarLogger()
+		tf.keras.callbacks.ProgbarLogger(count_mode="steps") # batches
 	]
