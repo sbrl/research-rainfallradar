@@ -61,4 +61,4 @@ if __name__ == "__main__":
 	loss = LossContrastive(weight_temperature=weight_temperature, batch_size=64)
 	
 	tensor_input = tf.random.uniform([64, 2, 512])
-	print(loss(tensor_input))
+	print(loss(tf.constant(1), tensor_input))
