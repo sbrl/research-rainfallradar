@@ -19,7 +19,7 @@ class LossContrastive(tf.keras.losses.Loss):
 		
 		# normalise features
 		rainfall = rainfall / tf.math.l2_normalize(rainfall, axis=1)
-		rainfall = rainfall / tf.math.l2_normalize(rainfall, axis=1)
+		water = water / tf.math.l2_normalize(water, axis=1)
 		
 		# logits = tf.linalg.matmul(rainfall, tf.transpose(water)) * tf.clip_by_value(tf.math.exp(self.weight_temperature), 0, 100)
 		logits = tf.linalg.matmul(rainfall, tf.transpose(water)) * tf.math.exp(self.weight_temperature)
