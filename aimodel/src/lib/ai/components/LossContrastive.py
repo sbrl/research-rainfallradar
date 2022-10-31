@@ -20,8 +20,8 @@ class LossContrastive(tf.keras.losses.Loss):
 		# water = tf.reshape(water, [self.batch_size, water.shape[1]])
 		
 		# normalise features
-		rainfall = rainfall / tf.math.l2_normalize(rainfall, axis=1)
-		water = water / tf.math.l2_normalize(water, axis=1)
+		# rainfall = rainfall / tf.math.l2_normalize(rainfall, axis=1)
+		# water = water / tf.math.l2_normalize(water, axis=1)
 		
 		print("AFTER_L2 rainfall", rainfall)
 		print("AFTER_L2 water", water)
