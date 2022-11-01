@@ -55,13 +55,14 @@ export PATH=$HOME/software/bin:$PATH;
 OUTPUT_UNIQ="${OUTPUT%/}_uniq"; # Stript trailing slash, if present
 OUTPUT_TFRECORD="${OUTPUT%/}_tfrecord"; # Stript trailing slash, if present
 
-mkd -p "${OUTPUT_UNIQ}" "${OUTPUT_TFRECORD}";
+mkdir -p "${OUTPUT_UNIQ}" "${OUTPUT_TFRECORD}";
 
 echo ">>> Settings";
 
 echo "RAINFALL $RAINFALL";
 echo "WATER $WATER";
 echo "OUTPUT $OUTPUT";
+echo "COUNT_FILE $COUNT_FILE";
 echo "ARGS $ARGS";
 
 echo ">>> Installing requirements";
