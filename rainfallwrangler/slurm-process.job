@@ -46,8 +46,7 @@ if [[ ! -r "${WATER}" ]]; then
 fi
 
 if [[ ! -d "${OUTPUT}" ]]; then
-	echo "Error: That output directory either doesn't exist, isn't a directory, or we don't have permission to access it.";
-	exit 3;
+	mkdir "${OUTPUT}";
 fi
 
 export PATH=$HOME/software/bin:$PATH;
@@ -55,6 +54,8 @@ export PATH=$HOME/software/bin:$PATH;
 
 OUTPUT_UNIQ="${OUTPUT%/}_uniq"; # Stript trailing slash, if present
 OUTPUT_TFRECORD="${OUTPUT%/}_tfrecord"; # Stript trailing slash, if present
+
+mkd -p "${OUTPUT_UNIQ}" "${OUTPUT_TFRECORD}";
 
 echo ">>> Settings";
 
