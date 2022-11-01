@@ -36,8 +36,17 @@ if [[ -z "${OUTPUT}" ]]; then
 	exit 1;
 fi
 
+if [[ ! -r "${RAINFALL}" ]]; then
+	echo "Error: That input rainfall file either doesn't exist, isn't a directory, or we don't have permission to access it.";
+	exit 3;
+fi
+if [[ ! -r "${WATER}" ]]; then
+	echo "Error: That input water depth file either doesn't exist, isn't a directory, or we don't have permission to access it.";
+	exit 3;
+fi
+
 if [[ ! -d "${OUTPUT}" ]]; then
-	echo "Error: That input directory either doesn't exist, isn't a directory, or we don't have permission to access it.";
+	echo "Error: That output directory either doesn't exist, isn't a directory, or we don't have permission to access it.";
 	exit 3;
 fi
 
