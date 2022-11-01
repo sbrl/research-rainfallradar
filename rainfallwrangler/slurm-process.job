@@ -9,6 +9,8 @@
 #SBATCH --mem=8096
 # * 8GB RAM
 
+set -e;
+
 module load utilities/multi
 module load readline/7.0
 module load gcc/10.2.0
@@ -20,7 +22,7 @@ module load python/anaconda/4.6/miniconda/3.7
 RAINFALL="${RAINFALL:-$HOME/data/nimrod_ceda.jsonl.gz}";
 WATER="${WATER:-$HOME/data/WaterDepths-new.stream.asc.gz}";
 OUTPUT="${OUTPUT}";
-COUNT_FILE="${COUNT_FILE:4096}";
+COUNT_FILE="${COUNT_FILE:-4096}";
 
 if [[ -z "${WATER}" ]]; then
 	echo "Error: No input water depth file specified in the WATER environment variable.";
