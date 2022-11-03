@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#SBATCH -J RainAIv3
+#SBATCH -J RainAISG
 #SBATCH -N 1
 #SBATCH -n 14
 #SBATCH --gres=gpu:1
