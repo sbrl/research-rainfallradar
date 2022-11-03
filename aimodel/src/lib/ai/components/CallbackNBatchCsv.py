@@ -9,7 +9,7 @@ class CallbackNBatchCsv(tf.keras.callbacks.Callback):
 		self.n_batches = n_batches
 		self.separator = separator
 		
-		self.handle = handle_open(filepath)
+		self.handle = handle_open(filepath, "w")
 		
 		
 		self.batches_seen = 0
