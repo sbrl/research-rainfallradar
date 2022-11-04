@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-#SBATCH -J RW2jsonl
+#SBATCH -J RWrangle
 #SBATCH -N 1
 #SBATCH -n 1
-#SBATCH -o %j.%N.%a.out.log
-#SBATCH -e %j.%N.%a.err.log
+#SBATCH -o %j.%N.%a.rainwrangle.out.log
+#SBATCH -e %j.%N.%a.rainwrangle.err.log
 #SBATCH -p compute
 #SBATCH --time=3-00:00:00
 #SBATCH --mem=8096
