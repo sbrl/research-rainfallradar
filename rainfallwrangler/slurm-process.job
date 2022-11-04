@@ -76,7 +76,7 @@ echo ">>> Converting dataset to .jsonl.gz";
 /usr/bin/env time -v src/index.mjs recordify --verbose --rainfall "${RAINFALL}" --water "${WATER}" --output "${OUTPUT}" --count-file "${COUNT_FILE}" ${ARGS};
 echo ">>> Deduplicating dataset";
 # This also automatically recompresses for us - hence the source/target rather than in-place
-srun --comment 'RainUniq' --exclusive -p compute /usr/bin/env time -v src/index.mjs uniq --source "${OUTPUT}" --target "${OUTPUT_UNIQ}" --count-file "${COUNT_FILE}";
+srun --comment 'RainUniq' --exclusive -p compute -n28 /usr/bin/env time -v src/index.mjs uniq --source "${OUTPUT}" --target "${OUTPUT_UNIQ}" --count-file "${COUNT_FILE}";
 echo ">>> Removing intermediate output";
 rm -r "${OUTPUT}";
 echo ">>> Queuing .jsonl.gz → tfrecord";
