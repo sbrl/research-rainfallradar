@@ -17,7 +17,7 @@ class CallbackNBatchCsv(tf.keras.callbacks.Callback):
 	
 	def write_header(self, logs): # logs = metrics
 		self.keys = logs.keys()
-		self.keys.sort()
+		self.keys = sorted(self.keys)
 		self.handle.write("\t".join(self.keys)+"\n")
 			
 	def on_batch_end(self, batch, logs=None): # logs = metrics
