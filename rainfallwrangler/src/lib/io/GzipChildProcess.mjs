@@ -9,7 +9,6 @@ import { end_safe } from './StreamHelpers.mjs';
 
 /**
  * Spawns and manages a gzip child process.
- * @deprecated Use spawn-stream instead
  * @extends EventEmitter
  */
 class GzipChildProcess extends EventEmitter {
