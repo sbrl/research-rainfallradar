@@ -11,11 +11,12 @@ from .shuffle import shuffle
 
 
 # TO PARSE:
-def parse_item(metadata, shape_water_desired, water_threshold=0.1):
+def parse_item(metadata, shape_water_desired, water_threshold=0.1, water_bins=2):
 	water_width_source, water_height_source, _water_channels_source = metadata["waterdepth"]
 	water_width_target, water_height_target = shape_water_desired
 	water_offset_x = math.ceil((water_width_source - water_width_target) / 2)
 	water_offset_y = math.ceil((water_height_source - water_height_target) / 2)
+	
 	def parse_item_inner(item):
 		parsed = tf.io.parse_single_example(item, features={
 			"rainfallradar": tf.io.FixedLenFeature([], tf.string),
@@ -34,7 +35,7 @@ def parse_item(metadata, shape_water_desired, water_threshold=0.1):
 		water = tf.cast(tf.math.greater_equal(water, water_threshold), dtype=tf.int32)
 		
 		water = tf.image.crop_to_bounding_box(water, water_offset_x, water_offset_y, water_width_target, water_height_target)
-		
+		water = tf.one_hot(water, water_bins, axis=-1, dtype=tf.int32)
 		print("DEBUG:dataset ITEM rainfall:shape", rainfall.shape, "water:shape", water.shape)
 		
 		# TODO: Add any other additional parsing here, since multiple .map() calls are not optimal
