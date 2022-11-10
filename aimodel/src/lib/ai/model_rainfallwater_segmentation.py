@@ -55,7 +55,7 @@ def model_rainfallwater_segmentation(metadata, shape_water_out, model_arch="conv
 	
 	model.compile(
 		optimizer="Adam",
-		loss=tf.keras.losses.SparseCategoricalCrossentropy(),
+		loss=tf.keras.losses.CategoricalCrossentropy(),
 		metrics=[tf.keras.metrics.SparseCategoricalAccuracy()]
 	)
 	
