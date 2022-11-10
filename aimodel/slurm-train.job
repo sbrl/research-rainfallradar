@@ -3,8 +3,8 @@
 #SBATCH -N 1
 #SBATCH -n 14
 #SBATCH --gres=gpu:1
-#SBATCH -o %j.%N.%a.out.log
-#SBATCH -e %j.%N.%a.err.log
+#SBATCH -o %j.%N.%a.segment.out.log
+#SBATCH -e %j.%N.%a.segment.err.log
 #SBATCH -p gpu05
 #SBATCH --time=5-00:00:00
 #SBATCH --mem=61440

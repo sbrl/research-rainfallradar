@@ -2,8 +2,8 @@
 #SBATCH -J RainUMAP
 #SBATCH -N 1
 #SBATCH -n 14
-#SBATCH -o %j.%N.%a.out.log
-#SBATCH -e %j.%N.%a.err.log
+#SBATCH -o %j.%N.%a.pretrain-plot.out.log
+#SBATCH -e %j.%N.%a.pretrain-plot.err.log
 #SBATCH -p highmem
 #SBATCH --time=3-00:00:00
 #SBATCH --exclusive
