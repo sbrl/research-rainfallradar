@@ -78,7 +78,7 @@ def get_filepaths(dirpath_input, do_shuffle=True):
 	
 	return result
 
-def dataset(dirpath_input, batch_size=64, train_percentage=0.8, parallel_reads_multiplier=1.5):
+def dataset(dirpath_input, batch_size=64, train_percentage=0.8, parallel_reads_multiplier=1.5, dummy_label=True):
 	filepaths = get_filepaths(dirpath_input)
 	filepaths_count = len(filepaths)
 	dataset_splitpoint = math.floor(filepaths_count * train_percentage)
@@ -88,8 +88,8 @@ def dataset(dirpath_input, batch_size=64, train_percentage=0.8, parallel_reads_m
 	
 	metadata = read_metadata(dirpath_input)
 	
-	dataset_train = make_dataset(filepaths_train, metadata, batch_size=batch_size, parallel_reads_multiplier=parallel_reads_multiplier)
-	dataset_validate = make_dataset(filepaths_validate, metadata, batch_size=batch_size, parallel_reads_multiplier=parallel_reads_multiplier)
+	dataset_train = make_dataset(filepaths_train, metadata, batch_size=batch_size, parallel_reads_multiplier=parallel_reads_multiplier, dummy_label=dummy_label)
+	dataset_validate = make_dataset(filepaths_validate, metadata, batch_size=batch_size, parallel_reads_multiplier=parallel_reads_multiplier, dummy_label=dummy_label)
 	
 	return dataset_train, dataset_validate #, filepaths
 
