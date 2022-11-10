@@ -14,6 +14,7 @@ from .model_rainfallwater_segmentation import model_rainfallwater_segmentation
 from .helpers import make_callbacks
 from .helpers import summarywriter
 from .components.LayerConvNeXtGamma import LayerConvNeXtGamma
+from .components.LayerStack2Image import LayerStack2Image
 from .helpers.summarywriter import summarywriter
 
 class RainfallWaterSegmenter(object):
@@ -70,6 +71,7 @@ class RainfallWaterSegmenter(object):
 		
 		self.model = tf.keras.models.load_model(filepath_checkpoint, custom_objects={
 			"LayerConvNeXtGamma": LayerConvNeXtGamma,
+			"LayerStack2Image": LayerStack2Image
 		})
 	
 	
@@ -80,7 +82,7 @@ class RainfallWaterSegmenter(object):
 			validation_data=dataset_validate,
 			epochs=self.epochs,
 			callbacks=make_callbacks(self.dir_output, self.model),
-			steps_per_epoch=10 # For testing
+			# steps_per_epoch=10 # For testing
 		)
 	
 	def embed(self, rainfall_embed):

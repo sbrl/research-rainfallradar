@@ -140,4 +140,4 @@ def run(args):
 	
 	handle.close()
 	
-	sys.stderr.write(">>> Complete\n")
+	sys.stderr.write("\n>>> Complete\n")

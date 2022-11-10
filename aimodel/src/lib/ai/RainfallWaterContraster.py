@@ -85,7 +85,7 @@ class RainfallWaterContraster(object):
 			validation_data=dataset_validate,
 			epochs=self.epochs,
 			callbacks=make_callbacks(self.dir_output, self.model_predict),
-			steps_per_epoch=10 # For testing
+			# steps_per_epoch=10 # For testing
 		)
 	
 	def embed(self, dataset):

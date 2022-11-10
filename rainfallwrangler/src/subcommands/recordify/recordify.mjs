@@ -18,6 +18,10 @@ export default async function() {
 	
 	if(typeof settings.output !== "string")
 		throw new Error(`Error: No output directory specified.`);
+	if(typeof settings.count_file !== "number")
+		throw new Error(`Error: --count-file was not specified.`);
+	if(isNaN(settings.count_file))
+		throw new Error(`Error: --count-file was not a number. process.argv: ${process.argv.join(" ")}`);
 	
 	if(!fs.existsSync(settings.output))
 		await fs.promises.mkdir(settings.output, { recursive: true });

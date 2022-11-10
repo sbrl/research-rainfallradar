@@ -40,6 +40,9 @@ def run(args):
 	
 	if (not hasattr(args, "params")) or args.params == None:
 		args.params = find_paramsjson(args.checkpoint)
+	if args.params == None:
+		logger.error("Error: Failed to find params.json. Please ensure it's either in the same directory as the checkpoint or 1 level above")
+		return
 	if (not hasattr(args, "read_multiplier")) or args.read_multiplier == None:
 		args.read_multiplier = 0
 	if (not hasattr(args, "records_per_file")) or args.records_per_file == None:
@@ -87,13 +90,13 @@ def run(args):
 	logger.info(f"Records per file: {args.records_per_file}")
 	
 	if output_mode == MODE_JSONL:
-		do_jsonl(args, ai, dataset, args.model_code, model_params)
+		do_jsonl(args, ai, dataset, model_params)
 	else:
-		do_png(args, ai, dataset, args.model_code, model_params)
+		do_png(args, ai, dataset, model_params)
 	
 	sys.stderr.write(">>> Complete\n")
 
-def do_png(args, ai, dataset, model_code, model_params):
+def do_png(args, ai, dataset, model_params):
 	if not os.path.exists(os.path.dirname(args.output)):
 		os.mkdir(os.path.dirname(args.output))
 	
@@ -114,7 +117,7 @@ def do_png(args, ai, dataset, model_code, model_params):
 			
 			segmentation_plot(
 				water_actual, water_predict,
-				model_code,
+				args.model_code,
 				args.output.replace("+d", str(i))
 			)
 			
@@ -152,7 +155,7 @@ def do_jsonl(args, ai, dataset, model_params):
 		i_batch = 0
 		for water_predict in water_predict_batch:
 			# [ width, height, softmax_probabilities ] → [ batch, width, height ]
-			water_predict = tf.math.argmax(water_predict, axis=-1) 
+			# water_predict = tf.math.argmax(water_predict, axis=-1) 
 			# [ width, height ]
 			water_actual = tf.squeeze(water_actual_batch[i_batch])
 			
@@ -165,11 +168,11 @@ def do_jsonl(args, ai, dataset, model_params):
 			
 			item_obj = {}
 			if "rainfall_actual" in args.log:
-				item_obj["rainfall_actual"] = rainfall_actual_batch[i_batch].numpy().list()
+				item_obj["rainfall_actual"] = rainfall_actual_batch[i_batch].numpy().tolist()
 			if "water_actual" in args.log:
-				item_obj["water_actual"] = water_actual.numpy().list()
+				item_obj["water_actual"] = water_actual.numpy().tolist()
 			if "water_predict" in args.log:
-				item_obj["water_predict"] = water_predict.numpy().list()
+				item_obj["water_predict"] = water_predict.numpy().tolist()
 			
 			handle.write(json.dumps(item_obj, separators=(',', ':'))+"\n") # Ref https://stackoverflow.com/a/64710892/1460422
 			

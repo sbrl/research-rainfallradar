@@ -147,7 +147,7 @@ def add_convnext_block(y, dim, drop_prob=0, prefix=""):
 		name=f'{prefix}.pwconv1'
 	)(y)
 	
-   
+	
 	y = tf.keras.layers.Activation(
 		'gelu',
 		name=f'{prefix}.act'

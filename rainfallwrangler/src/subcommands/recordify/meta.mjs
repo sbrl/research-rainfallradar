@@ -11,5 +11,5 @@ export default function(cli) {
 				.reverse();
 		})
 		.argument("water-offset", "Make the water depth data be this many time steps ahead of the rainfall radar data. (default: 1)", 1, "integer")
-		.argument("output", "The path to the directory to write the generated TFRecord files to.", null, "string");
+		.argument("output", "The path to the directory to write the generated .jsonl.gz files to.", null, "string");
 }
