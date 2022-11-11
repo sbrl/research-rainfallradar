@@ -41,7 +41,7 @@ def block_upscale(layer_in, block_number, depth, dim):
 	layer_next = tf.keras.layers.Conv2DTranspose(
 		name=f"cns.stage{block_number}.end.convtp",
 		filters=dim,
-		kernel_size=4,
+		kernel_size=2, # double each time, was 4
 		strides=2
 	)(layer_next)
 	layer_next = tf.keras.layers.LayerNormalization(name=f"cns.stage{block_number}.end.norm", epsilon=1e-6)(layer_next)
