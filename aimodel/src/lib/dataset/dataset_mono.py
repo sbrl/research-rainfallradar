@@ -34,10 +34,10 @@ def parse_item(metadata, shape_water_desired=[100,100], water_threshold=0.1, wat
 		rainfall = tf.transpose(rainfall, [1, 2, 0]) # channels_first → channels_last
 		# rainfall = tf.image.resize(rainfall, tf.cast(tf.constant(metadata["rainfallradar"]) / 2, dtype=tf.int32))
 		
-		water = tf.expand_dims(water, axis=-1) # [width, height] → [width, height, channels]
+		water = tf.expand_dims(water, axis=-1) # [width, height] → [width, height, channels=1]
 		water = tf.image.crop_to_bounding_box(water, water_offset_x, water_offset_y, water_width_target, water_height_target)
 		
-		
+		water = tf.squeeze(water)
 		water = tf.cast(tf.math.greater_equal(water, water_threshold), dtype=tf.int32)
 		water = tf.one_hot(water, water_bins, axis=-1, dtype=tf.int32)
 		
