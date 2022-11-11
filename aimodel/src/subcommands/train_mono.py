@@ -1,12 +1,11 @@
 import math
 import sys
 import argparse
-from asyncio.log import logger
 
 import tensorflow as tf
 
 from lib.ai.RainfallWaterMono import RainfallWaterMono
-from lib.dataset.dataset import dataset
+from lib.dataset.dataset_mono import dataset_mono
 from lib.dataset.read_metadata import read_metadata
 
 def parse_args():
@@ -51,7 +50,7 @@ def run(args):
 	sys.stderr.write(f"\n\n>>> This is TensorFlow {tf.__version__}\n\n\n")
 	
 	
-	dataset_train, dataset_validate = dataset(
+	dataset_train, dataset_validate = dataset_mono(
 		dirpath_input=args.input,
 		batch_size=args.batch_size,
 		water_threshold=args.water_threshold,
