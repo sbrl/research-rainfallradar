@@ -38,7 +38,7 @@ def model_rainfallwater_mono(metadata, shape_water_out, model_arch_enc="convnext
 		arch_name				= model_arch_enc
 	)(layer_input)
 	
-	print("ENCODER output_shape", layer_next.shape)
+	print("DEBUG:model ENCODER output_shape", layer_next.shape)
 	
 	# BOTTLENECK
 	layer_next = tf.keras.layers.Dense(name="cns.stage.bottleneck.dense2", units=feature_dim)(layer_input)
@@ -49,6 +49,8 @@ def model_rainfallwater_mono(metadata, shape_water_out, model_arch_enc="convnext
 	# DECODER
 	layer_next = LayerStack2Image(target_width=4, target_height=4)(layer_next)
 	# layer_next = tf.keras.layers.Reshape((4, 4, math.floor(feature_dim_in/(4*4))), name="cns.stable_begin.reshape")(layer_next)
+	
+	print("DEBUG:model BOTTLENECK:stack2image output_shape", layer_next.shape)
 	
 	layer_next = tf.keras.layers.Dense(name="cns.stage.begin.dense2", units=feature_dim)(layer_next)
 	layer_next = tf.keras.layers.Activation(name="cns.stage_begin.relu2", activation="gelu")(layer_next)
