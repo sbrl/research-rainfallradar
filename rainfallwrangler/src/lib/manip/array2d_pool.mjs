@@ -7,7 +7,7 @@ export default async function array2d_pool(channels, operator="max") {
 	if(operator !== "max")
 		throw new Error(`Error: Unknown operator '${operator}. At present only the 'max' operator is supported.`);
 	
-	// This is rather a hack to save time. Tensorflow.js is not needed here, but may result in increased speed. It may be worth rolling this out to the rest of the codebase, thinking about it. While Tensorflow.js hasmany bugs, this only extends to the machine learning / loss functions / models etc and not the 
+	// This is rather a hack to save time. Tensorflow.js is not needed here, but may result in increased speed. It may be worth rolling this out to the rest of the codebase, thinking about it. While Tensorflow.js has many bugs, this only extends to the machine learning / loss functions / models etc and not the fundamental operations.
 	const result_tensor = tf.tidy(() => {
 		const tensor = tf.tensor(channels);
 		return tf.max(tensor, 0, false);
