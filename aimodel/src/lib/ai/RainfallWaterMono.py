@@ -10,7 +10,7 @@ from ..io.find_paramsjson import find_paramsjson
 from ..io.readfile import readfile
 from ..io.writefile import writefile
 
-from .model_rainfallwater_segmentation import model_rainfallwater_segmentation
+from .model_rainfallwater_mono import model_rainfallwater_mono
 from .helpers import make_callbacks
 from .helpers import summarywriter
 from .components.LayerConvNeXtGamma import LayerConvNeXtGamma
@@ -57,7 +57,7 @@ class RainfallWaterMono(object):
 	
 	
 	def make_model(self):
-		self.model = model_rainfallwater_segmentation(
+		self.model = model_rainfallwater_mono(
 			batch_size=self.batch_size,
 			**self.kwargs
 		)
