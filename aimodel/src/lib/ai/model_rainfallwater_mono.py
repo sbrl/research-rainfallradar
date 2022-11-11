@@ -22,6 +22,7 @@ def model_rainfallwater_mono(metadata, shape_water_out, model_arch_enc="convnext
 	"""
 	rainfall_channels, rainfall_width, rainfall_height = metadata["rainfallradar"] # shape = [channels, width, height]
 	
+	print("RAINFALL channels", rainfall_channels, "width", rainfall_width, "height", rainfall_height)
 	out_water_width, out_water_height = shape_water_out
 	
 	layer_input = tf.keras.layers.Input(

@@ -19,6 +19,8 @@ def parse_item(metadata, shape_water_desired=[100,100], water_threshold=0.1, wat
 	water_width_target, water_height_target = shape_water_desired
 	water_offset_x = math.ceil((water_width_source - water_width_target) / 2)
 	water_offset_y = math.ceil((water_height_source - water_height_target) / 2)
+	
+	rainfall_channels, rainfall_width, rainfall_height = metadata["rainfallradar"]
 	def parse_item_inner(item):
 		parsed = tf.io.parse_single_example(item, features={
 			"rainfallradar": tf.io.FixedLenFeature([], tf.string),
