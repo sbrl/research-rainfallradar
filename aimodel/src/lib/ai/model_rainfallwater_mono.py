@@ -36,6 +36,7 @@ def model_rainfallwater_mono(metadata, shape_water_out, model_arch_enc="convnext
 		arch_name				= model_arch_enc
 	)(layer_input)
 	
+	print("ENCODER output_shape", layer_next.shape)
 	
 	# BOTTLENECK
 	layer_next = tf.keras.layers.Dense(name="cns.stage.bottleneck.dense2", units=feature_dim)(layer_input)
