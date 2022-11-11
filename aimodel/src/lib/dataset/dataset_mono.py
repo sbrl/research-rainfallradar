@@ -15,12 +15,12 @@ from .shuffle import shuffle
 
 # TO PARSE:
 def parse_item(metadata, shape_water_desired=[100,100], water_threshold=0.1, water_bins=2):
-	water_width_source, water_height_source = metadata["waterdepth"]
-	water_width_target, water_height_target = shape_water_desired
+	water_height_source, water_width_source = metadata["waterdepth"]
+	water_height_target, water_width_target = shape_water_desired
 	water_offset_x = math.ceil((water_width_source - water_width_target) / 2)
 	water_offset_y = math.ceil((water_height_source - water_height_target) / 2)
 	
-	rainfall_channels, rainfall_width, rainfall_height = metadata["rainfallradar"]
+	
 	def parse_item_inner(item):
 		parsed = tf.io.parse_single_example(item, features={
 			"rainfallradar": tf.io.FixedLenFeature([], tf.string),
@@ -28,12 +28,21 @@ def parse_item(metadata, shape_water_desired=[100,100], water_threshold=0.1, wat
 		})
 		rainfall = tf.io.parse_tensor(parsed["rainfallradar"], out_type=tf.float32)
 		water = tf.io.parse_tensor(parsed["waterdepth"], out_type=tf.float32)
-		# [channels, width, height] → [width, height, channels] - ref ConvNeXt does not support data_format=channels_first
+		
+		
 		
 		rainfall = tf.reshape(rainfall, tf.constant(metadata["rainfallradar"], dtype=tf.int32))
 		water = tf.reshape(water, tf.constant(metadata["waterdepth"], dtype=tf.int32))
 		
-		rainfall = tf.transpose(rainfall, [1, 2, 0]) # channels_first → channels_last
+		# Apparently the water depth data is also in HW instead of WH.... sighs
+		water = tf.transpose(water, [1, 0])
+		
+		# [channels, height, weight] → [width, height, channels] - ref ConvNeXt does not support data_format=channels_first
+		# BUG: For some reasons we have data that's not transposed correctly still!! O.o
+		# I can't believe in this entire project I have yet to get the rotation of the rainfall radar data correct....!
+		# %TRANSPOSE%
+		rainfall = tf.transpose(rainfall, [2, 1, 0])
+		
 		# rainfall = tf.image.resize(rainfall, tf.cast(tf.constant(metadata["rainfallradar"]) / 2, dtype=tf.int32))
 		
 		water = tf.expand_dims(water, axis=-1) # [width, height] → [width, height, channels=1]

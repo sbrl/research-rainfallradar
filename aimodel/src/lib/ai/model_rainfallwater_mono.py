@@ -20,7 +20,8 @@ def model_rainfallwater_mono(metadata, shape_water_out, model_arch_enc="convnext
 	Returns:
 		tf.keras.Model: The new model, freshly compiled for your convenience! :D
 	"""
-	rainfall_channels, rainfall_width, rainfall_height = metadata["rainfallradar"] # shape = [channels, width, height]
+	rainfall_channels, rainfall_height, rainfall_width = metadata["rainfallradar"] # shape = [channels, height, weight]
+	# BUG: We somehow *still* have the rainfall radar data transposed incorrectly! I have no idea how this happened. dataset_mono fixes it with (another) transpose
 	
 	print("RAINFALL channels", rainfall_channels, "width", rainfall_width, "height", rainfall_height)
 	out_water_width, out_water_height = shape_water_out
