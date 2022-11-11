@@ -54,8 +54,7 @@ def run(args):
 		dirpath_input=args.input,
 		batch_size=args.batch_size,
 		water_threshold=args.water_threshold,
-		shape_water_desired=[args.water_size, args.water_size],
-		dummy_label=False
+		shape_water_desired=[args.water_size, args.water_size]
 	)
 	dataset_metadata = read_metadata(args.input)
 	
