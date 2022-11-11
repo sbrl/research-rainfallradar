@@ -20,6 +20,8 @@ def parse_item(metadata, shape_water_desired=[100,100], water_threshold=0.1, wat
 	water_offset_x = math.ceil((water_width_source - water_width_target) / 2)
 	water_offset_y = math.ceil((water_height_source - water_height_target) / 2)
 	
+	print("DEBUG DATASET:rainfall shape", metadata["rainfallradar"])
+	print("DEBUG DATASET:water shape", metadata["waterdepth"])
 	
 	def parse_item_inner(item):
 		parsed = tf.io.parse_single_example(item, features={
@@ -53,7 +55,8 @@ def parse_item(metadata, shape_water_desired=[100,100], water_threshold=0.1, wat
 		water = tf.one_hot(water, water_bins, axis=-1, dtype=tf.int32)
 		
 		
-		print("DEBUG:dataset ITEM rainfall:shape", rainfall.shape, "water:shape", water.shape)
+		print("DEBUG DATASET_OUT:rainfall shape", rainfall.shape)
+		print("DEBUG DATASET_OUT:water shape", water.shape)
 		return rainfall, water
 	
 	return tf.function(parse_item_inner)
