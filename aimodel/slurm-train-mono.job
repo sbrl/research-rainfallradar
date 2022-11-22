@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+#SBATCH -J RainMono
+#SBATCH -N 1
+#SBATCH -n 14
+#SBATCH --gres=gpu:1
+#SBATCH -o %j.%N.%a.segment.out.log
+#SBATCH -e %j.%N.%a.segment.err.log
+#SBATCH -p gpu05
+#SBATCH --time=5-00:00:00
+#SBATCH --mem=61440
+# 61440 = 60GiB memory required
+
+module load utilities/multi
+module load readline/7.0
+module load gcc/10.2.0
+module load cuda/11.5.0
+
+module load python/anaconda/4.6/miniconda/3.7
+
+
+show_help() {
+	echo -e "Usage:" >&2;
+	echo -e "    [INPUT='\$HOME/rainfallwater_records_tfrecord'] [POSTFIX='<string>'] [ARGS='<extra-args>'] sbatch slurm-train-mono.job" >&2;
+	echo -e "" >&2;
+	echo -e "....where:" >&2;
+	echo -e "    INPUT     The path to the directory containing the .tfrecord files to use as training data (see the rainfallwrangler for making these)" >&2;
+	echo -e "    POSTFIX   Optional. A suffix to apply to the run code name." >&2;
+	echo -e "" >&2;
+	echo -e "The code used to identify the run is taken automatically from the filename of the config file." >&2;
+	exit;
+}
+INPUT="${INPUT:-$HOME/rainfallwater_records_tfrecord}";
+
+if [[ -z "${INPUT}" ]]; then
+	echo -e "Error: No INPUT environment variable specified.\n" >&2;
+	show_help;
+	exit 0;
+fi
+
+if [[ ! -d "${INPUT}" ]]; then
+	echo -e "Error: The directory '${INPUT}' containing the input .tfrecord dataset either doesn't exist or isn't a directory.";
+	show_help;
+	exit 1;
+fi
+
+
+CODE="train_mono";
+
+if [[ -n "${POSTFIX}" ]]; then
+	echo -e ">>> Applying postfix of ${POSTFIX}" >&2;
+	CODE="${CODE}_${POSTFIX}";
+fi
+
+echo -e ">>> Input dirpath: ${INPUT}" >&2;
+echo -e ">>> Code: ${CODE}" >&2;
+echo -e ">>> Additional args: ${ARGS}";
+
+dir_output="output/$(date -u --rfc-3339=date)_${CODE}";
+
+export PATH=$HOME/software/bin:$PATH;
+
+echo ">>> Installing requirements";
+conda run -n py38 pip install -r requirements.txt;
+echo ">>> Training model";
+#shellcheck disable=SC2086
+/usr/bin/env time -v conda run -n py38 src/index.py train-mono -i "${INPUT}" -o "${dir_output}" ${ARGS};
+# Recommended extra args: --water-size 94 --batch-size 48 --arch convnext_i_xtiny
+
+# Example used for raw testing:
+# src/index.py train --input output/rainfallwater_records_embed_2022-10-06_contrast_embed_umap_d512e19_tfrecord_TINY -o output/2022-09-28-segmenter-d512e19-TEST-tiny --water-size 94 --batch-size 48 --arch convnext_i_xtiny
+echo ">>> exited with code $?";
