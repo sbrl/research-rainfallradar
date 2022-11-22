@@ -72,7 +72,7 @@ def model_rainfallwater_mono(metadata, shape_water_out, model_arch_enc="convnext
 	model.compile(
 		optimizer="Adam",
 		loss=tf.keras.losses.CategoricalCrossentropy(),
-		metrics=[tf.keras.metrics.SparseCategoricalAccuracy()]
+		metrics=[tf.keras.metrics.CategoricalAccuracy()]
 	)
 	
 	return model
