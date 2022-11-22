@@ -5,7 +5,7 @@
 #SBATCH --gres=gpu:1
 #SBATCH -o %j.%N.%a.segment.out.log
 #SBATCH -e %j.%N.%a.segment.err.log
-#SBATCH -p gpu05
+#SBATCH -p gpu05,gpu
 #SBATCH --time=5-00:00:00
 #SBATCH --mem=61440
 # 61440 = 60GiB memory required
