@@ -19,8 +19,8 @@ def parse_args():
 	parser = argparse.ArgumentParser(description="Output water depth image segmentation maps using a given pretrained mono model.")
 	# parser.add_argument("--config", "-c", help="Filepath to the TOML config file to load.", required=True)
 	parser.add_argument("--input", "-i", help="Path to input directory containing the .tfrecord(.gz) files to predict for. If a single file is passed instead, then only that file will be converted.", required=True)
-	parser.add_argument("--reads-multiplier", help="Optional. The multiplier for the number of files we should read from at once. Defaults to 0. When using this start with 1.5, which means read ceil(NUMBER_OF_CORES * 1.5). Set to a higher number of systems with high read latency to avoid starving the GPU of data. SETTING THIS WILL SCRAMBLE THE ORDER OF THE DATASET.")
-	parser.add_argument("--batch-size", help="Optional. The batch size to calculate statistics with. Can be larger than normal since we don't have a model loaded. Default: 1024")
+	parser.add_argument("--reads-multiplier", help="Optional. The multiplier for the number of files we should read from at once. Defaults to 0. When using this start with 1.5, which means read ceil(NUMBER_OF_CORES * 1.5). Set to a higher number of systems with high read latency to avoid starving the GPU of data. SETTING THIS WILL SCRAMBLE THE ORDER OF THE DATASET.", type=int)
+	parser.add_argument("--batch-size", help="Optional. The batch size to calculate statistics with. Can be larger than normal since we don't have a model loaded. Default: 1024", type=int)
 	return parser
 
 def run(args):
@@ -29,7 +29,6 @@ def run(args):
 		args.read_multiplier = 4
 	if (not hasattr(args, "batch_size")) or args.batch_size == None:
 		args.batch_size = 1024
-	
 	
 	sys.stderr.write(f"\n\n>>> This is TensorFlow {tf.__version__}\n\n\n")
 	
