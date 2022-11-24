@@ -109,7 +109,7 @@ def dataset_mono(dirpath_input, train_percentage=0.8, **kwargs):
 	
 	return dataset_train, dataset_validate #, filepaths
 
-def dataset_mono_predict(dirpath_input):
+def dataset_mono_predict(dirpath_input, **kwargs):
 	"""Creates a tf.data.Dataset() for prediction using the contrastive learning model.
 	Note that this WILL MANGLE THE ORDERING if you set parallel_reads_multiplier to anything other than 0!!
 	
