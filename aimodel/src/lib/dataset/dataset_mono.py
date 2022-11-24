@@ -109,7 +109,7 @@ def dataset_mono(dirpath_input, train_percentage=0.8, **kwargs):
 	
 	return dataset_train, dataset_validate #, filepaths
 
-def dataset_mono_predict(dirpath_input, parallel_reads_multiplier=1.5, prefetch=True):
+def dataset_mono_predict(dirpath_input):
 	"""Creates a tf.data.Dataset() for prediction using the contrastive learning model.
 	Note that this WILL MANGLE THE ORDERING if you set parallel_reads_multiplier to anything other than 0!!
 	
@@ -126,10 +126,9 @@ def dataset_mono_predict(dirpath_input, parallel_reads_multiplier=1.5, prefetch=
 	return make_dataset(
 		filepaths=filepaths,
 		metadata=read_metadata(dirpath_input),
-		parallel_reads_multiplier=parallel_reads_multiplier,
 		batch_size=None,
-		prefetch=prefetch,
-		shuffle=False #even with shuffle=False we're not gonna get them all in the same order since we're reading in parallel
+		shuffle=False, #even with shuffle=False we're not gonna get them all in the same order since we're reading in parallel
+		**kwargs
 	)
 
 if __name__ == "__main__":
