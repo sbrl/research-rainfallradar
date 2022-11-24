@@ -113,6 +113,7 @@ def do_png(args, ai, dataset, model_params):
 			water_predict = tf.math.argmax(water_predict, axis=-1) 
 			# [ width, height, bins ]
 			water_actual = tf.squeeze(water[i_batch])
+			# [ width, height ]
 			water_actual = tf.math.argmax(water_actual, axis=-1)
 			
 			segmentation_plot(
