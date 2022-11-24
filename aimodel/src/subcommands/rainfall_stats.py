@@ -61,7 +61,7 @@ def run(args):
 		batch_stddev = tf.math.reduce_std(rainfall_flat)
 		batch_max = tf.math.reduce_max(rainfall_flat)
 		
-		print("BATCH mean\t", batch_mean.numpy().tolist()[0], "stddev\t", batch_stddev.numpy().tolist()[0], "max\t", batch_max.numpy().tolist()[0])
+		print("BATCH mean\t", batch_mean.numpy().tolist(), "stddev\t", batch_stddev.numpy().tolist(), "max\t", batch_max.numpy().tolist())
 		
 		calc_mean.append(batch_mean)
 		calc_stddev.append(batch_stddev)
