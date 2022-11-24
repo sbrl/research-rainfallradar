@@ -23,6 +23,7 @@ Available subcommands:
 	train				Train an image segmentation head on the output of pretrain-predict. YOU MUST TRAIN A CONTRASTIVE LEARNING MODEL FIRST.
 	train-predict		Make predictions using a model trained through the train subcommand.
 	train-mono			Train a mono rainfall → water depth model.
+	train-mono-predict	Make predictions using a model trained through the train-mono subcommand.
 
 For more information, do src/index.py <subcommand> --help.
 """)

@@ -71,7 +71,7 @@ def run(args):
 	
 	sys.stderr.write(f"\n\n>>> This is TensorFlow {tf.__version__}\n\n\n")
 	
-	# Note that if using a directory of input files, the output order is NOT GUARANTEED TO BE THE SAME. In fact, it probably won't be.
+	# Note that if using a directory of input files, the output order is NOT GUARANTEED TO BE THE SAME. In fact, it probably won't be (see dataset_mono for more details).
 	dataset = dataset_predict(
 		dirpath_input=args.input,
 		parallel_reads_multiplier=args.read_multiplier
