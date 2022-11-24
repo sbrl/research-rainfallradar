@@ -149,15 +149,12 @@ def do_jsonl(args, ai, dataset, model_params, do_argmax=False):
 	for batch in batched_iterator(dataset, tensors_in_item=2, batch_size=model_params["batch_size"]):
 		rainfall_actual_batch, water_actual_batch = batch
 		
-		print("DEBUG:do_jsonl rainfall_actual_batch", rainfall_actual_batch.shape)
-		print("DEBUG:do_jsonl water_actual_batch", water_actual_batch.shape)
 		water_predict_batch = ai.embed(rainfall_actual_batch)
 		water_actual_batch = tf.unstack(water_actual_batch, axis=0)
 		rainfall_actual_batch = tf.unstack(rainfall_actual_batch, axis=0)
 		
 		i_batch = 0
 		for water_predict in water_predict_batch:
-			print("DEBUG:do_jsonl water_predict", water_predict.shape)
 			# [ width, height, softmax_probabilities ] → [ batch, width, height ]
 			if do_argmax:
 				water_predict = tf.math.argmax(water_predict, axis=-1) 

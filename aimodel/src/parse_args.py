@@ -24,6 +24,7 @@ Available subcommands:
 	train-predict		Make predictions using a model trained through the train subcommand.
 	train-mono			Train a mono rainfall → water depth model.
 	train-mono-predict	Make predictions using a model trained through the train-mono subcommand.
+	rainfall-stats		Calculate statistics about the rainfall radar data.
 
 For more information, do src/index.py <subcommand> --help.
 """)
