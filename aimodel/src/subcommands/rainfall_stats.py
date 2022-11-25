@@ -76,4 +76,4 @@ def run(args):
 	print("STDDEV VALUES", tf.stack(calc_stddev).numpy().tolist())
 	print("OVERALL", "mean", calc_mean.numpy().tolist(), "max", calc_max.numpy().tolist())
 	
-	logger.write(">>> Complete\n")
+	logger.info(">>> Complete\n")
