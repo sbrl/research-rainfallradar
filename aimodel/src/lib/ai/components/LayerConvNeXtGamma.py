@@ -15,5 +15,5 @@ class LayerConvNeXtGamma(tf.keras.layers.Layer):
 	def get_config(self):
 		config = super(LayerConvNeXtGamma, self).get_config()
 		
-		config.update({ "const": self.const.numpy(), "dim": self.dim })
+		config.update({ "const_val": self.const.numpy(), "dim": self.dim })
 		return config
