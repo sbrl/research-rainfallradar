@@ -74,7 +74,8 @@ def run(args):
 	# Note that if using a directory of input files, the output order is NOT GUARANTEED TO BE THE SAME. In fact, it probably won't be (see dataset_mono for more details).
 	dataset = dataset_mono_predict(
 		dirpath_input=args.input,
-		parallel_reads_multiplier=args.read_multiplier
+		parallel_reads_multiplier=args.read_multiplier,
+		shape_water_desired=[64, 64]
 	)
 	
 	# for items in dataset_train.repeat(10):
