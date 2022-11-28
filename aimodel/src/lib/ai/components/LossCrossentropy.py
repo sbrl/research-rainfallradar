@@ -18,7 +18,7 @@ class LossCrossentropy(tf.keras.losses.Loss):
 		result = tf.keras.metrics.categorical_crossentropy(y_true, y_pred)
 		result_reduce = tf.math.reduce_sum(result)
 		label_nowater = tf.math.reduce_sum(tf.argmax(y_true, axis=-1))
-		tf.print("DEBUG:TFPRINT:loss LABEL", y_true.shape, y_true, "LABEL_ARGMAX_COUNT_AXIS0", label_nowater, "PREDICT", y_pred.shape, y_pred, "BEFORE_REDUCE", result.shape, result, "AFTER_REDUCE", result_reduce.shape, result_reduce)
+		# tf.print("DEBUG:TFPRINT:loss LABEL", y_true.shape, y_true, "LABEL_ARGMAX_COUNT_AXIS0", label_nowater, "PREDICT", y_pred.shape, y_pred, "BEFORE_REDUCE", result.shape, result, "AFTER_REDUCE", result_reduce.shape, result_reduce)
 		return result
 	
 	def get_config(self):

@@ -33,7 +33,7 @@ def run(args):
 	if (not hasattr(args, "read_multiplier")) or args.read_multiplier == None:
 		args.read_multiplier = 1.5
 	if (not hasattr(args, "water_threshold")) or args.water_threshold == None:
-		args.water_threshold = 1.5
+		args.water_threshold = 0.1
 	if (not hasattr(args, "water_size")) or args.water_size == None:
 		args.water_size = 1.5
 	if (not hasattr(args, "arch")) or args.arch == None:

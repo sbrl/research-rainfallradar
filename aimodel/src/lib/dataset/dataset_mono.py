@@ -22,6 +22,8 @@ def parse_item(metadata, shape_water_desired=[100,100], water_threshold=0.1, wat
 	
 	print("DEBUG DATASET:rainfall shape", metadata["rainfallradar"])
 	print("DEBUG DATASET:water shape", metadata["waterdepth"])
+	print("DEBUG DATASET:water_threshold", water_threshold)
+	print("DEBUG DATASET:water_bins", water_bins)
 	
 	def parse_item_inner(item):
 		parsed = tf.io.parse_single_example(item, features={
