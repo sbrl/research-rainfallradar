@@ -6,6 +6,7 @@ import tensorflow as tf
 from .components.convnext import make_convnext
 from .components.convnext_inverse import do_convnext_inverse
 from .components.LayerStack2Image import LayerStack2Image
+from .components.LossCrossentropy import LossCrossentropy
 
 def model_rainfallwater_mono(metadata, shape_water_out, model_arch_enc="convnext_xtiny", model_arch_dec="convnext_i_xtiny", feature_dim=512, batch_size=64, water_bins=2):
 	"""Makes a new rainfall / waterdepth mono model.
@@ -71,7 +72,8 @@ def model_rainfallwater_mono(metadata, shape_water_out, model_arch_enc="convnext
 	
 	model.compile(
 		optimizer="Adam",
-		loss=tf.keras.losses.CategoricalCrossentropy(),
+		loss=LossCrossentropy(batch_size=batch_size),
+		# loss=tf.keras.losses.CategoricalCrossentropy(),
 		metrics=[tf.keras.metrics.CategoricalAccuracy()]
 	)
 	

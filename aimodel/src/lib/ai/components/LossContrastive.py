@@ -2,7 +2,14 @@ import math
 
 import tensorflow as tf
 
+
 class LossContrastive(tf.keras.losses.Loss):
+	"""Implements a contrastive loss function.
+	@warning: This does not function as it should.
+	Args:
+		weight_temperature (integer): The temperature weight (e.g. from LayerCheeseMultipleOut).
+		batch_size (integer): The batch size.
+	"""
 	def __init__(self, weight_temperature, batch_size):
 		super(LossContrastive, self).__init__()
 		self.batch_size = batch_size
