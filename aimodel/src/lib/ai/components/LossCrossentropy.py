@@ -17,7 +17,7 @@ class LossCrossentropy(tf.keras.losses.Loss):
 	def call(self, y_true, y_pred):
 		result = tf.keras.metrics.categorical_crossentropy(y_true, y_pred)
 		result_reduce = tf.math.reduce_sum(result)
-		tf.print("DEBUG:TFPRINT:loss BEFORE_REDUCE", result, "AFTER_REDUCE", result_reduce)
+		tf.print("DEBUG:TFPRINT:loss LABEL", y_true, "PREDICT", y_pred, "BEFORE_REDUCE", result.shape, result, "AFTER_REDUCE", result_reduce.shape, result_reduce)
 		return result
 	
 	def get_config(self):
