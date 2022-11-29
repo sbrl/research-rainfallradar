@@ -35,8 +35,8 @@ def parse_item(metadata, shape_water_desired, water_threshold=0.1, water_bins=2)
 		water = tf.cast(tf.math.greater_equal(water, water_threshold), dtype=tf.int32)
 		
 		water = tf.image.crop_to_bounding_box(water, water_offset_x, water_offset_y, water_width_target, water_height_target)
-		water = tf.reshape(water, tf.constant([water_width_target, water_height_target, water_bins], dtype=tf.int32))
 		water = tf.one_hot(water, water_bins, axis=-1, dtype=tf.int32)
+		water = tf.reshape(water, tf.constant([water_width_target, water_height_target, water_bins], dtype=tf.int32))
 		print("DEBUG:dataset ITEM rainfall:shape", rainfall.shape, "water:shape", water.shape)
 		
 		# TODO: Add any other additional parsing here, since multiple .map() calls are not optimal
