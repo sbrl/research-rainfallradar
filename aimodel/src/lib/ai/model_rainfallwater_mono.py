@@ -8,15 +8,18 @@ from .components.convnext_inverse import do_convnext_inverse
 from .components.LayerStack2Image import LayerStack2Image
 from .components.LossCrossentropy import LossCrossentropy
 
-def model_rainfallwater_mono(metadata, shape_water_out, model_arch_enc="convnext_xtiny", model_arch_dec="convnext_i_xtiny", feature_dim=512, batch_size=64, water_bins=2):
+def model_rainfallwater_mono(metadata, shape_water_out, model_arch_enc="convnext_xtiny", model_arch_dec="convnext_i_xtiny", feature_dim=512, batch_size=64, water_bins=2, learning_rate=None):
 	"""Makes a new rainfall / waterdepth mono model.
 
 	Args:
 		metadata (dict): A dictionary of metadata about the dataset to use to build the model with.
 		shape_water_out (int[]): The width and height (in that order) that should dictate the output shape of the segmentation head. CURRENTLY NOT USED.
-		model_arch (str, optional): The architecture code for the underlying (inverted) ConvNeXt model. Defaults to "convnext_i_xtiny".
+		feature_dim	(int, optiona): The size of the bottleneck. Defaults to 512.
+		model_arch_enc (str, optional): The architecture code for the underlying (inverted) ConvNeXt model for the encoder. Defaults to "convnext_xtiny".
+		model_arch_dec (str, optional): The architecture code for the underlying (inverted) ConvNeXt model for the decoder. Defaults to "convnext_i_xtiny".
 		batch_size (int, optional): The batch size. Reduce to save memory. Defaults to 64.
 		water_bins (int, optional): The number of classes that the water depth output oft he segmentation head should be binned into. Defaults to 2.
+		learning_rate (float, optional): The (initial) learning rate. YOU DO NOT USUALLY NEED TO CHANGE THIS. For experimental purposes only. Defaults to None, which means it will be determined automatically.
 
 	Returns:
 		tf.keras.Model: The new model, freshly compiled for your convenience! :D
@@ -70,8 +73,11 @@ def model_rainfallwater_mono(metadata, shape_water_out, model_arch_enc="convnext
 		outputs = layer_next
 	)
 	
+	optimizer = "Adam"
+	if learning_rate is not None:
+		optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
 	model.compile(
-		optimizer="Adam",
+		optimizer=optimizer,
 		loss=LossCrossentropy(batch_size=batch_size),
 		# loss=tf.keras.losses.CategoricalCrossentropy(),
 		metrics=[tf.keras.metrics.CategoricalAccuracy()]

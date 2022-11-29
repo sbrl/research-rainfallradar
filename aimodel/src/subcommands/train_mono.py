@@ -20,6 +20,7 @@ def parse_args():
 	parser.add_argument("--bottleneck", help="The size of the bottleneck [default: 512].", type=int)
 	parser.add_argument("--arch-enc", help="Next of the underlying encoder convnext model to use [default: convnext_xtiny].")
 	parser.add_argument("--arch-dec", help="Next of the underlying decoder convnext model to use [default: convnext_i_xtiny].")
+	parser.add_argument("--learning-rate", help="The initial learning rate. YOU DO NOT USUALLY NEED TO CHANGE THIS. For experimental use only [default: determined automatically].", type=int)
 	
 	
 	return parser
@@ -43,6 +44,8 @@ def run(args):
 		args.arch_enc = "convnext_xtiny"
 	if (not hasattr(args, "arch_dec")) or args.arch_dec == None:
 		args.arch_dec = "convnext_i_xtiny"
+	if (not hasattr(args, "learning_rate")) or args.learning_rate == None:
+		args.learning_rate = None
 	
 	
 	# TODO: Validate args here.
@@ -66,12 +69,13 @@ def run(args):
 	
 	
 	ai = RainfallWaterMono(
-		dir_output=args.output,
-		batch_size=args.batch_size,
+		dir_output		= args.output,
+		batch_size		= args.batch_size,
 		
-		feature_dim=args.bottleneck,
-		model_arch_enc=args.arch_enc,
-		model_arch_dec=args.arch_dec,
+		feature_dim		= args.bottleneck,
+		model_arch_enc	= args.arch_enc,
+		model_arch_dec	= args.arch_dec,
+		learning_rate	= args.learning_rate,
 		
 		metadata = read_metadata(args.input),
 		shape_water_out=[ args.water_size, args.water_size ], # The DESIRED output shape. the actual data will be cropped to match this.
