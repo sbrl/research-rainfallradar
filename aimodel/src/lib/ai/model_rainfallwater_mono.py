@@ -73,6 +73,8 @@ def model_rainfallwater_mono(metadata, shape_water_out, model_arch_enc="convnext
 		outputs = layer_next
 	)
 	
+	logger.info(f"learning_rate: {str(learning_rate)}")
+	
 	optimizer = "Adam"
 	if learning_rate is not None:
 		optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
