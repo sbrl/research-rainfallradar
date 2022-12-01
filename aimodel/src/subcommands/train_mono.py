@@ -20,7 +20,7 @@ def parse_args():
 	parser.add_argument("--bottleneck", help="The size of the bottleneck [default: 512].", type=int)
 	parser.add_argument("--arch-enc", help="Next of the underlying encoder convnext model to use [default: convnext_xtiny].")
 	parser.add_argument("--arch-dec", help="Next of the underlying decoder convnext model to use [default: convnext_i_xtiny].")
-	parser.add_argument("--learning-rate", help="The initial learning rate. YOU DO NOT USUALLY NEED TO CHANGE THIS. For experimental use only [default: determined automatically].", type=int)
+	parser.add_argument("--learning-rate", help="The initial learning rate. YOU DO NOT USUALLY NEED TO CHANGE THIS. For experimental use only [default: determined automatically].", type=float)
 	
 	
 	return parser
