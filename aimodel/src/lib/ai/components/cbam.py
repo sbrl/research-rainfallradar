@@ -36,7 +36,6 @@ class LayerCBAMAttentionChannel(tf.keras.layers.Layer):
 		self.param_reduction_ratio = reduction_ratio
 		
 		self.mlp = tf.keras.Sequential([
-			tf.keras.layers.Dense(self.param_dim),
 			tf.keras.layers.Dense(self.param_dim / self.param_reduction_ratio),
 			tf.keras.layers.Dense(self.param_dim)
 		])
