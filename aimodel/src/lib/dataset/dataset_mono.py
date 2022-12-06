@@ -10,11 +10,12 @@ from lib.dataset.read_metadata import read_metadata
 
 from ..io.readfile import readfile
 from .shuffle import shuffle
+from .parse_heightmap import parse_heightmap
 
 
 
 # TO PARSE:
-def parse_item(metadata, shape_water_desired=[100,100], water_threshold=0.1, water_bins=2):
+def parse_item(metadata, shape_water_desired=[100,100], water_threshold=0.1, water_bins=2, heightmap=None):
 	water_height_source, water_width_source = metadata["waterdepth"]
 	water_height_target, water_width_target = shape_water_desired
 	water_offset_x = math.ceil((water_width_source - water_width_target) / 2)
@@ -24,6 +25,9 @@ def parse_item(metadata, shape_water_desired=[100,100], water_threshold=0.1, wat
 	print("DEBUG DATASET:water shape", metadata["waterdepth"])
 	print("DEBUG DATASET:water_threshold", water_threshold)
 	print("DEBUG DATASET:water_bins", water_bins)
+	
+	if heightmap is not None:
+		heightmap = tf.expand_dims(heightmap, axis=-1)
 	
 	def parse_item_inner(item):
 		parsed = tf.io.parse_single_example(item, features={
@@ -46,10 +50,17 @@ def parse_item(metadata, shape_water_desired=[100,100], water_threshold=0.1, wat
 		# I can't believe in this entire project I have yet to get the rotation of the rainfall radar data correct....!
 		# %TRANSPOSE%
 		rainfall = tf.transpose(rainfall, [2, 1, 0])
+		if heightmap is not None:
+			rainfall = tf.concat([rainfall, heightmap], axis=-1)
 		
 		# rainfall = tf.image.resize(rainfall, tf.cast(tf.constant(metadata["rainfallradar"]) / 2, dtype=tf.int32))
 		water = tf.expand_dims(water, axis=-1) # [width, height] → [width, height, channels=1]
-		water = tf.image.crop_to_bounding_box(water, water_offset_x, water_offset_y, water_width_target, water_height_target)
+		water = tf.image.crop_to_bounding_box(water,
+			offset_width=water_offset_x,
+			offset_height=water_offset_y,
+			target_width=water_width_target,
+			target_height=water_height_target
+		)
 		
 		print("DEBUG:dataset BEFORE_SQUEEZE water", water.shape)
 		water = tf.squeeze(water)
@@ -64,9 +75,13 @@ def parse_item(metadata, shape_water_desired=[100,100], water_threshold=0.1, wat
 	
 	return tf.function(parse_item_inner)
 
-def make_dataset(filepaths, compression_type="GZIP", parallel_reads_multiplier=1.5, shuffle_buffer_size=128, batch_size=64, prefetch=True, shuffle=True, **kwargs):
+def make_dataset(filepaths, compression_type="GZIP", parallel_reads_multiplier=1.5, shuffle_buffer_size=128, batch_size=64, prefetch=True, shuffle=True, filepath_heightmap=None **kwargs):
 	if "NO_PREFETCH" in os.environ:
 		logger.info("disabling data prefetching.")
+	
+	heightmap = None
+	if filepath_heightmap is not None:
+		heightmap = parse_heightmap(filepath_heightmap)
 	
 	dataset = tf.data.TFRecordDataset(filepaths,
 		compression_type=compression_type,
@@ -74,7 +89,7 @@ def make_dataset(filepaths, compression_type="GZIP", parallel_reads_multiplier=1
 	)
 	if shuffle:
 		dataset = dataset.shuffle(shuffle_buffer_size)
-	dataset = dataset.map(parse_item(**kwargs), num_parallel_calls=tf.data.AUTOTUNE)
+	dataset = dataset.map(parse_item(heightmap=heightmap, **kwargs), num_parallel_calls=tf.data.AUTOTUNE)
 	
 	if batch_size != None:
 		dataset = dataset.batch(batch_size, drop_remainder=True)

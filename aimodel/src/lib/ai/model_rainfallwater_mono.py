@@ -8,7 +8,7 @@ from .components.convnext_inverse import do_convnext_inverse
 from .components.LayerStack2Image import LayerStack2Image
 from .components.LossCrossentropy import LossCrossentropy
 
-def model_rainfallwater_mono(metadata, shape_water_out, model_arch_enc="convnext_xtiny", model_arch_dec="convnext_i_xtiny", feature_dim=512, batch_size=64, water_bins=2, learning_rate=None):
+def model_rainfallwater_mono(metadata, shape_water_out, model_arch_enc="convnext_xtiny", model_arch_dec="convnext_i_xtiny", feature_dim=512, batch_size=64, water_bins=2, learning_rate=None, heightmap_input=False):
 	"""Makes a new rainfall / waterdepth mono model.
 
 	Args:
@@ -19,6 +19,7 @@ def model_rainfallwater_mono(metadata, shape_water_out, model_arch_enc="convnext
 		model_arch_dec (str, optional): The architecture code for the underlying (inverted) ConvNeXt model for the decoder. Defaults to "convnext_i_xtiny".
 		batch_size (int, optional): The batch size. Reduce to save memory. Defaults to 64.
 		water_bins (int, optional): The number of classes that the water depth output oft he segmentation head should be binned into. Defaults to 2.
+		heightmap_input (bool, option): Whether a heightmap is being passed as an input to the model or not. Required to ensure we know how many channels the model will be taking in (the heightmap takes u  an additional input channel). Default: false.
 		learning_rate (float, optional): The (initial) learning rate. YOU DO NOT USUALLY NEED TO CHANGE THIS. For experimental purposes only. Defaults to None, which means it will be determined automatically.
 
 	Returns:
@@ -27,7 +28,10 @@ def model_rainfallwater_mono(metadata, shape_water_out, model_arch_enc="convnext
 	rainfall_channels, rainfall_height, rainfall_width = metadata["rainfallradar"] # shape = [channels, height, weight]
 	# BUG: We somehow *still* have the rainfall radar data transposed incorrectly! I have no idea how this happened. dataset_mono fixes it with (another) transpose
 	
-	print("RAINFALL channels", rainfall_channels, "width", rainfall_width, "height", rainfall_height)
+	if heightmap_input:
+		rainfall_channels += 1
+	
+	print("RAINFALL channels", rainfall_channels, "width", rainfall_width, "height", rainfall_height, "HEIGHTMAP_INPUT", heightmap_input)
 	out_water_width, out_water_height = shape_water_out
 	
 	layer_input = tf.keras.layers.Input(

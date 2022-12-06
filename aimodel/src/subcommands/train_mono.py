@@ -12,9 +12,10 @@ def parse_args():
 	parser = argparse.ArgumentParser(description="Train an mono rainfall-water model on a directory of .tfrecord.gz rainfall+waterdepth_label files.")
 	# parser.add_argument("--config", "-c", help="Filepath to the TOML config file to load.", required=True)
 	parser.add_argument("--input", "-i", help="Path to input directory containing the .tfrecord.gz files to pretrain with", required=True)
+	parser.add_argument("--heightmap", help="Optional. Filepath to the heightmap to pass as an input to the model along the channel dimension. If not specified, not heightmap will be specified as an input to the model. Default: None (not specified).")
 	parser.add_argument("--output", "-o", help="Path to output directory to write output to (will be automatically created if it doesn't exist)", required=True)
 	parser.add_argument("--batch-size", help="Sets the batch size [default: 64].", type=int)
-	parser.add_argument("--reads-multiplier", help="Optional. The multiplier for the number of files we should read from at once. Defaults to 1.5, which means read ceil(NUMBER_OF_CORES * 1.5) files at once. Set to a higher number of systems with high read latency to avoid starving the GPU of data.")
+	parser.add_argument("--reads-multiplier", help="Optional. The multiplier for the number of files we should read from at once. Defaults to 1.5, which means read ceil(NUMBER_OF_CORES * 1.5) files at once. Set to a higher number of systems with high read latency to avoid starving the GPU of data.", type=float)
 	parser.add_argument("--water-size", help="The width and height of the square of pixels that the model will predict. Smaller values crop the input more [default: 100].", type=int)
 	parser.add_argument("--water-threshold", help="The threshold at which a water cell should be considered water. Water depth values lower than this will be set to 0 (no water). Value unit is metres [default: 0.1].", type=int)
 	parser.add_argument("--bottleneck", help="The size of the bottleneck [default: 512].", type=int)
@@ -22,8 +23,8 @@ def parse_args():
 	parser.add_argument("--arch-dec", help="Next of the underlying decoder convnext model to use [default: convnext_i_xtiny].")
 	parser.add_argument("--learning-rate", help="The initial learning rate. YOU DO NOT USUALLY NEED TO CHANGE THIS. For experimental use only [default: determined automatically].", type=float)
 	
-	
 	return parser
+
 
 def run(args):
 	if (not hasattr(args, "water_size")) or args.water_size == None:
@@ -46,6 +47,9 @@ def run(args):
 		args.arch_dec = "convnext_i_xtiny"
 	if (not hasattr(args, "learning_rate")) or args.learning_rate == None:
 		args.learning_rate = None
+	if (not hasattr(args, "heightmap")) or args.heightmap == None:
+		args.heightmap = None
+	
 	
 	
 	# TODO: Validate args here.
@@ -57,7 +61,8 @@ def run(args):
 		dirpath_input=args.input,
 		batch_size=args.batch_size,
 		water_threshold=args.water_threshold,
-		shape_water_desired=[args.water_size, args.water_size]
+		shape_water_desired=[args.water_size, args.water_size],
+		filepath_heightmap=args.heightmap
 	)
 	dataset_metadata = read_metadata(args.input)
 	
