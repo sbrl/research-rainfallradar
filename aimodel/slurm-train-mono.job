@@ -24,7 +24,11 @@ show_help() {
 	echo -e "" >&2;
 	echo -e "....where:" >&2;
 	echo -e "    INPUT     The path to the directory containing the .tfrecord files to use as training data (see the rainfallwrangler for making these)" >&2;
+	echo -e "    HEIGHTMAP Optional. If specified, this heightmap will be passed in as an additional input to the model to be trained." >&2;
 	echo -e "    POSTFIX   Optional. A suffix to apply to the run code name." >&2;
+	echo -e "    ARGS      Optional. Any additional arguments to pass to the python program." >&2;
+	echo -e "" >&2;
+	echo -e "It is strongly advised that all filepaths do NOT contain spaces." >&2;
 	echo -e "" >&2;
 	echo -e "The code used to identify the run is taken automatically from the filename of the config file." >&2;
 	exit;
@@ -42,7 +46,14 @@ if [[ ! -d "${INPUT}" ]]; then
 	show_help;
 	exit 1;
 fi
+if [[ -n "${HEIGHTMAP}" ]] && [[ ! -r "${HEIGHTMAP}" ]]; then
+	echo -e "Error: I can't read the heightmap at '${HEIGHTMAP}'. It either doesn't exist, or I don't have permission to access it.";
+	exit 2;
+fi
 
+if [[ -n "${HEIGHTMAP}" ]]; then
+	ARGS="${ARGS} --heightmap ${HEIGHTMAP}";
+fi
 
 CODE="train_mono";
 
@@ -51,11 +62,12 @@ if [[ -n "${POSTFIX}" ]]; then
 	CODE="${CODE}_${POSTFIX}";
 fi
 
-echo -e ">>> Input dirpath: ${INPUT}" >&2;
-echo -e ">>> Code: ${CODE}" >&2;
-echo -e ">>> Additional args: ${ARGS}";
-
 dir_output="output/$(date -u --rfc-3339=date)_${CODE}";
+
+echo -e ">>> Input dirpath: ${INPUT}" >&2;
+echo -e ">>> Additional args: ${ARGS}";
+echo -e ">>> dir_output: ${dir_output}" >&2;
+
 
 export PATH=$HOME/software/bin:$PATH;
 
