@@ -81,6 +81,7 @@ def make_dataset(filepaths, compression_type="GZIP", parallel_reads_multiplier=1
 	
 	heightmap = None
 	if filepath_heightmap is not None:
+		logger.info(f"Using heightmap from '{filepath_heightmap}'.")
 		heightmap = parse_heightmap(filepath_heightmap)
 	
 	dataset = tf.data.TFRecordDataset(filepaths,
