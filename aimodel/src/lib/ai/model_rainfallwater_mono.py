@@ -8,7 +8,7 @@ from .components.convnext_inverse import do_convnext_inverse
 from .components.LayerStack2Image import LayerStack2Image
 from .components.LossCrossentropy import LossCrossentropy
 
-def model_rainfallwater_mono(metadata, shape_water_out, model_arch_enc="convnext_xtiny", model_arch_dec="convnext_i_xtiny", feature_dim=512, batch_size=64, water_bins=2, learning_rate=None, heightmap_input=False):
+def model_rainfallwater_mono(metadata, model_arch_enc="convnext_xtiny", model_arch_dec="convnext_i_xtiny", feature_dim=512, batch_size=64, water_bins=2, learning_rate=None, heightmap_input=False):
 	"""Makes a new rainfall / waterdepth mono model.
 
 	Args:
@@ -32,7 +32,7 @@ def model_rainfallwater_mono(metadata, shape_water_out, model_arch_enc="convnext
 		rainfall_channels += 1
 	
 	print("RAINFALL channels", rainfall_channels, "width", rainfall_width, "height", rainfall_height, "HEIGHTMAP_INPUT", heightmap_input)
-	out_water_width, out_water_height = shape_water_out
+	
 	
 	layer_input = tf.keras.layers.Input(
 		shape=(rainfall_width, rainfall_height, rainfall_channels)

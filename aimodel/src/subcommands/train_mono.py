@@ -37,8 +37,6 @@ def run(args):
 		args.read_multiplier = 1.5
 	if (not hasattr(args, "water_threshold")) or args.water_threshold == None:
 		args.water_threshold = 0.1
-	if (not hasattr(args, "water_size")) or args.water_size == None:
-		args.water_size = 1.5
 	if (not hasattr(args, "bottleneck")) or args.bottleneck == None:
 		args.bottleneck = 512
 	if (not hasattr(args, "arch_enc")) or args.arch_enc == None:
@@ -83,7 +81,7 @@ def run(args):
 		learning_rate	= args.learning_rate,
 		
 		metadata = read_metadata(args.input),
-		shape_water_out=[ args.water_size, args.water_size ], # The DESIRED output shape. the actual data will be cropped to match this.
+		# shape_water_out=[ args.water_size, args.water_size ], # The DESIRED output shape. the actual data will be cropped to match this.
 	)
 	
 	ai.train(dataset_train, dataset_validate)
