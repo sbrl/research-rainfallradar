@@ -79,6 +79,7 @@ def run(args):
 		model_arch_enc	= args.arch_enc,
 		model_arch_dec	= args.arch_dec,
 		learning_rate	= args.learning_rate,
+		heightmap_input = args.heightmap is not None
 		
 		metadata = read_metadata(args.input),
 		# shape_water_out=[ args.water_size, args.water_size ], # The DESIRED output shape. the actual data will be cropped to match this.
