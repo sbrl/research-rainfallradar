@@ -6,13 +6,14 @@ from .convnext import add_convnext_block
 depths_dims = dict(
 	# architectures from: https://github.com/facebookresearch/ConvNeXt
 	# A ConvNet for the 2020s: https://arxiv.org/abs/2201.03545
-	convnext_i_xxtiny = (dict(depths=[3, 6, 3, 3],    dims=[264, 132, 96, 66])),
-	convnext_i_xtiny  = (dict(depths=[3, 6, 3, 3],    dims=[528, 264, 132, 66])),
-	convnext_i_tiny   = (dict(depths=[3, 9, 3, 3],    dims=[768, 384, 192, 96])),
-	convnext_i_small  = (dict(depths=[3, 27, 3, 3],   dims=[768, 384, 192, 96])),
-	convnext_i_base   = (dict(depths=[3, 27, 3, 3],   dims=[1024, 512, 256, 128])),  
-	convnext_i_large  = (dict(depths=[3, 27, 3, 3],   dims=[1536, 768, 384, 192])),
-	convnext_i_xlarge = (dict(depths=[3, 27, 3, 3],   dims=[2048, 1024, 512, 256])),
+	convnext_i_shallow= (dict(depths=[2, 3, 2],		dims=[132, 96, 66])),
+	convnext_i_xxtiny = (dict(depths=[3, 6, 3, 3],	dims=[264, 132, 96, 66])),
+	convnext_i_xtiny  = (dict(depths=[3, 6, 3, 3],	dims=[528, 264, 132, 66])),
+	convnext_i_tiny   = (dict(depths=[3, 9, 3, 3],	dims=[768, 384, 192, 96])),
+	convnext_i_small  = (dict(depths=[3, 27, 3, 3],	dims=[768, 384, 192, 96])),
+	convnext_i_base   = (dict(depths=[3, 27, 3, 3],	dims=[1024, 512, 256, 128])),  
+	convnext_i_large  = (dict(depths=[3, 27, 3, 3],	dims=[1536, 768, 384, 192])),
+	convnext_i_xlarge = (dict(depths=[3, 27, 3, 3],	dims=[2048, 1024, 512, 256])),
 )
 
 
