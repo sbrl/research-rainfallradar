@@ -79,7 +79,7 @@ def parse_item(metadata, shape_water_desired=[100,100], water_threshold=0.1, wat
 	
 	return tf.function(parse_item_inner)
 
-def make_dataset(filepaths, compression_type="GZIP", parallel_reads_multiplier=1.5, shuffle_buffer_size=128, batch_size=64, prefetch=True, shuffle=True, filepath_heightmap=None **kwargs):
+def make_dataset(filepaths, compression_type="GZIP", parallel_reads_multiplier=1.5, shuffle_buffer_size=128, batch_size=64, prefetch=True, shuffle=True, filepath_heightmap=None, **kwargs):
 	if "NO_PREFETCH" in os.environ:
 		logger.info("disabling data prefetching.")
 	
