@@ -28,6 +28,10 @@ def parse_item(metadata, shape_water_desired=[100,100], water_threshold=0.1, wat
 	
 	if heightmap is not None:
 		heightmap = tf.expand_dims(heightmap, axis=-1)
+		# NORMALLY, this wouldn't work 'cause you'd need to know the max of ALL frames, but here we only have a single frame.
+		heightmap_max = tf.math.reduce_max(heightmap)
+		heightmap_min = tf.math.reduce_min(tf.where(tf.math.less(heightmap, -500), a, tf.fill(heightmap.shape, 0)))
+		heightmap = (heightmap - heightmap_min) / heightmap_max
 	
 	def parse_item_inner(item):
 		parsed = tf.io.parse_single_example(item, features={
