@@ -29,7 +29,7 @@ def dice_coef_loss(y_true, y_pred, **kwargs):
 	Returns:
 		Tensor: The Dice coefficient, but as a loss value that decreases instead fo increases as the model learns.
 	"""
-	return -dice_coef(y_true, y_pred, **kwargs)
+	return 1 - dice_coef(y_true, y_pred, **kwargs)
 
 
 
