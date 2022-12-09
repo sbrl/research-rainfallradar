@@ -38,7 +38,7 @@ class LossDice(tf.keras.losses.Loss):
 		smooth (float): The batch size (currently unused).
 	"""
 	def __init__(self, smooth=100, **kwargs):
-		super(LossCrossentropy, self).__init__(**kwargs)
+		super(LossDice, self).__init__(**kwargs)
 		
 		self.param_smooth = smooth
 	
@@ -46,7 +46,7 @@ class LossDice(tf.keras.losses.Loss):
 		return dice_coef_loss(y_true, y_pred, smooth=self.param_smooth)
 	
 	def get_config(self):
-		config = super(LossCrossentropy, self).get_config()
+		config = super(LossDice, self).get_config()
 		config.update({
 			"smooth": self.param_smooth,
 		})
