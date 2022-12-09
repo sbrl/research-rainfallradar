@@ -75,7 +75,7 @@ def model_rainfallwater_mono(metadata, model_arch_enc="convnext_xtiny", model_ar
 	# layer_next = tf.keras.layers.Softmax(axis=-1)(layer_next)
 	# LOSS dice
 	layer_next = tf.keras.layers.Conv2D(1, activation="gelu", kernel_size=1, padding="same")(layer_next)
-	layer_input = tf.keras.layers.Reshape(layer_next.shape[:-1]) # Strip the channels
+	layer_next = tf.keras.layers.Reshape(layer_next.shape[:-1])(layer_next) # Strip the channels
 	
 	model = tf.keras.Model(
 		inputs = layer_input,
