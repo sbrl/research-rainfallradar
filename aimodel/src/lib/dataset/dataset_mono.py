@@ -69,9 +69,11 @@ def parse_item(metadata, shape_water_desired=[100,100], water_threshold=0.1, wat
 		print("DEBUG:dataset BEFORE_SQUEEZE water", water.shape)
 		water = tf.squeeze(water)
 		print("DEBUG:dataset AFTER_SQUEEZE water", water.shape)
-		water = tf.cast(tf.math.greater_equal(water, water_threshold), dtype=tf.int32)
-		water = tf.one_hot(water, water_bins, axis=-1, dtype=tf.int32)
-		
+		# LOSS cross entropy
+		# water = tf.cast(tf.math.greater_equal(water, water_threshold), dtype=tf.int32)
+		# water = tf.one_hot(water, water_bins, axis=-1, dtype=tf.int32)
+		# LOSS dice
+		water = tf.cast(tf.math.greater_equal(water, water_threshold), dtype=tf.float32)
 		
 		print("DEBUG DATASET_OUT:rainfall shape", rainfall.shape)
 		print("DEBUG DATASET_OUT:water shape", water.shape)

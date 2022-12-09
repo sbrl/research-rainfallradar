@@ -69,8 +69,11 @@ def model_rainfallwater_mono(metadata, model_arch_enc="convnext_xtiny", model_ar
 	# TODO: An attention layer here instead of a dense layer, with a skip connection perhaps?
 	logger.warning("Warning: TODO implement attention from https://ieeexplore.ieee.org/document/9076883")
 	layer_next = tf.keras.layers.Dense(32, activation="gelu")(layer_next)
-	layer_next = tf.keras.layers.Conv2D(water_bins, activation="gelu", kernel_size=1, padding="same")(layer_next)
-	layer_next = tf.keras.layers.Softmax(axis=-1)(layer_next)
+	# LOSS cross entropy
+	# layer_next = tf.keras.layers.Conv2D(water_bins, activation="gelu", kernel_size=1, padding="same")(layer_next)
+	# layer_next = tf.keras.layers.Softmax(axis=-1)(layer_next)
+	# LOSS dice
+	layer_next = tf.keras.layers.Conv2D(1, activation="gelu", kernel_size=1, padding="same")(layer_next)
 	
 	model = tf.keras.Model(
 		inputs = layer_input,
