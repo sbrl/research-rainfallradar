@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+#SBATCH -J DeepLab3
+#SBATCH -N 1
+#SBATCH -n 14
+#SBATCH --gres=gpu:1
+#SBATCH -o %j.%N.%a.segment-mono.out.log
+#SBATCH -e %j.%N.%a.segment-mono.err.log
+#SBATCH -p gpu05,gpu
+#SBATCH --time=5-00:00:00
+#SBATCH --mem=30000
+# ---> in MiB
+
+module load utilities/multi
+module load readline/7.0
+module load gcc/10.2.0
+module load cuda/11.5.0
+
+module load python/anaconda/4.6/miniconda/3.7
+
+
+show_help() {
+	echo -e "Trains a TEST DeepLabv3+ model using a preset dataset." >&2;
+	echo -e "" >&2;
+	echo -e "Usage:" >&2;
+	echo -e "    sbatch slurm-TEST-deeplabv3p.job" >&2;
+	echo -e "" >&2;
+	echo -e "....where:" >&2;
+	echo -e "    ARGS      Optional. Any additional arguments to pass to the python program." >&2;
+	echo -e "" >&2;
+	echo -e "It is strongly advised that all filepaths do NOT contain spaces." >&2;
+	echo -e "" >&2;
+	echo -e "The code used to identify the run is taken automatically from the filename of the config file." >&2;
+	exit;
+}
+
+echo -e ">>> Additional args: ${ARGS}";
+
+export PATH=$HOME/software/bin:$PATH;
+
+echo ">>> Installing requirements";
+conda run -n py38 pip install -r requirements.txt;
+echo ">>> Training model";
+#shellcheck disable=SC2086
+/usr/bin/env time -v conda run -n py38 src/deeplabv3_plus_test.py
+echo ">>> exited with code $?";
