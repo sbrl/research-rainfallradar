@@ -35,6 +35,7 @@ def dice_coef_loss(y_true, y_pred, **kwargs):
 
 class LossDice(tf.keras.losses.Loss):
 	"""An implementation of the dice loss function.
+	@source 
 	Args:
 		smooth (float): The batch size (currently unused).
 	"""
