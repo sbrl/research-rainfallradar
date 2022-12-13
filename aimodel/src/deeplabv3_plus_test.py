@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # @source https://keras.io/examples/vision/deeplabv3_plus/
 # Required dataset: https://drive.google.com/uc?id=1B9A9UCJYMwTL4oBEo4RZfbMZMaZhKJaz [instance-level-human-parsing.zip]
 
