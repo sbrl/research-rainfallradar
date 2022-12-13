@@ -23,7 +23,8 @@ NUM_VAL_IMAGES = 50
 
 DIR_OUTPUT=f"output/{datetime.utcnow().date().isoformat()}_deeplabv3plus_TEST"
 
-os.makedirs(DIR_OUTPUT)
+if not os.path.exists(DIR_OUTPUT):
+	os.makedirs(DIR_OUTPUT)
 
 logger.info("DeepLabv3+ TEST")
 logger.info(f"> DIR_OUTPUT {DIR_OUTPUT}")
