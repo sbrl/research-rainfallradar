@@ -210,7 +210,7 @@ plt.savefig(os.path.join(DIR_OUTPUT, "val_acc.png"))
 
 # Loading the Colormap
 colormap = loadmat(
-    "./instance-level_human_parsing/instance-level_human_parsing/human_colormap.mat"
+    os.path.join(DIR_OUTPUT, "human_colormap.mat")
 )["colormap"]
 colormap = colormap * 100
 colormap = colormap.astype(np.uint8)
