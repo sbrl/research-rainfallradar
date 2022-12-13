@@ -15,11 +15,17 @@ from .parse_heightmap import parse_heightmap
 
 
 # TO PARSE:
-def parse_item(metadata, shape_water_desired=[100,100], water_threshold=0.1, water_bins=2, heightmap=None):
+def parse_item(metadata, output_size=100, input_size="same", water_threshold=0.1, water_bins=2, heightmap=None):
+	if input_size == "same":
+		input_size = output_size # This is almost always the case with e.g. the DeepLabV3+ model
+	
 	water_height_source, water_width_source = metadata["waterdepth"]
-	water_height_target, water_width_target = shape_water_desired
-	water_offset_x = math.ceil((water_width_source - water_width_target) / 2)
-	water_offset_y = math.ceil((water_height_source - water_height_target) / 2)
+	water_offset_x = math.ceil((water_width_source - output_size) / 2)
+	water_offset_y = math.ceil((water_height_source - output_size) / 2)
+	
+	_, rainfall_height_source, rainfall_width_source = metadata["rainfallradar"]
+	rainfall_offset_x = math.ceil((rainfall_width_source - input_size) / 2)
+	rainfall_offset_y = math.ceil((rainfall_height_source - input_size) / 2)
 	
 	print("DEBUG DATASET:rainfall shape", metadata["rainfallradar"])
 	print("DEBUG DATASET:water shape", metadata["waterdepth"])
@@ -42,7 +48,6 @@ def parse_item(metadata, shape_water_desired=[100,100], water_threshold=0.1, wat
 		water = tf.io.parse_tensor(parsed["waterdepth"], out_type=tf.float32)
 		
 		
-		
 		rainfall = tf.reshape(rainfall, tf.constant(metadata["rainfallradar"], dtype=tf.int32))
 		water = tf.reshape(water, tf.constant(metadata["waterdepth"], dtype=tf.int32))
 		
@@ -56,14 +61,21 @@ def parse_item(metadata, shape_water_desired=[100,100], water_threshold=0.1, wat
 		rainfall = tf.transpose(rainfall, [2, 1, 0])
 		if heightmap is not None:
 			rainfall = tf.concat([rainfall, heightmap], axis=-1)
+		if input_size is not None:
+			rainfall = tf.image.crop_to_bounding_box(rainfall,
+				offset_width=rainfall_offset_x,
+				offset_height=rainfall_offset_y,
+				target_width=input_size,
+				target_height=input_size,
+			)
 		
 		# rainfall = tf.image.resize(rainfall, tf.cast(tf.constant(metadata["rainfallradar"]) / 2, dtype=tf.int32))
 		water = tf.expand_dims(water, axis=-1) # [width, height] → [width, height, channels=1]
 		water = tf.image.crop_to_bounding_box(water,
 			offset_width=water_offset_x,
 			offset_height=water_offset_y,
-			target_width=water_width_target,
-			target_height=water_height_target
+			target_width=output_size,
+			target_height=output_size
 		)
 		
 		print("DEBUG:dataset BEFORE_SQUEEZE water", water.shape)
