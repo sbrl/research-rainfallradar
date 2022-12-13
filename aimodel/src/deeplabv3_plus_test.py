@@ -3,6 +3,7 @@
 # Required dataset: https://drive.google.com/uc?id=1B9A9UCJYMwTL4oBEo4RZfbMZMaZhKJaz [instance-level-human-parsing.zip]
 
 from datetime import datetime
+from loguru import logger
 
 import os
 import cv2
@@ -23,6 +24,10 @@ NUM_VAL_IMAGES = 50
 DIR_OUTPUT=f"output/{datetime.utcnow().date().isoformat()}_deeplabv3plus_TEST"
 
 os.makedirs(DIR_OUTPUT)
+
+logger.info("DeepLabv3+ TEST")
+logger.info(f"> DIR_OUTPUT {DIR_OUTPUT}")
+
 
 train_images = sorted(glob(os.path.join(DATA_DIR, "Images/*")))[:NUM_TRAIN_IMAGES]
 train_masks = sorted(glob(os.path.join(DATA_DIR, "Category_ids/*")))[:NUM_TRAIN_IMAGES]
@@ -64,8 +69,8 @@ def data_generator(image_list, mask_list):
 train_dataset = data_generator(train_images, train_masks)
 val_dataset = data_generator(val_images, val_masks)
 
-print("Train Dataset:", train_dataset)
-print("Val Dataset:", val_dataset)
+logger.info("Train Dataset:", train_dataset)
+logger.info("Val Dataset:", val_dataset)
 
 
 # ███    ███  ██████  ██████  ███████ ██     
@@ -156,7 +161,7 @@ model.compile(
     loss=loss,
     metrics=["accuracy"],
 )
-
+logger.info(">>> Beginning training")
 history = model.fit(train_dataset,
 	validation_data=val_dataset,
 	epochs=25,
@@ -167,6 +172,8 @@ history = model.fit(train_dataset,
 		)
 	],
 )
+logger.info(">>> Training complete")
+logger.info(">>> Plotting graphs")
 
 plt.plot(history.history["loss"])
 plt.title("Training Loss")
