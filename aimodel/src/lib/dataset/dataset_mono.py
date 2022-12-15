@@ -15,7 +15,7 @@ from .parse_heightmap import parse_heightmap
 
 
 # TO PARSE:
-def parse_item(metadata, output_size=100, input_size="same", water_threshold=0.1, water_bins=2, heightmap=None):
+def parse_item(metadata, output_size=100, input_size="same", water_threshold=0.1, water_bins=2, heightmap=None, rainfall_scale_up=1):
 	if input_size == "same":
 		input_size = output_size # This is almost always the case with e.g. the DeepLabV3+ model
 	
@@ -61,6 +61,8 @@ def parse_item(metadata, output_size=100, input_size="same", water_threshold=0.1
 		rainfall = tf.transpose(rainfall, [2, 1, 0])
 		if heightmap is not None:
 			rainfall = tf.concat([rainfall, heightmap], axis=-1)
+		if rainfall_scale_up > 1:
+			rainfall = tf.repeat(tf.repeat(rainfall, rainfall_scale_up, axis=0), rainfall_scale_up, axis=1)
 		if input_size is not None:
 			rainfall = tf.image.crop_to_bounding_box(rainfall,
 				offset_width=rainfall_offset_x,
