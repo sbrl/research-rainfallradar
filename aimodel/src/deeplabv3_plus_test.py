@@ -181,24 +181,28 @@ plt.title("Training Loss")
 plt.ylabel("loss")
 plt.xlabel("epoch")
 plt.savefig(os.path.join(DIR_OUTPUT, "loss.png"))
+plt.close()
 
 plt.plot(history.history["accuracy"])
 plt.title("Training Accuracy")
 plt.ylabel("accuracy")
 plt.xlabel("epoch")
 plt.savefig(os.path.join(DIR_OUTPUT, "acc.png"))
+plt.close()
 
 plt.plot(history.history["val_loss"])
 plt.title("Validation Loss")
 plt.ylabel("val_loss")
 plt.xlabel("epoch")
 plt.savefig(os.path.join(DIR_OUTPUT, "val_loss.png"))
+plt.close()
 
 plt.plot(history.history["val_accuracy"])
 plt.title("Validation Accuracy")
 plt.ylabel("val_accuracy")
 plt.xlabel("epoch")
 plt.savefig(os.path.join(DIR_OUTPUT, "val_acc.png"))
+plt.close()
 
 
 
