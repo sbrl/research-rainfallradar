@@ -55,8 +55,17 @@ dir_output="output/$(date -u --rfc-3339=date)_${CODE}";
 
 echo -e ">>> Additional args: ${ARGS}";
 
-export PATH=$HOME/software/bin:$PATH;
-export 
+export PATH="$HOME/software/bin:$PATH";
+
+
+export IMAGE_SIZE;
+export BATCH_SIZE;
+export DATA_DIR_TF="$DIR_RAINFALL";
+export PATH_HEIGHTMAP;
+export PATH_COLOURMAP;
+export STEPS_PER_EPOCH;
+export DIR_OUTPUT="$dir_output";
+
 
 echo ">>> Installing requirements";
 conda run -n py38 pip install -r requirements.txt;
