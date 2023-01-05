@@ -29,7 +29,7 @@ def parse_item(metadata, output_size=100, input_size="same", water_threshold=0.1
 	rainfall_offset_x = math.ceil((rainfall_width_source - input_size) / 2)
 	rainfall_offset_y = math.ceil((rainfall_height_source - input_size) / 2)
 	
-	print("DEBUG DATASET:rainfall shape", metadata["rainfallradar"], "/", f"{rainfall_width_source} h{rainfall_height_source}")
+	print("DEBUG DATASET:rainfall shape", metadata["rainfallradar"], "/", f"w {rainfall_width_source} h {rainfall_height_source}")
 	print("DEBUG DATASET:water shape", metadata["waterdepth"])
 	print("DEBUG DATASET:water_threshold", water_threshold)
 	print("DEBUG DATASET:water_bins", water_bins)
@@ -44,6 +44,7 @@ def parse_item(metadata, output_size=100, input_size="same", water_threshold=0.1
 		heightmap_max = tf.math.reduce_max(heightmap)
 		heightmap_min = tf.math.reduce_min(tf.where(tf.math.less(heightmap, -500), heightmap, tf.fill(heightmap.shape, 0.0)))
 		heightmap = (heightmap - heightmap_min) / heightmap_max
+		heightmap = tf.transpose(heightmap, [1, 0, 2]) # [width, height] → [height, width]
 	
 	def parse_item_inner(item):
 		parsed = tf.io.parse_single_example(item, features={
@@ -58,13 +59,14 @@ def parse_item(metadata, output_size=100, input_size="same", water_threshold=0.1
 		water = tf.reshape(water, tf.constant(metadata["waterdepth"], dtype=tf.int32))
 		
 		# Apparently the water depth data is also in HW instead of WH.... sighs
-		water = tf.transpose(water, [1, 0])
+		# * YES IT IS, BUT TENSORFLOW *wants* NHWC NOT NWHC....!
+		# water = tf.transpose(water, [1, 0])
 		
-		# [channels, height, weight] → [width, height, channels] - ref ConvNeXt does not support data_format=channels_first
+		# [channels, height, weight] → [height, width, channels] - ref ConvNeXt does not support data_format=channels_first
 		# BUG: For some reasons we have data that's not transposed correctly still!! O.o
 		# I can't believe in this entire project I have yet to get the rotation of the rainfall radar data correct....!
 		# %TRANSPOSE%
-		rainfall = tf.transpose(rainfall, [2, 1, 0])
+		rainfall = tf.transpose(rainfall, [1, 2, 0])
 		if heightmap is not None:
 			rainfall = tf.concat([rainfall, heightmap], axis=-1)
 		if rainfall_scale_up > 1:
@@ -78,7 +80,7 @@ def parse_item(metadata, output_size=100, input_size="same", water_threshold=0.1
 			)
 		
 		# rainfall = tf.image.resize(rainfall, tf.cast(tf.constant(metadata["rainfallradar"]) / 2, dtype=tf.int32))
-		water = tf.expand_dims(water, axis=-1) # [width, height] → [width, height, channels=1]
+		water = tf.expand_dims(water, axis=-1) # [height, width] → [height, width, channels=1]
 		water = tf.image.crop_to_bounding_box(water,
 			offset_width=water_offset_x,
 			offset_height=water_offset_y,
