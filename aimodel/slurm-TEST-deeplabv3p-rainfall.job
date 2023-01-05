@@ -27,7 +27,7 @@ show_help() {
 	echo -e "....where:" >&2;
 	echo -e "    IMAGE_SIZE=128		Optional. Sets the size of the 'images' that the DeepLabV3+ model will work with." >&2;
 	echo -e "    BATCH_SIZE=64		Optional. Sets the batch size to train the model with." >&2;
-	echo -e "    DIR_RAINFALL		The path to the directory the .tfrecord files containing the rainfall radar data." >&2;
+	echo -e "    DIR_RAINFALLWATER	The path to the directory the .tfrecord files containing the rainfall radar / water depth data." >&2;
 	echo -e "    PATH_HEIGHTMAP 	The path to the heightmap jsonl file to read in." >&2;
 	echo -e "    PATH_COLOURMAP 	The path to the colourmap for predictive purposes." >&2;
 	echo -e "    STEPS_PER_EPOCH	The number of steps to consider an epoch. Defaults to None, which means use the entire dataset." >&2;
@@ -40,7 +40,7 @@ show_help() {
 	exit;
 }
 
-DIR_RAINFALL="${DIR_RAINFALL:-$HOME/rainfallwater_records_tfrecord}";
+DIR_RAINFALLWATER="${DIR_RAINFALLWATER:-$HOME/rainfallwater_records_tfrecord}";
 PATH_HEIGHTMAP="${PATH_HEIGHTMAP:-$HOME/data/terrain50-nimrodsized.json.gz}";
 PATH_COLOURMAP="${PATH_COLOURMAP:-$HOME/instance-level-human-parsing/instance-level_human_parsing/human_colormap.mat}";
 
@@ -51,16 +51,16 @@ if [[ -n "${POSTFIX}" ]]; then
 	CODE="${CODE}_${POSTFIX}";
 fi
 
-dir_output="output/$(date -u --rfc-3339=date)_${CODE}";
+DIR_OUTPUT="output/$(date -u --rfc-3339=date)_${CODE}";
 
 echo -e ">>> Additional args: ${ARGS}";
 
 export PATH=$HOME/software/bin:$PATH;
-export 
+export IMAGE_SIZE BATCH_SIZE DIR_RAINFALLWATER PATH_HEIGHTMAP COLOURMAP STEPS_PER_EPOCH DIR_OUTPUT;
 
 echo ">>> Installing requirements";
 conda run -n py38 pip install -r requirements.txt;
 echo ">>> Training model";
 #shellcheck disable=SC2086
-/usr/bin/env time -v conda run -n py38 src/deeplabv3_plus_test.py
+/usr/bin/env time -v conda run -n py38 src/deeplabv3_plus_test_rainfall.py
 echo ">>> exited with code $?";
