@@ -20,7 +20,7 @@ BATCH_SIZE = int(os.environ["BATCH_SIZE"]) if "BATCH_SIZE" in os.environ else 64
 NUM_CLASSES = 2
 DIR_RAINFALLWATER = os.environ["DIR_RAINFALLWATER"]
 PATH_HEIGHTMAP = os.environ["PATH_HEIGHTMAP"]
-PATH_COLOURMAP = os.environ["COLOURMAP"]
+PATH_COLOURMAP = os.environ["PATH_COLOURMAP"]
 STEPS_PER_EPOCH = int(os.environ["STEPS_PER_EPOCH"]) if "STEPS_PER_EPOCH" in os.environ else None
 
 DIR_OUTPUT=os.environ["DIR_OUTPUT"] if "DIR_OUTPUT" in os.environ else f"output/{datetime.utcnow().date().isoformat()}_deeplabv3plus_rainfall_TEST"
