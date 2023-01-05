@@ -15,6 +15,8 @@ import matplotlib.pyplot as plt
 
 import tensorflow as tf
 
+from lib.dataset.dataset_mono import dataset_mono
+
 IMAGE_SIZE = int(os.environ["IMAGE_SIZE"]) if "IMAGE_SIZE" in os.environ else 128 # was 512; 128 is the highest power of 2 that fits the data
 BATCH_SIZE = int(os.environ["BATCH_SIZE"]) if "BATCH_SIZE" in os.environ else 64
 NUM_CLASSES = 2
