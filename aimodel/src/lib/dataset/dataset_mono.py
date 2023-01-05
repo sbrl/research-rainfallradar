@@ -24,10 +24,12 @@ def parse_item(metadata, output_size=100, input_size="same", water_threshold=0.1
 	water_offset_y = math.ceil((water_height_source - output_size) / 2)
 	
 	_, rainfall_height_source, rainfall_width_source = metadata["rainfallradar"]
+	rainfall_height_source *= rainfall_scale_up
+	rainfall_width_source *= rainfall_scale_up
 	rainfall_offset_x = math.ceil((rainfall_width_source - input_size) / 2)
 	rainfall_offset_y = math.ceil((rainfall_height_source - input_size) / 2)
 	
-	print("DEBUG DATASET:rainfall shape", metadata["rainfallradar"])
+	print("DEBUG DATASET:rainfall shape", metadata["rainfallradar"], "/", f"{rainfall_width_source} h{rainfall_height_source}")
 	print("DEBUG DATASET:water shape", metadata["waterdepth"])
 	print("DEBUG DATASET:water_threshold", water_threshold)
 	print("DEBUG DATASET:water_bins", water_bins)
