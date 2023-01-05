@@ -26,7 +26,7 @@ def parse_item(metadata, shape_water_desired, dummy_label=True):
 		})
 		rainfall = tf.io.parse_tensor(parsed["rainfallradar"], out_type=tf.float32)
 		water = tf.io.parse_tensor(parsed["waterdepth"], out_type=tf.float32)
-		# [channels, width, height] → [width, height, channels] - ref ConvNeXt does not support data_format=channels_first
+		# [channels, height, width] → [height, width, channels] - ref ConvNeXt does not support data_format=channels_first
 		
 		rainfall = tf.reshape(rainfall, tf.constant(metadata["rainfallradar"], dtype=tf.int32))
 		water = tf.reshape(water, tf.constant(metadata["waterdepth"], dtype=tf.int32))
@@ -34,8 +34,13 @@ def parse_item(metadata, shape_water_desired, dummy_label=True):
 		rainfall = tf.transpose(rainfall, [1, 2, 0]) # channels_first → channels_last
 		# rainfall = tf.image.resize(rainfall, tf.cast(tf.constant(metadata["rainfallradar"]) / 2, dtype=tf.int32))
 		
-		water = tf.expand_dims(water, axis=-1) # [width, height] → [width, height, channels]
-		water = tf.image.crop_to_bounding_box(water, water_offset_x, water_offset_y, water_width_target, water_height_target)
+		water = tf.expand_dims(water, axis=-1) # [height, width] → [height, width, channels]
+		water = tf.image.crop_to_bounding_box(water,
+			offset_height=water_offset_y,
+			offset_width =water_offset_x,
+			target_height=water_height_target,
+			target_width =water_width_target,
+		)
 		
 		print("DEBUG:dataset ITEM rainfall:shape", rainfall.shape, "water:shape", water.shape)
 		# TODO: Any other additional parsing here, since multiple .map() calls are not optimal

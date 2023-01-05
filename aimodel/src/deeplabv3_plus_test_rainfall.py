@@ -123,7 +123,7 @@ def DeeplabV3Plus(image_size, num_classes, num_channels=3):
     return tf.keras.Model(inputs=model_input, outputs=model_output)
 
 
-model = DeeplabV3Plus(image_size=IMAGE_SIZE, num_classes=NUM_CLASSES)
+model = DeeplabV3Plus(image_size=IMAGE_SIZE, num_classes=NUM_CLASSES, num_channels=8)
 summarywriter(model, os.path.join(DIR_OUTPUT, "summary.txt"))
 
 
