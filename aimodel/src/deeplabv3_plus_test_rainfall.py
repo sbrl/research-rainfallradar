@@ -153,7 +153,7 @@ history = model.fit(dataset_train,
 			separator="\t"
 		),
 		CallbackCustomModelCheckpoint(
-			model_to_checkpoint=model_predict,
+			model_to_checkpoint=model,
 			filepath=os.path.join(
 				DIR_OUTPUT,
 				"checkpoints"
