@@ -252,10 +252,10 @@ def plot_predictions(filepath, input_items, colormap, model):
 	for input_tensor in input_items:
 		prediction_mask = infer(image_tensor=input_tensor, model=model)
 		prediction_colormap = decode_segmentation_masks(prediction_mask, colormap, 20)
-		overlay = get_overlay(input_tensor, prediction_colormap)
+		
 		plot_samples_matplotlib(
 			filepath,
-			[input_tensor, overlay, prediction_colormap],
+			[input_tensor, prediction_colormap],
 			figsize=(18, 14)
 		)
 
