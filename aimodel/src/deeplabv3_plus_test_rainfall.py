@@ -163,7 +163,7 @@ if PATH_CHECKPOINT is None:
 				model_to_checkpoint=model,
 				filepath=os.path.join(
 					DIR_OUTPUT,
-					"checkpoints"
+					"checkpoints",
 					"checkpoint_e{epoch:d}_loss{loss:.3f}.hdf5"
 				),
 				monitor="loss"
