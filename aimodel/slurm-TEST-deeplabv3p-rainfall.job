@@ -30,6 +30,7 @@ show_help() {
 	echo -e "    DIR_RAINFALLWATER	The path to the directory the .tfrecord files containing the rainfall radar / water depth data." >&2;
 	echo -e "    PATH_HEIGHTMAP 	The path to the heightmap jsonl file to read in." >&2;
 	echo -e "    PATH_COLOURMAP 	The path to the colourmap for predictive purposes." >&2;
+	echo -e "    PATH_CHECKPOINT 	The path to a checkcpoint to load. If specified, a model will be loaded instead of being trained." >&2;
 	echo -e "    STEPS_PER_EPOCH	The number of steps to consider an epoch. Defaults to None, which means use the entire dataset." >&2;
 	echo -e "    POSTFIX			Postfix to append to the output dir (auto calculated)." >&2;
 	echo -e "    ARGS				Optional. Any additional arguments to pass to the python program." >&2;
