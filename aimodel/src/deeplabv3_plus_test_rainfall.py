@@ -262,7 +262,10 @@ def plot_predictions(filepath, input_items, colormap, model):
 		
 		plot_samples_matplotlib(
 			filepath,
-			[input_tensor, prediction_colormap],
+			[
+				# input_tensor,
+				prediction_colormap
+			],
 			figsize=(18, 14)
 		)
 
