@@ -247,6 +247,8 @@ def get_overlay(image, coloured_mask):
 
 def plot_samples_matplotlib(filepath, display_list, figsize=(5, 3)):
 	_, axes = plt.subplots(nrows=1, ncols=len(display_list), figsize=figsize)
+	if not isinstance(axes, list):
+		axes = [ axes ]
 	for i in range(len(display_list)):
 		if display_list[i].shape[-1] == 3:
 			axes[i].imshow(tf.keras.preprocessing.image.array_to_img(display_list[i]))
