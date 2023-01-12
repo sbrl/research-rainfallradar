@@ -25,6 +25,9 @@ DIR_RAINFALLWATER = os.environ["DIR_RAINFALLWATER"]
 PATH_HEIGHTMAP = os.environ["PATH_HEIGHTMAP"]
 PATH_COLOURMAP = os.environ["PATH_COLOURMAP"]
 STEPS_PER_EPOCH = int(os.environ["STEPS_PER_EPOCH"]) if "STEPS_PER_EPOCH" in os.environ else None
+EPOCHS = int(os.environ["EPOCHS"]) if "EPOCHS" in os.environ else 25
+PREDICT_COUNT = int(os.environ["PREDICT_COUNT"]) if "PREDICT_COUNT" in os.environ else 4
+
 
 DIR_OUTPUT=os.environ["DIR_OUTPUT"] if "DIR_OUTPUT" in os.environ else f"output/{datetime.utcnow().date().isoformat()}_deeplabv3plus_rainfall_TEST"
 
@@ -39,8 +42,10 @@ logger.info(f"> DIR_RAINFALLWATER {DIR_RAINFALLWATER}")
 logger.info(f"> PATH_HEIGHTMAP {PATH_HEIGHTMAP}")
 logger.info(f"> PATH_COLOURMAP {PATH_COLOURMAP}")
 logger.info(f"> STEPS_PER_EPOCH {STEPS_PER_EPOCH}")
+logger.info(f"> EPOCHS {EPOCHS}")
 logger.info(f"> DIR_OUTPUT {DIR_OUTPUT}")
 logger.info(f"> PATH_CHECKPOINT {PATH_CHECKPOINT}")
+logger.info(f"> PREDICT_COUNT {PREDICT_COUNT}")
 
 
 dataset_train, dataset_validate = dataset_mono(
@@ -153,7 +158,7 @@ if PATH_CHECKPOINT is None:
 	logger.info(">>> Beginning training")
 	history = model.fit(dataset_train,
 		validation_data=dataset_validate,
-		epochs=25,
+		epochs=EPOCHS,
 		callbacks=[
 			tf.keras.callbacks.CSVLogger(
 				filename=os.path.join(DIR_OUTPUT, "metrics.tsv"),
@@ -287,13 +292,13 @@ def get_from_batched(dataset, count):
 
 plot_predictions(
 	os.path.join(DIR_OUTPUT, "predict_train_$$.png"),
-	get_from_batched(dataset_train, 4),
+	get_from_batched(dataset_train, PREDICT_COUNT),
 	colormap,
 	model=model
 )
 plot_predictions(
 	os.path.join(DIR_OUTPUT, "predict_validate_$$.png"),
-	get_from_batched(dataset_validate, 4),
+	get_from_batched(dataset_validate, PREDICT_COUNT),
 	colormap,
 	model=model
 )

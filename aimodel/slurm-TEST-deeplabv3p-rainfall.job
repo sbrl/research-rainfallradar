@@ -32,6 +32,8 @@ show_help() {
 	echo -e "    PATH_COLOURMAP 	The path to the colourmap for predictive purposes." >&2;
 	echo -e "    PATH_CHECKPOINT 	The path to a checkcpoint to load. If specified, a model will be loaded instead of being trained." >&2;
 	echo -e "    STEPS_PER_EPOCH	The number of steps to consider an epoch. Defaults to None, which means use the entire dataset." >&2;
+	echo -e "    EPOCHS				The number of epochs to train for." >&2;
+	echo -e "    PREDICT_COUNT		The number of items from the (SCRAMBLED) dataset to make a prediction for." >&2;
 	echo -e "    POSTFIX			Postfix to append to the output dir (auto calculated)." >&2;
 	echo -e "    ARGS				Optional. Any additional arguments to pass to the python program." >&2;
 	echo -e "" >&2;
@@ -57,7 +59,7 @@ DIR_OUTPUT="output/$(date -u --rfc-3339=date)_${CODE}";
 echo -e ">>> Additional args: ${ARGS}";
 
 export PATH=$HOME/software/bin:$PATH;
-export IMAGE_SIZE BATCH_SIZE DIR_RAINFALLWATER PATH_HEIGHTMAP PATH_COLOURMAP STEPS_PER_EPOCH DIR_OUTPUT PATH_CHECKPOINT;
+export IMAGE_SIZE BATCH_SIZE DIR_RAINFALLWATER PATH_HEIGHTMAP PATH_COLOURMAP STEPS_PER_EPOCH DIR_OUTPUT PATH_CHECKPOINT EPOCHS;
 
 echo ">>> Installing requirements";
 conda run -n py38 pip install -q -r requirements.txt;
