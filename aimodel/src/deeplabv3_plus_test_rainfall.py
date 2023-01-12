@@ -265,7 +265,7 @@ def plot_predictions(filepath, input_items, colormap, model):
 		print("DEBUG:plot_predictions INFER", prediction_mask)
 		
 		plot_samples_matplotlib(
-			filepath.replace("$$", i),
+			filepath.replace("$$", str(i)),
 			[
 				# input_tensor,
 				input_pair[1], #label_colourmap
