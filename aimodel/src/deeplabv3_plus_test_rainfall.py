@@ -245,14 +245,14 @@ def get_overlay(image, coloured_mask):
 	return overlay
 
 
-def plot_samples_matplotlib(filepath, display_list, figsize=(5, 3)):
+def plot_samples_matplotlib(filepath, display_list):
 	for i in range(len(display_list)):
 		plt.subplot(1, len(display_list), i+1)
 		if display_list[i].shape[-1] == 3:
 			plt.imshow(tf.keras.preprocessing.image.array_to_img(display_list[i]))
 		else:
 			plt.imshow(display_list[i])
-	plt.savefig(filepath)
+	plt.savefig(filepath, dpi=200)
 
 
 def plot_predictions(filepath, input_items, colormap, model):
@@ -270,8 +270,7 @@ def plot_predictions(filepath, input_items, colormap, model):
 				# input_tensor,
 				input_pair[1], #label_colourmap
 				prediction_colormap
-			],
-			figsize=(18, 14)
+			]
 		)
 		i += 1
 
