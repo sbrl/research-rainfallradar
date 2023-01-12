@@ -267,7 +267,7 @@ def plot_predictions(filepath, input_items, colormap, model):
 		# label_colourmap = decode_segmentation_masks(input_pair[1], colormap, 2)
 		prediction_colormap = decode_segmentation_masks(prediction_mask, colormap, 2)
 		
-		print("DEBUG:plot_predictions INFER", str(prediction_mask.numpy().tolist()).replace("], [", "],\n["))
+		# print("DEBUG:plot_predictions INFER", str(prediction_mask.numpy().tolist()).replace("], [", "],\n["))
 		
 		plot_samples_matplotlib(
 			filepath.replace("$$", str(i)),
