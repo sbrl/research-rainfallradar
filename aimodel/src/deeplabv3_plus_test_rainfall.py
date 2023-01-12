@@ -268,7 +268,7 @@ def plot_predictions(filepath, input_items, colormap, model):
 			filepath,
 			[
 				# input_tensor,
-				input_items[1], #label_colourmap
+				input_pair[1], #label_colourmap
 				prediction_colormap
 			],
 			figsize=(18, 14)
