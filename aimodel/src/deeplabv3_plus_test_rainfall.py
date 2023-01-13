@@ -17,6 +17,7 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 
 from lib.dataset.dataset_mono import dataset_mono
+from lib.ai.components.LossCrossEntropyDice import LossCrossEntropyDice
 
 IMAGE_SIZE = int(os.environ["IMAGE_SIZE"]) if "IMAGE_SIZE" in os.environ else 128 # was 512; 128 is the highest power of 2 that fits the data
 BATCH_SIZE = int(os.environ["BATCH_SIZE"]) if "BATCH_SIZE" in os.environ else 64
@@ -27,12 +28,12 @@ PATH_COLOURMAP = os.environ["PATH_COLOURMAP"]
 STEPS_PER_EPOCH = int(os.environ["STEPS_PER_EPOCH"]) if "STEPS_PER_EPOCH" in os.environ else None
 REMOVE_ISOLATED_PIXELS = FALSE if "NO_REMOVE_ISOLATED_PIXELS" in os.environ else True
 EPOCHS = int(os.environ["EPOCHS"]) if "EPOCHS" in os.environ else 25
-PREDICT_COUNT = int(os.environ["PREDICT_COUNT"]) if "PREDICT_COUNT" in os.environ else 4
-
+LOSS = os.environ["LOSS"] if "LOSS" in os.environ else "cross-entropy"
 
 DIR_OUTPUT=os.environ["DIR_OUTPUT"] if "DIR_OUTPUT" in os.environ else f"output/{datetime.utcnow().date().isoformat()}_deeplabv3plus_rainfall_TEST"
 
 PATH_CHECKPOINT = os.environ["PATH_CHECKPOINT"] if "PATH_CHECKPOINT" in os.environ else None
+PREDICT_COUNT = int(os.environ["PREDICT_COUNT"]) if "PREDICT_COUNT" in os.environ else 4
 
 if not os.path.exists(DIR_OUTPUT):
 	os.makedirs(os.path.join(DIR_OUTPUT, "checkpoints"))
@@ -45,7 +46,10 @@ logger.info(f"> PATH_COLOURMAP {PATH_COLOURMAP}")
 logger.info(f"> STEPS_PER_EPOCH {STEPS_PER_EPOCH}")
 logger.info(f"> REMOVE_ISOLATED_PIXELS {REMOVE_ISOLATED_PIXELS} [NO_REMOVE_ISOLATED_PIXELS]")
 logger.info(f"> EPOCHS {EPOCHS}")
+logger.info(f"> LOSS {LOSS}")
+
 logger.info(f"> DIR_OUTPUT {DIR_OUTPUT}")
+
 logger.info(f"> PATH_CHECKPOINT {PATH_CHECKPOINT}")
 logger.info(f"> PREDICT_COUNT {PREDICT_COUNT}")
 
@@ -152,10 +156,17 @@ else:
 #    ██    ██   ██ ██   ██ ██ ██   ████ ██ ██   ████  ██████  
 
 if PATH_CHECKPOINT is None:
-	loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
+	loss_fn = None
+	if LOSS == "cross-entropy-dice":
+		loss_fn = LossCrossEntropyDice()
+	elif LOSS == "cross-entropy":
+		tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
+	else:
+		raise Exception(f"Error: Unknown loss function '{LOSS}' (possible values: cross-entropy, cross-entropy-dice).")
+	
 	model.compile(
 		optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
-		loss=loss,
+		loss=loss_fn,
 		metrics=["accuracy"],
 	)
 	logger.info(">>> Beginning training")

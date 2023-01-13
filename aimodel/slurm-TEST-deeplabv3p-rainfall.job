@@ -30,10 +30,11 @@ show_help() {
 	echo -e "    DIR_RAINFALLWATER	The path to the directory the .tfrecord files containing the rainfall radar / water depth data." >&2;
 	echo -e "    PATH_HEIGHTMAP 	The path to the heightmap jsonl file to read in." >&2;
 	echo -e "    PATH_COLOURMAP 	The path to the colourmap for predictive purposes." >&2;
-	echo -e "    PATH_CHECKPOINT 	The path to a checkcpoint to load. If specified, a model will be loaded instead of being trained." >&2;
 	echo -e "    STEPS_PER_EPOCH	The number of steps to consider an epoch. Defaults to None, which means use the entire dataset." >&2;
 	echo -e "    NO_REMOVE_ISOLATED_PIXELS	Set to any value to avoid the engine from removing isolated pixels - that is, water pixels with no other surrounding pixels, either side to side to diagonally." >&2;
 	echo -e "    EPOCHS				The number of epochs to train for." >&2;
+	echo -e "    LOSS               The loss function to use. Default: cross-entropy (possible values: cross-entropy, cross-entropy-dice)." >&2;
+	echo -e "    PATH_CHECKPOINT 	The path to a checkcpoint to load. If specified, a model will be loaded instead of being trained." >&2;
 	echo -e "    PREDICT_COUNT		The number of items from the (SCRAMBLED) dataset to make a prediction for." >&2;
 	echo -e "    POSTFIX			Postfix to append to the output dir (auto calculated)." >&2;
 	echo -e "    ARGS				Optional. Any additional arguments to pass to the python program." >&2;
@@ -60,7 +61,7 @@ DIR_OUTPUT="output/$(date -u --rfc-3339=date)_${CODE}";
 echo -e ">>> Additional args: ${ARGS}";
 
 export PATH=$HOME/software/bin:$PATH;
-export IMAGE_SIZE BATCH_SIZE DIR_RAINFALLWATER PATH_HEIGHTMAP PATH_COLOURMAP STEPS_PER_EPOCH DIR_OUTPUT PATH_CHECKPOINT EPOCHS PREDICT_COUNT NO_REMOVE_ISOLATED_PIXELS;
+export IMAGE_SIZE BATCH_SIZE DIR_RAINFALLWATER PATH_HEIGHTMAP PATH_COLOURMAP STEPS_PER_EPOCH DIR_OUTPUT PATH_CHECKPOINT EPOCHS PREDICT_COUNT NO_REMOVE_ISOLATED_PIXELS LOSS;
 
 echo ">>> Installing requirements";
 conda run -n py38 pip install -q -r requirements.txt;
