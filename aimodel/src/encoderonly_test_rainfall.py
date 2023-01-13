@@ -101,7 +101,7 @@ summarywriter(model, os.path.join(DIRPATH_OUTPUT, "summary.txt"))
 #    ██    ██   ██ ██   ██ ██ ██  ██ ██ ██ ██  ██ ██ ██    ██ 
 #    ██    ██   ██ ██   ██ ██ ██   ████ ██ ██   ████  ██████  
 
-model.fit(dataset_train,
+history = model.fit(dataset_train,
 	validation_data=dataset_validate,
 	epochs=25,
 
@@ -124,6 +124,36 @@ model.fit(dataset_train,
 )
 logger.info(">>> Training complete")
 
+logger.info(">>> Plotting graphs")
+
+plt.plot(history.history["loss"])
+plt.title("Training Loss")
+plt.ylabel("loss")
+plt.xlabel("epoch")
+plt.savefig(os.path.join(DIRPATH_OUTPUT, "loss.png"))
+plt.close()
+
+plt.plot(history.history["accuracy"])
+plt.title("Training Accuracy")
+plt.ylabel("accuracy")
+plt.xlabel("epoch")
+plt.savefig(os.path.join(DIRPATH_OUTPUT, "acc.png"))
+plt.close()
+
+plt.plot(history.history["val_loss"])
+plt.title("Validation Loss")
+plt.ylabel("val_loss")
+plt.xlabel("epoch")
+plt.savefig(os.path.join(DIRPATH_OUTPUT, "val_loss.png"))
+plt.close()
+
+plt.plot(history.history["val_accuracy"])
+plt.title("Validation Accuracy")
+plt.ylabel("val_accuracy")
+plt.xlabel("epoch")
+plt.savefig(os.path.join(DIRPATH_OUTPUT, "val_acc.png"))
+plt.close()
+
 
 # ██████  ██████  ███████ ██████  ██  ██████ ████████ ██  ██████  ███    ██
 # ██   ██ ██   ██ ██      ██   ██ ██ ██         ██    ██ ██    ██ ████   ██
@@ -132,8 +162,8 @@ logger.info(">>> Training complete")
 # ██      ██   ██ ███████ ██████  ██  ██████    ██    ██  ██████  ██   ████
 
 
+logger.info("Predictions coming soon.")
 # TODO FILL THIS IN
-
 
 
 # █████ █████ █████ █████ █████ █████ █████ █████ █████
