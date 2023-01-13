@@ -29,6 +29,7 @@ STEPS_PER_EPOCH = int(os.environ["STEPS_PER_EPOCH"]) if "STEPS_PER_EPOCH" in os.
 REMOVE_ISOLATED_PIXELS = FALSE if "NO_REMOVE_ISOLATED_PIXELS" in os.environ else True
 EPOCHS = int(os.environ["EPOCHS"]) if "EPOCHS" in os.environ else 25
 LOSS = os.environ["LOSS"] if "LOSS" in os.environ else "cross-entropy"
+LEARNING_RATE = float(os.environ["LEARNING_RATE"]) if "LEARNING_RATE" in os.environ else 0.001
 
 DIR_OUTPUT=os.environ["DIR_OUTPUT"] if "DIR_OUTPUT" in os.environ else f"output/{datetime.utcnow().date().isoformat()}_deeplabv3plus_rainfall_TEST"
 
@@ -165,7 +166,7 @@ if PATH_CHECKPOINT is None:
 		raise Exception(f"Error: Unknown loss function '{LOSS}' (possible values: cross-entropy, cross-entropy-dice).")
 	
 	model.compile(
-		optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
+		optimizer=tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE),
 		loss=loss_fn,
 		metrics=["accuracy"],
 	)
