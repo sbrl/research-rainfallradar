@@ -9,7 +9,7 @@ import tensorflow as tf
 from lib.dataset.read_metadata import read_metadata
 
 from ..io.readfile import readfile
-from .shuffle import shuffle
+from .primitives.shuffle import shuffle
 
 
 
