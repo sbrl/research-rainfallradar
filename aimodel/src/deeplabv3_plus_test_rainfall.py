@@ -58,7 +58,7 @@ dataset_train, dataset_validate = dataset_mono(
 	output_size=IMAGE_SIZE,
 	input_size="same",
 	filepath_heightmap=PATH_HEIGHTMAP,
-	remove_isolated_pixels=REMOVE_ISOLATED_PIXELS
+	do_remove_isolated_pixels=REMOVE_ISOLATED_PIXELS
 )
 
 logger.info("Train Dataset:", dataset_train)
