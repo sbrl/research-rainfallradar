@@ -26,7 +26,7 @@ class LossCrossEntropyDice(tf.keras.losses.Loss):
 	"""
 
 	def __init__(self, **kwargs):
-		super(LossDice, self).__init__(**kwargs)
+		super(LossCrossEntropyDice, self).__init__(**kwargs)
 
 	def call(self, y_true, y_pred):
 		y_true = tf.cast(y_true, tf.float32)
@@ -34,7 +34,7 @@ class LossCrossEntropyDice(tf.keras.losses.Loss):
 		return tf.reduce_mean(o)
 
 	def get_config(self):
-		config = super(LossDice, self).get_config()
+		config = super(LossCrossEntropyDice, self).get_config()
 		config.update({
 			
 		})
