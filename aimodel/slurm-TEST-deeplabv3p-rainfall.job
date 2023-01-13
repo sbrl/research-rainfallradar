@@ -5,7 +5,7 @@
 #SBATCH --gres=gpu:1
 #SBATCH -o %j.%N.%a.deeplab-rainfall.out.log
 #SBATCH -e %j.%N.%a.deeplab-rainfall.err.log
-#SBATCH -p gpu05,gpu
+#SBATCH -p gpu
 #SBATCH --time=5-00:00:00
 #SBATCH --mem=30000
 # ---> in MiB
