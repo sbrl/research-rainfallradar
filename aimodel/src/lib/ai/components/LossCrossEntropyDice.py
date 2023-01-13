@@ -31,7 +31,7 @@ class LossCrossEntropyDice(tf.keras.losses.Loss):
 	
 	def call(self, y_true, y_pred):
 		y_true = tf.cast(y_true, tf.float32)
-		y_true = tf.one_hot(y_true, 2) # Input is sparse
+		y_true = tf.cast(tf.one_hot(y_true, 2), dtype=tf.int32) # Input is sparse
 		o = tf.nn.sigmoid_cross_entropy_with_logits(y_true, y_pred) + dice_loss(y_true, y_pred)
 		return tf.reduce_mean(o)
 	
