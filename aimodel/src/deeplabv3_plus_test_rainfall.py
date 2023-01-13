@@ -25,6 +25,7 @@ DIR_RAINFALLWATER = os.environ["DIR_RAINFALLWATER"]
 PATH_HEIGHTMAP = os.environ["PATH_HEIGHTMAP"]
 PATH_COLOURMAP = os.environ["PATH_COLOURMAP"]
 STEPS_PER_EPOCH = int(os.environ["STEPS_PER_EPOCH"]) if "STEPS_PER_EPOCH" in os.environ else None
+REMOVE_ISOLATED_PIXELS = FALSE if "NO_REMOVE_ISOLATED_PIXELS" in os.environ else True
 EPOCHS = int(os.environ["EPOCHS"]) if "EPOCHS" in os.environ else 25
 PREDICT_COUNT = int(os.environ["PREDICT_COUNT"]) if "PREDICT_COUNT" in os.environ else 4
 
@@ -42,6 +43,7 @@ logger.info(f"> DIR_RAINFALLWATER {DIR_RAINFALLWATER}")
 logger.info(f"> PATH_HEIGHTMAP {PATH_HEIGHTMAP}")
 logger.info(f"> PATH_COLOURMAP {PATH_COLOURMAP}")
 logger.info(f"> STEPS_PER_EPOCH {STEPS_PER_EPOCH}")
+logger.info(f"> REMOVE_ISOLATED_PIXELS {REMOVE_ISOLATED_PIXELS} [NO_REMOVE_ISOLATED_PIXELS]")
 logger.info(f"> EPOCHS {EPOCHS}")
 logger.info(f"> DIR_OUTPUT {DIR_OUTPUT}")
 logger.info(f"> PATH_CHECKPOINT {PATH_CHECKPOINT}")
@@ -56,6 +58,7 @@ dataset_train, dataset_validate = dataset_mono(
 	output_size=IMAGE_SIZE,
 	input_size="same",
 	filepath_heightmap=PATH_HEIGHTMAP,
+	remove_isolated_pixels=REMOVE_ISOLATED_PIXELS
 )
 
 logger.info("Train Dataset:", dataset_train)

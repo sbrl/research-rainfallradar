@@ -9,13 +9,13 @@ import tensorflow as tf
 from lib.dataset.read_metadata import read_metadata
 
 from ..io.readfile import readfile
-from .shuffle import shuffle
 from .parse_heightmap import parse_heightmap
-
+from .primitives.shuffle import shuffle
+from .primitives.remove_isolated_pixels import remove_isolated_pixels
 
 
 # TO PARSE:
-def parse_item(metadata, output_size=100, input_size="same", water_threshold=0.1, water_bins=2, heightmap=None, rainfall_scale_up=1):
+def parse_item(metadata, output_size=100, input_size="same", water_threshold=0.1, water_bins=2, heightmap=None, rainfall_scale_up=1, remove_isolated_pixels=True):
 	if input_size == "same":
 		input_size = output_size # This is almost always the case with e.g. the DeepLabV3+ model
 	
@@ -91,11 +91,13 @@ def parse_item(metadata, output_size=100, input_size="same", water_threshold=0.1
 		print("DEBUG:dataset BEFORE_SQUEEZE water", water.shape)
 		water = tf.squeeze(water)
 		print("DEBUG:dataset AFTER_SQUEEZE water", water.shape)
-		# LOSS cross entropy
+		# ONE-HOT [LOSS cross entropy]
 		# water = tf.cast(tf.math.greater_equal(water, water_threshold), dtype=tf.int32)
 		# water = tf.one_hot(water, water_bins, axis=-1, dtype=tf.int32)
-		# LOSS dice
+		# SPARSE [LOSS dice]
 		water = tf.cast(tf.math.greater_equal(water, water_threshold), dtype=tf.float32)
+		if remove_isolated_pixels:
+			water = remove_isolated_pixels(water)
 		
 		print("DEBUG DATASET_OUT:rainfall shape", rainfall.shape)
 		print("DEBUG DATASET_OUT:water shape", water.shape)
