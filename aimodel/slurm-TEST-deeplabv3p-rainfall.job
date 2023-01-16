@@ -34,8 +34,8 @@ show_help() {
 	echo -e "    NO_REMOVE_ISOLATED_PIXELS	Set to any value to avoid the engine from removing isolated pixels - that is, water pixels with no other surrounding pixels, either side to side to diagonally." >&2;
 	echo -e "    EPOCHS				The number of epochs to train for." >&2;
 	echo -e "    LOSS               The loss function to use. Default: cross-entropy (possible values: cross-entropy, cross-entropy-dice)." >&2;
-	echo -e "    LEARNING_RATE      The learning rate to use. Default: 0.001." >&2;
 	echo -e "    PATH_CHECKPOINT 	The path to a checkcpoint to load. If specified, a model will be loaded instead of being trained." >&2;
+	echo -e "    LEARNING_RATE      The learning rate to use. Default: 0.001." >&2;
 	echo -e "    PREDICT_COUNT		The number of items from the (SCRAMBLED) dataset to make a prediction for." >&2;
 	echo -e "    POSTFIX			Postfix to append to the output dir (auto calculated)." >&2;
 	echo -e "    ARGS				Optional. Any additional arguments to pass to the python program." >&2;
@@ -59,6 +59,10 @@ fi
 
 DIR_OUTPUT="output/$(date -u --rfc-3339=date)_${CODE}";
 
+mkdir -p "${DIR_OUTPUT}";
+
+echo -e ">>> NOW: $(date)";
+echo -e ">>> DIR_OUTPUT: ${DIR_OUTPUT}";
 echo -e ">>> Additional args: ${ARGS}";
 
 export PATH=$HOME/software/bin:$PATH;
@@ -67,6 +71,6 @@ export IMAGE_SIZE BATCH_SIZE DIR_RAINFALLWATER PATH_HEIGHTMAP PATH_COLOURMAP STE
 echo ">>> Installing requirements";
 conda run -n py38 pip install -q -r requirements.txt;
 echo ">>> Training model";
-#shellcheck disable=SC2086
-/usr/bin/env time -v conda run -n py38 src/deeplabv3_plus_test_rainfall.py
+#shellcheck disable=SC2016
+/usr/bin/env time -v conda run -n py38 bash -c 'src/deeplabv3_plus_test_rainfall.py >>"${DIR_OUTPUT}/experiment.${SLURM_JOB_ID}.out.log" >>"${DIR_OUTPUT}/experiment.${SLURM_JOB_ID}.err.log"';
 echo ">>> exited with code $?";
