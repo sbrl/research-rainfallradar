@@ -19,6 +19,9 @@ import tensorflow as tf
 from lib.dataset.dataset_mono import dataset_mono
 from lib.ai.components.LossCrossEntropyDice import LossCrossEntropyDice
 
+time_start = datetime.now()
+logger.info(f"Starting at {str(datetime.now().isoformat())}")
+
 IMAGE_SIZE = int(os.environ["IMAGE_SIZE"]) if "IMAGE_SIZE" in os.environ else 128 # was 512; 128 is the highest power of 2 that fits the data
 BATCH_SIZE = int(os.environ["BATCH_SIZE"]) if "BATCH_SIZE" in os.environ else 64
 NUM_CLASSES = 2
@@ -317,3 +320,5 @@ plot_predictions(
 	colormap,
 	model=model
 )
+
+logger.info(f"Complete at {str(datetime.now().isoformat())}, elapsed {str((datetime.now() - time_start).total_seconds())} seconds")

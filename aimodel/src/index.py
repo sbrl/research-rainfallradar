@@ -2,6 +2,7 @@
 
 import importlib
 import sys
+from datetime import datetime
 
 from loguru import logger
 
@@ -15,8 +16,14 @@ def main():
 	if args == None:
 		return
 	
+	time_start = datetime.utcnow()
+	logger.info(f"Time: Starting subcommand {subcommand} at {str(datetime.utcnow().isoformat())}")
+	
 	imported_module = importlib.import_module(f"subcommands.{subcommand}")
 	imported_module.run(args)
+	
+	logger.info(f"*** complete in {str((datetime.now() - time_start).total_seconds())} seconds ***")
+	
 	
 
 if __name__ == "__main__":
