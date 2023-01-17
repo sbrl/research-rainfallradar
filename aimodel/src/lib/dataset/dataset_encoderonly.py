@@ -88,7 +88,7 @@ def parse_item(metadata, water_threshold=0.1, water_bins=2, heightmap=None, rain
 		)
 		rainfall = tf.reshape(rainfall, [-1, windowsize, windowsize, rainfall_channels])
 		
-		water = tf.reshape([-1]) # we flatten because we cropped to the right shape above
+		water = tf.reshape(water, [-1]) # we flatten because we cropped to the right shape above
 		
 		print("DEBUG DATASET_OUT:rainfall shape", rainfall.shape)
 		print("DEBUG DATASET_OUT:water shape", water.shape)
