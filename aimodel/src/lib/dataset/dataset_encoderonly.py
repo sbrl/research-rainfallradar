@@ -16,9 +16,6 @@ from .parse_heightmap import parse_heightmap
 
 # TO PARSE:
 def parse_item(metadata, water_threshold=0.1, water_bins=2, heightmap=None, rainfall_scale_up=1, windowsize=33):
-	if input_size == "same":
-		input_size = output_size # This is almost always the case with e.g. the DeepLabV3+ model
-	
 	water_height_source, water_width_source = metadata["waterdepth"]
 	
 	rainfall_channels, rainfall_height_source, rainfall_width_source = metadata["rainfallradar"]
@@ -29,8 +26,6 @@ def parse_item(metadata, water_threshold=0.1, water_bins=2, heightmap=None, rain
 	print("DEBUG DATASET:water shape", metadata["waterdepth"])
 	print("DEBUG DATASET:water_threshold", water_threshold)
 	print("DEBUG DATASET:water_bins", water_bins)
-	print("DEBUG DATASET:output_size", output_size)
-	print("DEBUG DATASET:input_size", input_size)
 	
 	if heightmap is not None:
 		heightmap = tf.expand_dims(heightmap, axis=-1)
