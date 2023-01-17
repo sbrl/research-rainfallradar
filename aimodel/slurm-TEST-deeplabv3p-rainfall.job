@@ -6,9 +6,11 @@
 #SBATCH -o %j.%N.%a.deeplab-rainfall.out.log
 #SBATCH -e %j.%N.%a.deeplab-rainfall.err.log
 #SBATCH -p gpu
+#SBATCH --no-requeue
 #SBATCH --time=5-00:00:00
 #SBATCH --mem=30000
 # ---> in MiB
+# no-requeue: ref https://support.hull.ac.uk/tas/public/ssp/content/detail/incident?unid=652db7ac6e73485c9f7658db78b2b628
 
 module load utilities/multi
 module load readline/7.0
