@@ -81,7 +81,7 @@ def parse_item(metadata, water_threshold=0.1, water_bins=2, heightmap=None, rain
 		water = tf.cast(tf.math.greater_equal(water, water_threshold), dtype=tf.int32)
 		
 		rainfall = tf.image.extract_patches(tf.expand_dims(rainfall, axis=0),
-			sizes=[1,windowsize,windowsize],
+			sizes=[1,windowsize,windowsize,1],
 			strides=[1,1,1,1],
 			rates=[1,1,1,1],
 			padding="VALID"
