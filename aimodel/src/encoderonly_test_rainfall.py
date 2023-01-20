@@ -60,7 +60,7 @@ dataset_train, dataset_validate = dataset_encoderonly(
 # ██  ██  ██ ██    ██ ██   ██ ██      ██
 # ██      ██  ██████  ██████  ███████ ███████
 
-def make_encoderonly(windowsize, channels, encoder="convnext", water_bins=2):
+def make_encoderonly(windowsize, channels, encoder="convnext", water_bins=2, **kwargs):
 	if encoder == "convnext":
 		model = make_convnext(input_shape=(windowsize, windowsize, channels), num_classes=water_bins, **kwargs)
 	elif encoder == "resnet":
