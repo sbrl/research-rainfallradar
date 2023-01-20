@@ -53,7 +53,8 @@ def convnext(
 	depths					= [3, 3, 9, 3],
 	dims					= [96, 192, 384, 768],
 	drop_path_rate			= 0.,
-	classifier_activation	= 'softmax'
+	classifier_activation	= 'softmax',
+	downsample_at_start		= True
 	# Note that we CAN'T add data_format here, 'cause Dense doesn't support specifying the axis
 ):
 	print("convnext:shape IN x", x.shape)
@@ -67,7 +68,7 @@ def convnext(
 				x = tf.keras.layers.Conv2D(
 					dim,
 					kernel_size	= 4,
-					strides		= 4,
+					strides		= 4 if downsample_at_start else 1,
 					padding		= "valid",
 					name		= "downsample_layers.0.0_conv"
 				)(x)
