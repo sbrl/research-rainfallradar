@@ -67,6 +67,7 @@ def make_encoderonly(windowsize, channels, encoder="convnext", water_bins=2, **k
 			input_shape=(windowsize, windowsize, channels),
 			num_classes=water_bins,
 			downsample_at_start=False,
+			arch_name="convnext_xtiny",
 			**kwargs
 		)
 	elif encoder == "resnet":
