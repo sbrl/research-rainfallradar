@@ -49,7 +49,8 @@ dataset_train, dataset_validate = dataset_encoderonly(
 	dirpath_input=DIRPATH_INPUT,
 	filepath_heightmap=PATH_HEIGHTMAP,
 	batch_size=BATCH_SIZE,
-	windowsize=WINDOW_SIZE
+	windowsize=WINDOW_SIZE,
+	rainfall_scale_up=2
 )
 
 
