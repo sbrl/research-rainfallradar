@@ -116,9 +116,7 @@ def make_dataset(filepaths, compression_type="GZIP", parallel_reads_multiplier=3
 		compression_type=compression_type,
 		num_parallel_reads=math.ceil(os.cpu_count() * parallel_reads_multiplier) if parallel_reads_multiplier > 0 else None
 	)
-	if shuffle:
-		dataset = dataset.shuffle(128) # additional shuffle buffer to mix things up
-	
+	# If we want another shuffle buffer here, we'd need to split the map function which we don't really want to do
 	dataset = dataset.map(parse_item(heightmap=heightmap, **kwargs), num_parallel_calls=tf.data.AUTOTUNE) \
 		.unbatch()
 	
