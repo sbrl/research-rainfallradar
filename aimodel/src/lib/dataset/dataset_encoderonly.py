@@ -26,6 +26,7 @@ def parse_item(metadata, water_threshold=0.1, water_bins=2, heightmap=None, rain
 	print("DEBUG DATASET:water shape", metadata["waterdepth"])
 	print("DEBUG DATASET:water_threshold", water_threshold)
 	print("DEBUG DATASET:water_bins", water_bins)
+	print("DEBUG DATASET:rainfall_scale_up", rainfall_scale_up)
 	
 	if heightmap is not None:
 		heightmap = tf.expand_dims(heightmap, axis=-1)
