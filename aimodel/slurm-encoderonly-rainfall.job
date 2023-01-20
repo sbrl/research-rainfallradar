@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+#SBATCH -J EncORain
+#SBATCH -N 1
+#SBATCH -n 14
+#SBATCH --gres=gpu:1
+#SBATCH -o %j.%N.%a.encoderonly-rainfall.out.log
+#SBATCH -e %j.%N.%a.encoderonly-rainfall.err.log
+#SBATCH -p gpu
+#SBATCH --no-requeue
+#SBATCH --time=5-00:00:00
+#SBATCH --mem=30000
+# ---> in MiB
+# no-requeue: ref https://support.hull.ac.uk/tas/public/ssp/content/detail/incident?unid=652db7ac6e73485c9f7658db78b2b628
+
+module load utilities/multi
+module load readline/7.0
+module load gcc/10.2.0
+module load cuda/11.5.0
+
+module load python/anaconda/4.6/miniconda/3.7
+
+
+show_help() {
+	echo -e "Trains a TEST encoderonly model using rainfall radar and water depth data." >&2;
+	echo -e "" >&2;
+	echo -e "Usage:" >&2;
+	echo -e "    sbatch slurm-encoderonly-rainfall.job" >&2;
+	echo -e "" >&2;
+	echo -e "....where:" >&2;
+	echo -e "    BATCH_SIZE=64		Optional. Sets the batch size to train the model with." >&2;
+	echo -e "    DIRPATH_RAINFALLWATER	The path to the directory the .tfrecord files containing the rainfall radar / water depth data." >&2;
+	echo -e "    PATH_HEIGHTMAP 	The path to the heightmap jsonl file to read in." >&2;
+# 	echo -e "    PATH_COLOURMAP 	The path to the colourmap for predictive purposes." >&2;
+	echo -e "    CHANNELS=8         The number of channels the input data has." >&2;
+	echo -e "    WINDOW_SIZE=33     The window size to use when convolving the input dataset for single pixel prediction." >&2;
+	echo -e "    STEPS_PER_EPOCH	The number of steps to consider an epoch. Defaults to None, which means use the entire dataset." >&2;
+	echo -e "    EPOCHS=25			The number of epochs to train for." >&2;
+# 	echo -e "    NO_REMOVE_ISOLATED_PIXELS	Set to any value to avoid the engine from removing isolated pixels - that is, water pixels with no other surrounding pixels, either side to side to diagonally." >&2;
+# 	echo -e "    PATH_CHECKPOINT 	The path to a checkcpoint to load. If specified, a model will be loaded instead of being trained." >&2;
+# 	echo -e "    LEARNING_RATE      The learning rate to use. Default: 0.001." >&2;
+# 	echo -e "    PREDICT_COUNT		The number of items from the (SCRAMBLED) dataset to make a prediction for." >&2;
+	echo -e "    POSTFIX			Postfix to append to the output dir (auto calculated)." >&2;
+	echo -e "    ARGS				Optional. Any additional arguments to pass to the python program." >&2;
+	echo -e "" >&2;
+	echo -e "It is strongly advised that all filepaths do NOT contain spaces." >&2;
+	exit;
+}
+
+DIRPATH_RAINFALLWATER="${DIRPATH_RAINFALLWATER:-$HOME/rainfallwater_records_tfrecord}";
+PATH_HEIGHTMAP="${PATH_HEIGHTMAP:-$HOME/data/terrain50-nimrodsized.json.gz}";
+PATH_COLOURMAP="${PATH_COLOURMAP:-$HOME/data/instance-level-human-parsing/instance-level_human_parsing/human_colormap.mat}";
+
+CODE="encoderonly_rainfall";
+
+if [[ -n "${POSTFIX}" ]]; then
+	echo -e ">>> Applying postfix of ${POSTFIX}" >&2;
+	CODE="${CODE}_${POSTFIX}";
+fi
+
+DIRPATH_OUTPUT="output/$(date -u --rfc-3339=date)_${CODE}";
+
+mkdir -p "${DIR_OUTPUT}";
+
+echo -e ">>> NOW: $(date)";
+echo -e ">>> DIR_OUTPUT: ${DIR_OUTPUT}";
+echo -e ">>> Additional args: ${ARGS}";
+
+export PATH=$HOME/software/bin:$PATH;
+export BATCH_SIZE DIRPATH_RAINFALLWATER PATH_HEIGHTMAP STEPS_PER_EPOCH DIRPATH_OUTPUT PATH_CHECKPOINT CHANNELS WINDOW_SIZE EPOCHS;
+#LOSS LEARNING_RATE;
+
+echo ">>> Installing requirements";
+conda run -n py38 pip install -q -r requirements.txt;
+echo ">>> Training model";
+#shellcheck disable=SC2016
+/usr/bin/env time -v conda run -n py38 bash -c 'src/encoderonly_test_rainfall.py >>"${DIR_OUTPUT}/experiment.${SLURM_JOB_ID}.out.log" 2>>"${DIR_OUTPUT}/experiment.${SLURM_JOB_ID}.err.log"; echo "[slurm_runner] EXIT_CODE: $?" >>"${DIR_OUTPUT}/experiment.${SLURM_JOB_ID}.out.log";';
+echo ">>> exited with code $?";
