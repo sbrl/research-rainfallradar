@@ -7,6 +7,7 @@ import tensorflow as tf
 
 from lib.dataset.dataset_encoderonly import dataset_encoderonly
 from lib.ai.components.convnext import make_convnext
+from lib.ai.components.CallbackCustomModelCheckpoint import CallbackCustomModelCheckpoint
 from lib.ai.helpers.summarywriter import summarywriter
 
 # ███████ ███    ██ ██    ██
