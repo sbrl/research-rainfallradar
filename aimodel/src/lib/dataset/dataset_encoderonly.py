@@ -79,6 +79,7 @@ def parse_item(metadata, water_threshold=0.1, water_bins=2, heightmap=None, rain
 		# water = tf.one_hot(water, water_bins, axis=-1, dtype=tf.int32)
 		# LOSS dice
 		water = tf.cast(tf.math.greater_equal(water, water_threshold), dtype=tf.int32)
+		print("DEBUG:dataset AFTER_BINARISE water", water.shape)
 		
 		rainfall = tf.image.extract_patches(tf.expand_dims(rainfall, axis=0),
 			sizes=[1,windowsize,windowsize,1],
@@ -86,7 +87,10 @@ def parse_item(metadata, water_threshold=0.1, water_bins=2, heightmap=None, rain
 			rates=[1,1,1,1],
 			padding="VALID"
 		)
+		print("DEBUG:dataset AFTER_PATCHES rainfall", rainfall.shape, "windowsize", windowsize)
 		rainfall = tf.reshape(rainfall, [-1, windowsize, windowsize, rainfall_channels])
+		print("DEBUG:dataset AFTER_RESHAPE rainfall",
+		rainfall, "rainfall_channels", rainfall_channels)
 		
 		water = tf.reshape(water, [-1]) # we flatten because we cropped to the right shape above
 		
