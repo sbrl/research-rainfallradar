@@ -59,7 +59,7 @@ fi
 
 DIRPATH_OUTPUT="output/$(date -u --rfc-3339=date)_${CODE}";
 
-mkdir -p "${DIR_OUTPUT}";
+mkdir -p "${DIRPATH_OUTPUT}";
 
 echo -e ">>> NOW: $(date)";
 echo -e ">>> DIR_OUTPUT: ${DIR_OUTPUT}";
