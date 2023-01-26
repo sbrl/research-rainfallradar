@@ -73,5 +73,5 @@ echo ">>> Installing requirements";
 conda run -n py38 pip install -q -r requirements.txt;
 echo ">>> Training model";
 #shellcheck disable=SC2016
-/usr/bin/env time -v conda run -n py38 bash -c 'src/encoderonly_test_rainfall.py >>"${DIR_OUTPUT}/experiment.${SLURM_JOB_ID}.out.log" 2>>"${DIR_OUTPUT}/experiment.${SLURM_JOB_ID}.err.log"; echo "[slurm_runner] EXIT_CODE: $?" >>"${DIR_OUTPUT}/experiment.${SLURM_JOB_ID}.out.log";';
+/usr/bin/env time -v conda run -n py38 bash -c 'src/encoderonly_test_rainfall.py >>"${DIRPATH_OUTPUT}/experiment.${SLURM_JOB_ID}.out.log" 2>>"${DIRPATH_OUTPUT}/experiment.${SLURM_JOB_ID}.err.log"; echo "[slurm_runner] EXIT_CODE: $?" >>"${DIRPATH_OUTPUT}/experiment.${SLURM_JOB_ID}.out.log";';
 echo ">>> exited with code $?";
