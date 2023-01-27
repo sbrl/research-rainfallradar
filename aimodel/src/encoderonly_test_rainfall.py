@@ -22,10 +22,11 @@ DIRPATH_OUTPUT	= os.environ["DIRPATH_OUTPUT"]
 PATH_HEIGHTMAP	= os.environ["PATH_HEIGHTMAP"]			if "PATH_HEIGHTMAP"		in os.environ else None
 CHANNELS		= os.environ["CHANNELS"]				if "CHANNELS"			in os.environ else 8
 
-EPOCHS			= int(os.environ["EPOCHS"])			if "EPOCHS"			in os.environ else 25
+EPOCHS			= int(os.environ["EPOCHS"])				if "EPOCHS"				in os.environ else 25
 BATCH_SIZE		= int(os.environ["BATCH_SIZE"])			if "BATCH_SIZE"			in os.environ else 64
 WINDOW_SIZE		= int(os.environ["WINDOW_SIZE"])		if "WINDOW_SIZE"		in os.environ else 33
 STEPS_PER_EPOCH = int(os.environ["STEPS_PER_EPOCH"])	if "STEPS_PER_EPOCH"	in os.environ else None
+LEARNING_RATE	= float(os.environ["LEARNING_RATE"])	if "LEARNING_RATE"		in os.environ else 0.001
 
 logger.info("Encoder-only rainfall radar TEST")
 logger.info(f"> DIRPATH_RAINFALLWATER {DIRPATH_RAINFALLWATER}")
@@ -35,6 +36,7 @@ logger.info(f"> CHANNELS {CHANNELS}")
 logger.info(f"> BATCH_SIZE {BATCH_SIZE}")
 logger.info(f"> WINDOW_SIZE {WINDOW_SIZE}")
 logger.info(f"> STEPS_PER_EPOCH {STEPS_PER_EPOCH}")
+logger.info(f"> LEARNING_RATE {LEARNING_RATE}")
 
 
 if not os.path.exists(DIRPATH_OUTPUT):
@@ -89,7 +91,7 @@ def make_encoderonly(windowsize, channels, encoder="convnext", water_bins=2, **k
 		raise Exception(f"Error: Unknown encoder '{encoder}' (known encoders: convnext, resnet).")
 	
 	model.compile(
-		optimizer="Adam",
+		optimizer=tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE),
 		loss = tf.keras.losses.SparseCategoricalCrossentropy(),
 		metrics = [
 			tf.keras.metrics.SparseCategoricalAccuracy()
