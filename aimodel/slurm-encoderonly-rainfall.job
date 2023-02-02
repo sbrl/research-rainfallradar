@@ -34,6 +34,7 @@ show_help() {
 	echo -e "    CHANNELS=8         The number of channels the input data has." >&2;
 	echo -e "    WINDOW_SIZE=33     The window size to use when convolving the input dataset for single pixel prediction." >&2;
 	echo -e "    STEPS_PER_EPOCH	The number of steps to consider an epoch. Defaults to None, which means use the entire dataset." >&2;
+	echo -e "    STEPS_PER_EXECUTION	The number of steps to do before returning to do callbacks. High numbers boost performance. Defaults to 1." >&2;
 	echo -e "    EPOCHS=25			The number of epochs to train for." >&2;
 	echo -e "    LEARNING_RATE      The learning rate to use. Default: 0.001." >&2;
 # 	echo -e "    NO_REMOVE_ISOLATED_PIXELS	Set to any value to avoid the engine from removing isolated pixels - that is, water pixels with no other surrounding pixels, either side to side to diagonally." >&2;
@@ -66,7 +67,7 @@ echo -e ">>> DIR_OUTPUT: ${DIR_OUTPUT}";
 echo -e ">>> Additional args: ${ARGS}";
 
 export PATH=$HOME/software/bin:$PATH;
-export BATCH_SIZE DIRPATH_RAINFALLWATER PATH_HEIGHTMAP STEPS_PER_EPOCH DIRPATH_OUTPUT PATH_CHECKPOINT CHANNELS WINDOW_SIZE EPOCHS LEARNING_RATE;
+export BATCH_SIZE DIRPATH_RAINFALLWATER PATH_HEIGHTMAP STEPS_PER_EPOCH DIRPATH_OUTPUT PATH_CHECKPOINT CHANNELS WINDOW_SIZE EPOCHS LEARNING_RATE STEPS_PER_EXECUTION;
 #LOSS ;
 
 echo ">>> Installing requirements";

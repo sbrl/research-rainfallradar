@@ -26,6 +26,7 @@ EPOCHS			= int(os.environ["EPOCHS"])				if "EPOCHS"				in os.environ else 25
 BATCH_SIZE		= int(os.environ["BATCH_SIZE"])			if "BATCH_SIZE"			in os.environ else 64
 WINDOW_SIZE		= int(os.environ["WINDOW_SIZE"])		if "WINDOW_SIZE"		in os.environ else 33
 STEPS_PER_EPOCH = int(os.environ["STEPS_PER_EPOCH"])	if "STEPS_PER_EPOCH"	in os.environ else None
+STEPS_PER_EXECUTION = int(os.environ["STEPS_PER_EXECUTION"]) if "STEPS_PER_EXECUTION" in os.environ else None
 LEARNING_RATE	= float(os.environ["LEARNING_RATE"])	if "LEARNING_RATE"		in os.environ else 0.001
 
 logger.info("Encoder-only rainfall radar TEST")
@@ -64,7 +65,7 @@ dataset_train, dataset_validate = dataset_encoderonly(
 # ██  ██  ██ ██    ██ ██   ██ ██      ██
 # ██      ██  ██████  ██████  ███████ ███████
 
-def make_encoderonly(windowsize, channels, encoder="convnext", water_bins=2, **kwargs):
+def make_encoderonly(windowsize, channels, encoder="convnext", water_bins=2, steps_per_execution=1, **kwargs):
 	if encoder == "convnext":
 		model = make_convnext(
 			input_shape=(windowsize, windowsize, channels),
@@ -95,7 +96,8 @@ def make_encoderonly(windowsize, channels, encoder="convnext", water_bins=2, **k
 		loss = tf.keras.losses.SparseCategoricalCrossentropy(),
 		metrics = [
 			tf.keras.metrics.SparseCategoricalAccuracy()
-		]
+		],
+		steps_per_execution=steps_per_execution
 	)
 	
 	return model
@@ -103,7 +105,8 @@ def make_encoderonly(windowsize, channels, encoder="convnext", water_bins=2, **k
 
 model = make_encoderonly(
 	windowsize=WINDOW_SIZE,
-	channels=CHANNELS
+	channels=CHANNELS.
+	steps_per_execution=STEPS_PER_EXECUTION
 )
 summarywriter(model, os.path.join(DIRPATH_OUTPUT, "summary.txt"))
 
