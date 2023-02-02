@@ -46,7 +46,7 @@ if not os.path.exists(DIRPATH_OUTPUT):
 	os.makedirs(os.path.join(DIRPATH_OUTPUT, "checkpoints"))
 
 if MIXED_PRECISION:
-	tf.keras.mixed_precision.set_policy("mixed_float16")
+	tf.keras.mixed_precision.set_global_policy("mixed_float16")
 
 
 # ██████   █████  ████████  █████  ███████ ███████ ████████
