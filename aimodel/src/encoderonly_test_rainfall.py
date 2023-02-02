@@ -105,7 +105,7 @@ def make_encoderonly(windowsize, channels, encoder="convnext", water_bins=2, ste
 
 model = make_encoderonly(
 	windowsize=WINDOW_SIZE,
-	channels=CHANNELS.
+	channels=CHANNELS,
 	steps_per_execution=STEPS_PER_EXECUTION
 )
 summarywriter(model, os.path.join(DIRPATH_OUTPUT, "summary.txt"))
