@@ -26,6 +26,7 @@ EPOCHS			= int(os.environ["EPOCHS"])				if "EPOCHS"				in os.environ else 25
 BATCH_SIZE		= int(os.environ["BATCH_SIZE"])			if "BATCH_SIZE"			in os.environ else 64
 WINDOW_SIZE		= int(os.environ["WINDOW_SIZE"])		if "WINDOW_SIZE"		in os.environ else 33
 STEPS_PER_EPOCH = int(os.environ["STEPS_PER_EPOCH"])	if "STEPS_PER_EPOCH"	in os.environ else None
+VAL_STEPS_PER_EPOCH = int(os.environ["VAL_STEPS_PER_EPOCH"])	if "VAL_STEPS_PER_EPOCH"	in os.environ else None
 STEPS_PER_EXECUTION = int(os.environ["STEPS_PER_EXECUTION"]) if "STEPS_PER_EXECUTION" in os.environ else None
 LEARNING_RATE	= float(os.environ["LEARNING_RATE"])	if "LEARNING_RATE"		in os.environ else 0.001
 JIT_COMPILE		= True									if "JIT_COMPILE"		in os.environ else False
@@ -126,7 +127,7 @@ summarywriter(model, os.path.join(DIRPATH_OUTPUT, "summary.txt"))
 history = model.fit(dataset_train,
 	validation_data=dataset_validate,
 	epochs=EPOCHS,
-
+	
 	callbacks=[
 		tf.keras.callbacks.CSVLogger(
 			filename=os.path.join(DIRPATH_OUTPUT, "metrics.tsv"),
@@ -143,6 +144,7 @@ history = model.fit(dataset_train,
 		),
 	],
 	steps_per_epoch=STEPS_PER_EPOCH,
+	validation_steps=VAL_STEPS_PER_EPOCH
 )
 logger.info(">>> Training complete")
 
