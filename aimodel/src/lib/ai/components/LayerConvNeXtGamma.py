@@ -7,7 +7,7 @@ class LayerConvNeXtGamma(tf.keras.layers.Layer):
 		super(LayerConvNeXtGamma, self).__init__(name=name)
 		
 		self.dim   = dim
-		self.const = const_val * tf.ones((self.dim), dtype=tf.float32 if tf.mixed_precision.global_policy().name == "float32" else tf.float16)
+		self.const = const_val * tf.ones((self.dim), dtype=tf.float32 if tf.keras.mixed_precision.global_policy().name == "float32" else tf.float16)
 
 	def call(self, inputs, **kwargs):
 		return tf.multiply(inputs, self.const)
