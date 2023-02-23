@@ -130,7 +130,7 @@ if PATH_CHECKPOINT is None:
 		x = DilatedSpatialPyramidPooling(x)
 
 		input_a = tf.keras.layers.UpSampling2D(
-			size=(image_size // 4 // x.shape[1], image_size // 4 // x.shape[2]), # <--- UPSAMPLE after pyramid
+			size=(image_size // 4 // x.shape[1] * 2, image_size // 4 // x.shape[2] * 2), # <--- UPSAMPLE after pyramid
 			interpolation="bilinear",
 		)(x)
 		input_b = resnet50.get_layer("conv2_block3_2_relu").output
