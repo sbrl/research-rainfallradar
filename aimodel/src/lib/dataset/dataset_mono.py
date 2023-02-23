@@ -94,7 +94,7 @@ def parse_item(metadata, output_size=100, input_size="same", water_threshold=0.1
 		# ONE-HOT [LOSS cross entropy]
 		# water = tf.cast(tf.math.greater_equal(water, water_threshold), dtype=tf.int32)
 		# water = tf.one_hot(water, water_bins, axis=-1, dtype=tf.int32)
-		# SPARSE [LOSS dice]
+		# SPARSE [LOSS dice / sparse cross entropy]
 		water = tf.cast(tf.math.greater_equal(water, water_threshold), dtype=tf.float32)
 		if do_remove_isolated_pixels:
 			water = remove_isolated_pixels(water)
