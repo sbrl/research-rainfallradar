@@ -22,6 +22,13 @@ from lib.ai.components.LossCrossEntropyDice import LossCrossEntropyDice
 time_start = datetime.now()
 logger.info(f"Starting at {str(datetime.now().isoformat())}")
 
+
+# ███████ ███    ██ ██    ██ ██ ██████   ██████  ███    ██ ███    ███ ███████ ███    ██ ████████
+# ██      ████   ██ ██    ██ ██ ██   ██ ██    ██ ████   ██ ████  ████ ██      ████   ██    ██
+# █████   ██ ██  ██ ██    ██ ██ ██████  ██    ██ ██ ██  ██ ██ ████ ██ █████   ██ ██  ██    ██
+# ██      ██  ██ ██  ██  ██  ██ ██   ██ ██    ██ ██  ██ ██ ██  ██  ██ ██      ██  ██ ██    ██
+# ███████ ██   ████   ████   ██ ██   ██  ██████  ██   ████ ██      ██ ███████ ██   ████    ██
+
 IMAGE_SIZE = int(os.environ["IMAGE_SIZE"]) if "IMAGE_SIZE" in os.environ else 128 # was 512; 128 is the highest power of 2 that fits the data
 BATCH_SIZE = int(os.environ["BATCH_SIZE"]) if "BATCH_SIZE" in os.environ else 64
 NUM_CLASSES = 2
@@ -39,24 +46,23 @@ DIR_OUTPUT=os.environ["DIR_OUTPUT"] if "DIR_OUTPUT" in os.environ else f"output/
 PATH_CHECKPOINT = os.environ["PATH_CHECKPOINT"] if "PATH_CHECKPOINT" in os.environ else None
 PREDICT_COUNT = int(os.environ["PREDICT_COUNT"]) if "PREDICT_COUNT" in os.environ else 4
 
+# ~~~
+
 if not os.path.exists(DIR_OUTPUT):
 	os.makedirs(os.path.join(DIR_OUTPUT, "checkpoints"))
 
+# ~~~
+
 logger.info("DeepLabV3+ rainfall radar TEST")
-logger.info(f"> BATCH_SIZE {BATCH_SIZE}")
-logger.info(f"> DIR_RAINFALLWATER {DIR_RAINFALLWATER}")
-logger.info(f"> PATH_HEIGHTMAP {PATH_HEIGHTMAP}")
-logger.info(f"> PATH_COLOURMAP {PATH_COLOURMAP}")
-logger.info(f"> STEPS_PER_EPOCH {STEPS_PER_EPOCH}")
-logger.info(f"> REMOVE_ISOLATED_PIXELS {REMOVE_ISOLATED_PIXELS} [NO_REMOVE_ISOLATED_PIXELS]")
-logger.info(f"> EPOCHS {EPOCHS}")
-logger.info(f"> LOSS {LOSS}")
+for env_name in [ "BATCH_SIZE","NUM_CLASSES", "DIR_RAINFALLWATER", "PATH_HEIGHTMAP", "PATH_COLOURMAP", "STEPS_PER_EPOCH", "REMOVE_ISOLATED_PIXELS", "EPOCHS", "LOSS", "LEARNING_RATE", "DIR_OUTPUT", "PATH_CHECKPOINT", "PREDICT_COUNT" ]:
+	logger.info(f"> {env_name} {str(globals()[env_name])}")
 
-logger.info(f"> DIR_OUTPUT {DIR_OUTPUT}")
 
-logger.info(f"> PATH_CHECKPOINT {PATH_CHECKPOINT}")
-logger.info(f"> PREDICT_COUNT {PREDICT_COUNT}")
-
+# ██████   █████  ████████  █████  ███████ ███████ ████████ 
+# ██   ██ ██   ██    ██    ██   ██ ██      ██         ██    
+# ██   ██ ███████    ██    ███████ ███████ █████      ██    
+# ██   ██ ██   ██    ██    ██   ██      ██ ██         ██    
+# ██████  ██   ██    ██    ██   ██ ███████ ███████    ██    
 
 dataset_train, dataset_validate = dataset_mono(
 	dirpath_input=DIR_RAINFALLWATER,
