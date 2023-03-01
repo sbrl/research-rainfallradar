@@ -156,7 +156,10 @@ if PATH_CHECKPOINT is None:
 	model = DeeplabV3Plus(image_size=IMAGE_SIZE, num_classes=NUM_CLASSES, num_channels=8)
 	summarywriter(model, os.path.join(DIR_OUTPUT, "summary.txt"))
 else:
-	model = tf.keras.models.load_model(PATH_CHECKPOINT)
+	model = tf.keras.models.load_model(PATH_CHECKPOINT, custom_objects={
+		# Tell Tensorflow about our custom layers so that it can deserialise models that use them
+		"LossCrossEntropyDice": LossCrossEntropyDice
+	})
 
 
 
