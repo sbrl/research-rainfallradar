@@ -60,7 +60,7 @@ if [[ -n "${POSTFIX}" ]]; then
 	CODE="${CODE}_${POSTFIX}";
 fi
 
-DIR_OUTPUT="output/$(date -u --rfc-3339=date)_${CODE}";
+DIR_OUTPUT="${DIR_OUTPUT:-output/$(date -u --rfc-3339=date)_${CODE}}";
 
 mkdir -p "${DIR_OUTPUT}";
 
