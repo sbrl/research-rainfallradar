@@ -18,9 +18,9 @@ import tensorflow as tf
 
 from lib.dataset.dataset_mono import dataset_mono
 from lib.ai.components.LossCrossEntropyDice import LossCrossEntropyDice
-from lib.ai.components.MetricDice import MetricDice
-from lib.ai.components.MetricSensitivity import MetricSensitivity
-from lib.ai.components.MetricSpecificity import MetricSpecificity
+from lib.ai.components.MetricDice import dice_coefficient
+from lib.ai.components.MetricSensitivity import sensitivity
+from lib.ai.components.MetricSpecificity import specificity
 
 time_start = datetime.now()
 logger.info(f"Starting at {str(datetime.now().isoformat())}")
@@ -189,10 +189,10 @@ if PATH_CHECKPOINT is None:
 		loss=loss_fn,
 		metrics=[
 			"accuracy",
-			MetricDice(),
+			dice_coefficient,
 			tf.keras.metrics.MeanIoU(num_classes=2),
-			MetricSensitivity(), # How many true positives were accurately predicted
-			MetricSpecificity() # How many true negatives were accurately predicted?
+			sensitivity, # How many true positives were accurately predicted
+			specificity # How many true negatives were accurately predicted?
 			# TODO: Add IoU, F1, Precision, Recall,  here. 
 		],
 	)

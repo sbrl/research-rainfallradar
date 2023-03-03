@@ -2,7 +2,13 @@ import math
 
 import tensorflow as tf
 
-
+def sensitivity(y_true, y_pred):
+	ground_truth = tf.cast(y_true, dtype=tf.float32)
+	prediction = tf.cast(y_pred, dtype=tf.float32)
+	
+	recall = tf.keras.metrics.Recall()
+	recall.update_state(y_true, y_pred)
+	return recall.result()
 
 class MetricSensitivity(tf.keras.metrics.Metric):
 	"""An implementation of the sensitivity.
