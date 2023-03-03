@@ -21,7 +21,8 @@ def specificity(y_pred, y_true):
 
 
 class MetricSpecificity(tf.keras.metrics.Metric):
-	"""An implementation of the sensitivity.
+	"""An implementation of the specificity.
+	In other words, a measure of how many of the true negatives were accurately predicted
 	@source 
 	Args:
 		smooth (float): The batch size (currently unused).
@@ -29,8 +30,6 @@ class MetricSpecificity(tf.keras.metrics.Metric):
 
 	def __init__(self, name="specificity", **kwargs):
 		super(MetricSpecificity, self).__init__(name=name, **kwargs)
-		
-		self.param_smooth = smooth
 
 	def call(self, y_true, y_pred):
 		ground_truth = tf.cast(y_true, dtype=tf.float32)
@@ -41,6 +40,6 @@ class MetricSpecificity(tf.keras.metrics.Metric):
 	def get_config(self):
 		config = super(MetricSpecificity, self).get_config()
 		config.update({
-			"smooth": self.param_smooth,
+			
 		})
 		return config

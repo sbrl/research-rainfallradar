@@ -19,6 +19,8 @@ import tensorflow as tf
 from lib.dataset.dataset_mono import dataset_mono
 from lib.ai.components.LossCrossEntropyDice import LossCrossEntropyDice
 from lib.ai.components.MetricDice import MetricDice
+from lia.ai.components.MetricSensitivity import MetricSensitivity
+from lib.ai.components.MetricSpecificity import MetricSpecificity
 
 time_start = datetime.now()
 logger.info(f"Starting at {str(datetime.now().isoformat())}")
@@ -160,7 +162,9 @@ else:
 	model = tf.keras.models.load_model(PATH_CHECKPOINT, custom_objects={
 		# Tell Tensorflow about our custom layers so that it can deserialise models that use them
 		"LossCrossEntropyDice": LossCrossEntropyDice,
-		"MetricDice": MetricDice
+		"MetricDice": MetricDice,
+		"MetricSensitivity": MetricSensitivity,
+		"MetricSpecificity": MetricSpecificity
 	})
 
 
@@ -186,7 +190,9 @@ if PATH_CHECKPOINT is None:
 		metrics=[
 			"accuracy",
 			MetricDice(),
-			tf.keras.metrics.MeanIoU(num_classes=2)
+			tf.keras.metrics.MeanIoU(num_classes=2),
+			MetricSensitivity(), # How many true positives were accurately predicted
+			MetricSpecificity() # How many true negatives were accurately predicted?
 			# TODO: Add IoU, F1, Precision, Recall,  here. 
 		],
 	)
