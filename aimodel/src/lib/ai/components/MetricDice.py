@@ -15,9 +15,6 @@ def dice_coefficient(y_true, y_pred):
 		tf.Tensor: The computed Dice coefficient.
 	"""
 	
-	y_true = tf.cast(y_true, dtype=tf.float32)
-	y_pred = tf.cast(y_pred, dtype=tf.float32)
-	
 	y_pred = tf.math.sigmoid(y_pred)
 	numerator = 2 * tf.reduce_sum(y_true * y_pred)
 	denominator = tf.reduce_sum(y_true + y_pred)
@@ -26,5 +23,8 @@ def dice_coefficient(y_true, y_pred):
 
 
 def metric_dice_coefficient(y_true, y_pred):
+	y_true = tf.cast(y_true, dtype=tf.float32)
+	y_pred = tf.cast(y_pred, dtype=tf.float32)
+	
 	y_pred = tf.math.argmax(y_pred, axis=-1)
 	return dice_coefficient(y_true, y_pred)
