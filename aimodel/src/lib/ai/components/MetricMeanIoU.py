@@ -12,10 +12,13 @@ def one_hot_mean_iou(y_true, y_pred, classes=2):
 	Returns:
 		tf.Tensor: The computed mean IoU.
 	"""
-	
+	print("DEBUG:meaniou y_pred.shape BEFORE", y_pred.shape)
+	print("DEBUG:meaniou y_true.shape BEFORE", y_true.shape)
 	y_pred = tf.math.argmax(y_pred, axis=-1)
 	y_true = tf.cast(y_true, dtype=tf.float32)
 	y_pred = tf.cast(y_pred, dtype=tf.float32)
+	print("DEBUG:meaniou y_pred.shape AFTER", y_pred.shape)
+	print("DEBUG:meaniou y_true.shape AFTER", y_true.shape)
 	
 	
 	iou = tf.keras.metrics.MeanIoU(num_classes=classes)
