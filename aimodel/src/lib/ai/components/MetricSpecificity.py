@@ -3,7 +3,7 @@ import math
 import tensorflow as tf
 
 
-def specificity(y_pred, y_true):
+def specificity(y_true, y_pred):
 	"""An implementation of the specificity.
 	In other words, a measure of how many of the true negatives were accurately predicted
 	@source https://datascience.stackexchange.com/a/40746/86851
@@ -14,7 +14,6 @@ def specificity(y_pred, y_true):
 	Specificity score
 	"""
 	y_pred = tf.math.argmax(y_pred, axis=-1)
-	y_true = tf.math.argmax(y_true, axis=-1)
 	y_true = tf.cast(y_true, dtype=tf.float32)
 	y_pred = tf.cast(y_pred, dtype=tf.float32)
 	

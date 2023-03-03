@@ -14,7 +14,6 @@ def one_hot_mean_iou(y_true, y_pred, classes=2):
 	"""
 	
 	y_pred = tf.math.argmax(y_pred, axis=-1)
-	y_true = tf.math.argmax(y_true, axis=-1)
 	y_true = tf.cast(y_true, dtype=tf.float32)
 	y_pred = tf.cast(y_pred, dtype=tf.float32)
 	
