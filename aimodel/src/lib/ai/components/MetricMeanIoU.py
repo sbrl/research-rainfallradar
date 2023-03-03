@@ -18,6 +18,6 @@ def one_hot_mean_iou(y_true, y_pred, classes=2):
 	y_pred = tf.cast(y_pred, dtype=tf.float32)
 	
 	
-	iou = tf.keras.metrics.MeanIoU(classes=classes)
+	iou = tf.keras.metrics.MeanIoU(num_classes=classes)
 	iou.update_state(y_true, y_pred)
 	return iou.result()
