@@ -18,7 +18,7 @@ import tensorflow as tf
 
 from lib.dataset.dataset_mono import dataset_mono
 from lib.ai.components.LossCrossEntropyDice import LossCrossEntropyDice
-from lib.ai.components.MetricDice import dice_coefficient
+from lib.ai.components.MetricDice import metric_dice_coefficient
 from lib.ai.components.MetricSensitivity import sensitivity
 from lib.ai.components.MetricSpecificity import specificity
 
@@ -189,7 +189,7 @@ if PATH_CHECKPOINT is None:
 		loss=loss_fn,
 		metrics=[
 			"accuracy",
-			dice_coefficient,
+			metric_dice_coefficient,
 			tf.keras.metrics.MeanIoU(num_classes=2),
 			sensitivity, # How many true positives were accurately predicted
 			specificity # How many true negatives were accurately predicted?
