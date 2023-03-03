@@ -18,4 +18,4 @@ def make_sensitivity():
 		recall.update_state(y_true, y_pred)
 		return recall.result()
 	
-	return _sensitivity
+	return sensitivity
