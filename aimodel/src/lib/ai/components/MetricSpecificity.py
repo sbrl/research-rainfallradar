@@ -13,10 +13,9 @@ def specificity(y_pred, y_true):
 	Returns:
 	Specificity score
 	"""
+	y_pred = tf.math.argmax(y_pred, axis=-1)
 	y_true = tf.cast(y_true, dtype=tf.float32)
 	y_pred = tf.cast(y_pred, dtype=tf.float32)
-	
-	y_pred = tf.math.argmax(y_pred, axis=-1)
 	
 	neg_y_true = 1 - y_true
 	neg_y_pred = 1 - y_pred
