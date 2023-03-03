@@ -18,6 +18,7 @@ import tensorflow as tf
 
 from lib.dataset.dataset_mono import dataset_mono
 from lib.ai.components.LossCrossEntropyDice import LossCrossEntropyDice
+from lib.ai.components.MetricDice import MetricDice
 
 time_start = datetime.now()
 logger.info(f"Starting at {str(datetime.now().isoformat())}")
@@ -158,7 +159,8 @@ if PATH_CHECKPOINT is None:
 else:
 	model = tf.keras.models.load_model(PATH_CHECKPOINT, custom_objects={
 		# Tell Tensorflow about our custom layers so that it can deserialise models that use them
-		"LossCrossEntropyDice": LossCrossEntropyDice
+		"LossCrossEntropyDice": LossCrossEntropyDice,
+		"MetricDice": MetricDice
 	})
 
 
@@ -181,7 +183,12 @@ if PATH_CHECKPOINT is None:
 	model.compile(
 		optimizer=tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE),
 		loss=loss_fn,
-		metrics=["accuracy"],
+		metrics=[
+			"accuracy",
+			MetricDice(),
+			tf.keras.metrics.MeanIoU(num_classes=2)
+			# TODO: Add IoU, F1, Precision, Recall,  here. 
+		],
 	)
 	logger.info(">>> Beginning training")
 	history = model.fit(dataset_train,
