@@ -19,7 +19,7 @@ def specificity(y_pred, y_true):
 	
 	neg_y_true = 1 - y_true
 	neg_y_pred = 1 - y_pred
-	fp = K.sum(neg_y_true * y_pred)
-	tn = K.sum(neg_y_true * neg_y_pred)
-	specificity = tn / (tn + fp + K.epsilon())
+	fp = tf.math.reduce_sum(neg_y_true * y_pred)
+	tn = tf.math.reduce_sum(neg_y_true * neg_y_pred)
+	specificity = tn / (tn + fp + tf.keras.backend.epsilon())
 	return specificity
