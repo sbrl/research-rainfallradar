@@ -19,7 +19,7 @@ import tensorflow as tf
 from lib.dataset.dataset_mono import dataset_mono
 from lib.ai.components.LossCrossEntropyDice import LossCrossEntropyDice
 from lib.ai.components.MetricDice import MetricDice
-from lia.ai.components.MetricSensitivity import MetricSensitivity
+from lib.ai.components.MetricSensitivity import MetricSensitivity
 from lib.ai.components.MetricSpecificity import MetricSpecificity
 
 time_start = datetime.now()
