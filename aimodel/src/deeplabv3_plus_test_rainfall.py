@@ -40,14 +40,14 @@ PATH_HEIGHTMAP = os.environ["PATH_HEIGHTMAP"]
 PATH_COLOURMAP = os.environ["PATH_COLOURMAP"]
 STEPS_PER_EPOCH = int(os.environ["STEPS_PER_EPOCH"]) if "STEPS_PER_EPOCH" in os.environ else None
 REMOVE_ISOLATED_PIXELS = False if "NO_REMOVE_ISOLATED_PIXELS" in os.environ else True
-EPOCHS = int(os.environ["EPOCHS"]) if "EPOCHS" in os.environ else 25
-LOSS = os.environ["LOSS"] if "LOSS" in os.environ else "cross-entropy"
+EPOCHS = int(os.environ["EPOCHS"]) if "EPOCHS" in os.environ else 50
+LOSS = os.environ["LOSS"] if "LOSS" in os.environ else "cross-entropy-dice"
 LEARNING_RATE = float(os.environ["LEARNING_RATE"]) if "LEARNING_RATE" in os.environ else 0.001
 
 DIR_OUTPUT=os.environ["DIR_OUTPUT"] if "DIR_OUTPUT" in os.environ else f"output/{datetime.utcnow().date().isoformat()}_deeplabv3plus_rainfall_TEST"
 
 PATH_CHECKPOINT = os.environ["PATH_CHECKPOINT"] if "PATH_CHECKPOINT" in os.environ else None
-PREDICT_COUNT = int(os.environ["PREDICT_COUNT"]) if "PREDICT_COUNT" in os.environ else 4
+PREDICT_COUNT = int(os.environ["PREDICT_COUNT"]) if "PREDICT_COUNT" in os.environ else 25
 
 # ~~~
 
