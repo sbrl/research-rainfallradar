@@ -307,7 +307,7 @@ def plot_predictions(filepath, input_items, colormap, model):
 	i = 0
 	for input_pair in input_items:
 		prediction_mask = infer(image_tensor=input_pair[0], model=model)
-		prediction_mask_argmax = tf.argmax(predictions, axis=2)
+		prediction_mask_argmax = tf.argmax(prediction_mask, axis=2)
 		# label_colourmap = decode_segmentation_masks(input_pair[1], colormap, 2)
 		prediction_colormap = decode_segmentation_masks(prediction_mask_argmax, colormap, 2)
 		
