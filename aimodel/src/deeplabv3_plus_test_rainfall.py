@@ -166,7 +166,7 @@ else:
 		"metric_dice_coefficient": dice_coefficient,
 		"make_sensitivity": sensitivity,
 		"specificity": specificity,
-		"make_one_hot_mean_iou": mean_iou
+		"one_hot_mean_iou": mean_iou
 	})
 
 
