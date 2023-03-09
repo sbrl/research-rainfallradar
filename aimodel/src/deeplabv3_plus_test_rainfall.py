@@ -313,6 +313,8 @@ def plot_predictions(filepath, input_items, colormap, model):
 			filepath.replace("$$", str(i)),
 			[
 				# input_tensor,
+				tf.math.reduce_max(input_pair[0][:,:,:-1], axis=-1), # rainfall only
+				input_pair[0][:,:,-1], # heightmap
 				input_pair[1], #label_colourmap,
 				prediction_mask[:,:,1],
 				prediction_colormap
