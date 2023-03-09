@@ -164,7 +164,7 @@ else:
 		# Tell Tensorflow about our custom layers so that it can deserialise models that use them
 		"LossCrossEntropyDice": LossCrossEntropyDice,
 		"metric_dice_coefficient": dice_coefficient,
-		"make_sensitivity": sensitivity,
+		"sensitivity": sensitivity,
 		"specificity": specificity,
 		"one_hot_mean_iou": mean_iou
 	})
