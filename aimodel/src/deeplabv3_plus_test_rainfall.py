@@ -4,10 +4,12 @@
 
 from datetime import datetime
 from loguru import logger
+
 from lib.ai.helpers.summarywriter import summarywriter
 from lib.ai.components.CallbackCustomModelCheckpoint import CallbackCustomModelCheckpoint
 
 import os
+import math
 import cv2
 import numpy as np
 from glob import glob
@@ -293,8 +295,9 @@ def get_overlay(image, coloured_mask):
 
 
 def plot_samples_matplotlib(filepath, display_list):
+	plt.figure(figsize=(16, 8))
 	for i in range(len(display_list)):
-		plt.subplot(1, len(display_list), i+1)
+		plt.subplot(2, math.ceil(len(display_list) / 2), i+1)
 		if display_list[i].shape[-1] == 3:
 			plt.imshow(tf.keras.preprocessing.image.array_to_img(display_list[i]))
 		else:
