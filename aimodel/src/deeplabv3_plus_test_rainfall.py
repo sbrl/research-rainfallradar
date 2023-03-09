@@ -163,6 +163,10 @@ else:
 	model = tf.keras.models.load_model(PATH_CHECKPOINT, custom_objects={
 		# Tell Tensorflow about our custom layers so that it can deserialise models that use them
 		"LossCrossEntropyDice": LossCrossEntropyDice,
+		"metric_dice_coefficient": dice_coefficient,
+		"make_sensitivity": sensitivity,
+		"specificity": specificity,
+		"make_one_hot_mean_iou": mean_iou
 	})
 
 
