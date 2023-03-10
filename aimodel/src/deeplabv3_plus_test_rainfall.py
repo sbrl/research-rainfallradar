@@ -341,7 +341,7 @@ def plot_predictions(filepath, input_items, colormap, model):
 		
 		save_samples(
 			filepath_jsonl,
-			prediction_mask.numpy().list()
+			prediction_mask.numpy().tolist()
 		)
 		i += 1
 
