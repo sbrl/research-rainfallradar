@@ -9,6 +9,7 @@ from lib.ai.helpers.summarywriter import summarywriter
 from lib.ai.components.CallbackCustomModelCheckpoint import CallbackCustomModelCheckpoint
 
 import os
+import io
 import math
 import cv2
 import numpy as np
@@ -312,6 +313,9 @@ def save_samples(filepath, save_list):
 	handle.close()
 
 def plot_predictions(filepath, input_items, colormap, model):
+	filepath_jsonl = filepath.replace("_$$", "").replace(".png", ".jsonl")
+	os.truncate(filepath_jsonl, 0)
+	
 	i = 0
 	for input_pair in input_items:
 		prediction_mask = infer(image_tensor=input_pair[0], model=model)
@@ -334,7 +338,7 @@ def plot_predictions(filepath, input_items, colormap, model):
 		)
 		
 		save_samples(
-			filepath.replace("_$$", "").replace(".png", ".jsonl"),
+			filepath_jsonl,
 			prediction_mask
 		)
 		i += 1
