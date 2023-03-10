@@ -314,7 +314,8 @@ def save_samples(filepath, save_list):
 
 def plot_predictions(filepath, input_items, colormap, model):
 	filepath_jsonl = filepath.replace("_$$", "").replace(".png", ".jsonl")
-	os.truncate(filepath_jsonl, 0)
+	if os.path.exists(filepath_jsonl):
+		os.truncate(filepath_jsonl, 0)
 	
 	i = 0
 	for input_pair in input_items:
