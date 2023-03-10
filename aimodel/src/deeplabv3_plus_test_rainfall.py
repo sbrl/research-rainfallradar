@@ -47,6 +47,7 @@ STEPS_PER_EPOCH = int(os.environ["STEPS_PER_EPOCH"]) if "STEPS_PER_EPOCH" in os.
 REMOVE_ISOLATED_PIXELS = False if "NO_REMOVE_ISOLATED_PIXELS" in os.environ else True
 EPOCHS = int(os.environ["EPOCHS"]) if "EPOCHS" in os.environ else 50
 LOSS = os.environ["LOSS"] if "LOSS" in os.environ else "cross-entropy-dice"
+DICE_LOG_COSH = True if "DICE_LOG_COSH" in os.environ else False
 LEARNING_RATE = float(os.environ["LEARNING_RATE"]) if "LEARNING_RATE" in os.environ else 0.001
 
 DIR_OUTPUT=os.environ["DIR_OUTPUT"] if "DIR_OUTPUT" in os.environ else f"output/{datetime.utcnow().date().isoformat()}_deeplabv3plus_rainfall_TEST"
@@ -184,7 +185,7 @@ else:
 if PATH_CHECKPOINT is None:
 	loss_fn = None
 	if LOSS == "cross-entropy-dice":
-		loss_fn = LossCrossEntropyDice()
+		loss_fn = LossCrossEntropyDice(log_cosh=DICE_LOG_COSH)
 	elif LOSS == "cross-entropy":
 		loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
 	else:
