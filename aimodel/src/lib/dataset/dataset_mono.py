@@ -40,10 +40,11 @@ def parse_item(metadata, output_size=100, input_size="same", water_threshold=0.1
 	
 	if heightmap is not None:
 		heightmap = tf.expand_dims(heightmap, axis=-1)
-		# NORMALLY, this wouldn't work 'cause you'd need to know the max of ALL frames, but here we only have a single frame.
-		heightmap_max = tf.math.reduce_max(heightmap)
-		heightmap_min = tf.math.reduce_min(tf.where(tf.math.less(heightmap, -500), heightmap, tf.fill(heightmap.shape, 0.0)))
-		heightmap = (heightmap - heightmap_min) / heightmap_max
+		norm = tf.keras.layers.Normalization(axis=None)
+		norm.adapt(heightmap)
+		# THIS IS (probably) OK, because BatchNorm also outputs mean=0 stddev=1, bias term shifts anyway
+		# Ref https://datascience.stackexchange.com/a/54383/86851
+		heightmap = norm(heightmap)
 		heightmap = tf.transpose(heightmap, [1, 0, 2]) # [width, height] → [height, width]
 	
 	def parse_item_inner(item):
