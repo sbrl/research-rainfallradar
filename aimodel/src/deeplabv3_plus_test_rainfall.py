@@ -305,6 +305,11 @@ def plot_samples_matplotlib(filepath, display_list):
 			plt.colorbar()
 	plt.savefig(filepath, dpi=200)
 
+def save_samples(filepath, save_list):
+	handle = io.open(filepath, "a")
+	json.dump(save_list, handle)
+	handle.write("\n")
+	handle.close()
 
 def plot_predictions(filepath, input_items, colormap, model):
 	i = 0
@@ -326,6 +331,11 @@ def plot_predictions(filepath, input_items, colormap, model):
 				prediction_mask[:,:,1],
 				prediction_colormap
 			]
+		)
+		
+		save_samples(
+			filepath.replace("_$$", "").replace(".png", ".jsonl"),
+			prediction_mask
 		)
 		i += 1
 
