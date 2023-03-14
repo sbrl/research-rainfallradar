@@ -49,6 +49,7 @@ EPOCHS = int(os.environ["EPOCHS"]) if "EPOCHS" in os.environ else 50
 LOSS = os.environ["LOSS"] if "LOSS" in os.environ else "cross-entropy-dice"
 DICE_LOG_COSH = True if "DICE_LOG_COSH" in os.environ else False
 LEARNING_RATE = float(os.environ["LEARNING_RATE"]) if "LEARNING_RATE" in os.environ else 0.001
+WATER_THRESHOLD = float(os.environ["WATER_THRESHOLD"]) if "WATER_THRESHOLD" in os.environ else 0.1
 
 DIR_OUTPUT=os.environ["DIR_OUTPUT"] if "DIR_OUTPUT" in os.environ else f"output/{datetime.utcnow().date().isoformat()}_deeplabv3plus_rainfall_TEST"
 
@@ -76,7 +77,7 @@ for env_name in [ "BATCH_SIZE","NUM_CLASSES", "DIR_RAINFALLWATER", "PATH_HEIGHTM
 dataset_train, dataset_validate = dataset_mono(
 	dirpath_input=DIR_RAINFALLWATER,
 	batch_size=BATCH_SIZE,
-	water_threshold=0.1,
+	water_threshold=WATER_THRESHOLD,
 	rainfall_scale_up=2, # done BEFORE cropping to the below size
 	output_size=IMAGE_SIZE,
 	input_size="same",
