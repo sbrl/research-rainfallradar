@@ -38,6 +38,9 @@ class LossCrossEntropyDice(tf.keras.losses.Loss):
 		cel = tf.nn.sigmoid_cross_entropy_with_logits(y_true, y_pred)
 		dice = dice_loss(y_true, y_pred)
 		
+		if self.param_log_cosh:
+			dice = tf.math.log(tf.math.cosh(dice))
+		
 		o = cel + dice
 		return tf.reduce_mean(o)
 	
