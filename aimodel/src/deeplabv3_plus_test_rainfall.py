@@ -52,6 +52,7 @@ LEARNING_RATE = float(os.environ["LEARNING_RATE"]) if "LEARNING_RATE" in os.envi
 WATER_THRESHOLD = float(os.environ["WATER_THRESHOLD"]) if "WATER_THRESHOLD" in os.environ else 0.1
 UPSAMPLE = int(os.environ["UPSAMPLE"]) if "UPSAMPLE" in os.environ else 2
 
+STEPS_PER_EXECUTION = int(os.environ["STEPS_PER_EXECUTION"]) if "STEPS_PER_EXECUTION" in os.environ else 16
 DIR_OUTPUT=os.environ["DIR_OUTPUT"] if "DIR_OUTPUT" in os.environ else f"output/{datetime.utcnow().date().isoformat()}_deeplabv3plus_rainfall_TEST"
 
 PATH_CHECKPOINT = os.environ["PATH_CHECKPOINT"] if "PATH_CHECKPOINT" in os.environ else None
@@ -227,6 +228,7 @@ if PATH_CHECKPOINT is None:
 			specificity # How many true negatives were accurately predicted?
 			# TODO: Add IoU, F1, Precision, Recall,  here. 
 		],
+		steps_per_execution=STEPS_PER_EXECUTION
 	)
 	logger.info(">>> Beginning training")
 	history = model.fit(dataset_train,
