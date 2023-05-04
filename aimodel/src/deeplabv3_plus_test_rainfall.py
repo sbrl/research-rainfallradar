@@ -160,8 +160,9 @@ if PATH_CHECKPOINT is None:
 		x = backbone.get_layer("conv4_block6_2_relu").output
 		x = DilatedSpatialPyramidPooling(x)
 		
+		factor = 4 if upsample == 2 else 8 # else: upsample == 1. other values are not supported yet because maths
 		input_a = tf.keras.layers.UpSampling2D(
-			size=(image_size // 4 // x.shape[1] * 2, image_size // 4 // x.shape[2] * 2), # <--- UPSAMPLE after pyramid
+			size=(image_size // factor // x.shape[1] * 2, image_size // factor // x.shape[2] * 2), # <--- UPSAMPLE after pyramid
 			interpolation="bilinear",
 		)(x)
 		input_b = backbone.get_layer("conv2_block3_2_relu").output
