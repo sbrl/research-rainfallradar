@@ -6,7 +6,7 @@
 #SBATCH -o %j.%N.%a.deeplab-rainfall.out.log
 #SBATCH -e %j.%N.%a.deeplab-rainfall.err.log
 #SBATCH -p gpu
-#SBATCH --no-requeue
+#SBATCH --no-requeue
 #SBATCH --time=5-00:00:00
 #SBATCH --mem=30000
 # ---> in MiB
@@ -41,6 +41,7 @@ show_help() {
 	echo -e "    WATER_THRESHOLD    The threshold to cut water off at when training, in metres. Default: 0.1" >&2;
 	echo -e "    PATH_CHECKPOINT 	The path to a checkcpoint to load. If specified, a model will be loaded instead of being trained." >&2;
 	echo -e "    LEARNING_RATE      The learning rate to use. Default: 0.001." >&2;
+	echo -e "    UPSAMPLE           How much to upsample by at the beginning of the model. A value of disables upscaling. Default: 2." >&2;
 	echo -e "    PREDICT_COUNT		The number of items from the (SCRAMBLED) dataset to make a prediction for." >&2;
 	echo -e "    POSTFIX			Postfix to append to the output dir (auto calculated)." >&2;
 	echo -e "    ARGS				Optional. Any additional arguments to pass to the python program." >&2;
