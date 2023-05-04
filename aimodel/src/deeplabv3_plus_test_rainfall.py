@@ -52,7 +52,8 @@ LEARNING_RATE = float(os.environ["LEARNING_RATE"]) if "LEARNING_RATE" in os.envi
 WATER_THRESHOLD = float(os.environ["WATER_THRESHOLD"]) if "WATER_THRESHOLD" in os.environ else 0.1
 UPSAMPLE = int(os.environ["UPSAMPLE"]) if "UPSAMPLE" in os.environ else 2
 
-STEPS_PER_EXECUTION = int(os.environ["STEPS_PER_EXECUTION"]) if "STEPS_PER_EXECUTION" in os.environ else 16
+
+STEPS_PER_EXECUTION = int(os.environ["STEPS_PER_EXECUTION"]) if "STEPS_PER_EXECUTION" in os.environ else 1
 JIT_COMPILE = True if "JIT_COMPILE" in os.environ else False
 DIR_OUTPUT=os.environ["DIR_OUTPUT"] if "DIR_OUTPUT" in os.environ else f"output/{datetime.utcnow().date().isoformat()}_deeplabv3plus_rainfall_TEST"
 
@@ -158,7 +159,7 @@ if PATH_CHECKPOINT is None:
 		
 		x = backbone.get_layer("conv4_block6_2_relu").output
 		x = DilatedSpatialPyramidPooling(x)
-
+		
 		input_a = tf.keras.layers.UpSampling2D(
 			size=(image_size // 4 // x.shape[1] * 2, image_size // 4 // x.shape[2] * 2), # <--- UPSAMPLE after pyramid
 			interpolation="bilinear",
