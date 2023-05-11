@@ -258,12 +258,12 @@ if PATH_CHECKPOINT is None:
 	logger.info(">>> Training complete")
 	logger.info(">>> Plotting graphs")
 	
-	plot_metric(history.history["loss"], history.history["val_loss"], "loss")
-	plot_metric(history.history["acc"], history.history["val_acc"], "accuracy")
-	plot_metric(history.history["metric_dice_coefficient"], history.history["val_metric_dice_coefficient"], "dice")
-	plot_metric(history.history["one_hot_mean_iou"], history.history["val_one_hot_mean_iou"], "mean iou")
-	plot_metric(history.history["sensitivity"], history.history["val_sensitivity"], "sensitivity")
-	plot_metric(history.history["specificity"], history.history["val_specificity"], "specificity")
+	plot_metric(history.history["loss"], history.history["val_loss"], "loss", DIR_OUTPUT)
+	plot_metric(history.history["acc"], history.history["val_acc"], "accuracy", DIR_OUTPUT)
+	plot_metric(history.history["metric_dice_coefficient"], history.history["val_metric_dice_coefficient"], "dice", DIR_OUTPUT)
+	plot_metric(history.history["one_hot_mean_iou"], history.history["val_one_hot_mean_iou"], "mean iou", DIR_OUTPUT)
+	plot_metric(history.history["sensitivity"], history.history["val_sensitivity"], "sensitivity", DIR_OUTPUT)
+	plot_metric(history.history["specificity"], history.history["val_specificity"], "specificity", DIR_OUTPUT)
 	
 
 # ██ ███    ██ ███████ ███████ ██████  ███████ ███    ██  ██████ ███████ 
