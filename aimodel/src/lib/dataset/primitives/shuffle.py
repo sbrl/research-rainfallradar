@@ -17,7 +17,7 @@ def shuffle(lst):
 	tmplist = deepcopy(lst)
 	m = len(tmplist)
 	
-	if RANDSEED in os.environ:
+	if "RANDSEED" in os.environ:
 		seed = os.environ["RANDSEED"]
 		random.seed(seed)
 		logger.info(f"Random seed set to {seed}, first 3 values: {random.randint(0, m)}, {random.randint(0, m)}, {random.randint(0, m)}")
