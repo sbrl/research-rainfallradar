@@ -58,7 +58,7 @@ Usage:
 	if os.path.isdir(FILEPATH_INPUT):
 		FILEPATH_INPUT = os.path.join(FILEPATH_INPUT, "metrics.tsv")
 	if not os.path.exists(FILEPATH_INPUT):
-		sys.stderr.write(f"Error: The input filepath at {FILEPATH_INPUT} either does not exist ro you don't have permission to read it.\n")
+		sys.stderr.write(f"Error: The input filepath at {FILEPATH_INPUT} either does not exist or you don't have permission to read it.\n")
 		sys.exit(1)
 	DIRPATH_OUTPUT = os.environ["OUTPUT"] if "OUTPUT" in os.environ else os.path.dirname(FILEPATH_INPUT)
 	
