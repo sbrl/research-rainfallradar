@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import sys
 import os
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -34,13 +35,32 @@ def plot_metrics(filepath_input, dirpath_output):
 
 	target=os.path.join(dirpath_output, f"metrics.png")
 	plt.savefig(target)
-
-	print(f">>> Saved to {target}")
+	
+	sys.stderr.write(">>> Saved to ")
+	sys.stdout.write(target)
+	sys.stderr.write("\n")
 
 
 if __name__ == "__main__":
+	if "INPUT" not in os.environ:
+		sys.stderr.write("""
+plot_metrics.py: plot metrics for a metrics.tsv file
+
+The output file is named "metrics.png".
+
+Usage:
+	INPUT="path/to/metrics.tsv" OUTPUT="path/to/output_dir" path/to/plot_metrics.py 
+""")
+		sys.exit()
+		
+	
 	FILEPATH_INPUT = os.environ["INPUT"]
-	DIRPATH_OUTPUT = os.environ["OUTPUT"] if "OUTPUT" in os.environ else os.getcwd()
+	if os.path.isdir(FILEPATH_INPUT):
+		FILEPATH_INPUT = os.path.join(FILEPATH_INPUT, "metrics.tsv")
+	if not os.path.exists(FILEPATH_INPUT):
+		sys.stderr.write(f"Error: The input filepath at {FILEPATH_INPUT} either does not exist ro you don't have permission to read it.\n")
+		sys.exit(1)
+	DIRPATH_OUTPUT = os.environ["OUTPUT"] if "OUTPUT" in os.environ else os.path.dirname(FILEPATH_INPUT)
 	
 	plot_metrics(FILEPATH_INPUT, DIRPATH_OUTPUT)
 	
