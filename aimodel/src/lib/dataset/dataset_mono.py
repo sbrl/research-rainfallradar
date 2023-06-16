@@ -158,7 +158,7 @@ def dataset_mono(dirpath_input, train_percentage=0.8, **kwargs):
 	
 	return dataset_train, dataset_validate #, filepaths
 
-def dataset_mono_predict(dirpath_input, **kwargs):
+def dataset_mono_predict(dirpath_input, batch_size=64, **kwargs):
 	"""Creates a tf.data.Dataset() for prediction using the contrastive learning model.
 	Note that this WILL MANGLE THE ORDERING if you set parallel_reads_multiplier to anything other than 0!!
 	
@@ -175,7 +175,7 @@ def dataset_mono_predict(dirpath_input, **kwargs):
 	return make_dataset(
 		filepaths=filepaths,
 		metadata=read_metadata(dirpath_input),
-		batch_size=None,
+		batch_size=None, # NOTE: We IGNORE batch_size because otherwise we have issues reading the dataset which is stupid because it doesn't always happen and it's weird.
 		shuffle=False, #even with shuffle=False we're not gonna get them all in the same order since we're reading in parallel
 		**kwargs
 	)
