@@ -175,7 +175,7 @@ def dataset_mono_predict(dirpath_input, batch_size=64, **kwargs):
 	return make_dataset(
 		filepaths=filepaths,
 		metadata=read_metadata(dirpath_input),
-		batch_size=None, # NOTE: We IGNORE batch_size because otherwise we have issues reading the dataset which is stupid because it doesn't always happen and it's weird.
+		batch_size=batch_size, # WAS None
 		shuffle=False, #even with shuffle=False we're not gonna get them all in the same order since we're reading in parallel
 		**kwargs
 	)
