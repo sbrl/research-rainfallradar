@@ -20,7 +20,7 @@ import matplotlib.pyplot as plt
 
 import tensorflow as tf
 
-from lib.dataset.dataset_mono import dataset_mono
+from lib.dataset.dataset_mono import dataset_mono, dataset_mono_predict
 from lib.ai.components.LossCrossEntropyDice import LossCrossEntropyDice
 from lib.ai.components.MetricDice import metric_dice_coefficient as dice_coefficient
 from lib.ai.components.MetricSensitivity import make_sensitivity as sensitivity
@@ -59,6 +59,7 @@ DIR_OUTPUT=os.environ["DIR_OUTPUT"] if "DIR_OUTPUT" in os.environ else f"output/
 
 PATH_CHECKPOINT = os.environ["PATH_CHECKPOINT"] if "PATH_CHECKPOINT" in os.environ else None
 PREDICT_COUNT = int(os.environ["PREDICT_COUNT"]) if "PREDICT_COUNT" in os.environ else 25
+PREDICT_AS_ONE = True if "PREDICT_AS_ONE" in os.environ else False
 
 # ~~~
 
@@ -68,7 +69,7 @@ if not os.path.exists(DIR_OUTPUT):
 # ~~~
 
 logger.info("DeepLabV3+ rainfall radar TEST")
-for env_name in [ "BATCH_SIZE","NUM_CLASSES", "DIR_RAINFALLWATER", "PATH_HEIGHTMAP", "PATH_COLOURMAP", "STEPS_PER_EPOCH", "REMOVE_ISOLATED_PIXELS", "EPOCHS", "LOSS", "LEARNING_RATE", "DIR_OUTPUT", "PATH_CHECKPOINT", "PREDICT_COUNT", "DICE_LOG_COSH", "WATER_THRESHOLD", "UPSAMPLE", "STEPS_PER_EXECUTION", "JIT_COMPILE" ]:
+for env_name in [ "BATCH_SIZE","NUM_CLASSES", "DIR_RAINFALLWATER", "PATH_HEIGHTMAP", "PATH_COLOURMAP", "STEPS_PER_EPOCH", "REMOVE_ISOLATED_PIXELS", "EPOCHS", "LOSS", "LEARNING_RATE", "DIR_OUTPUT", "PATH_CHECKPOINT", "PREDICT_COUNT", "DICE_LOG_COSH", "WATER_THRESHOLD", "UPSAMPLE", "STEPS_PER_EXECUTION", "JIT_COMPILE", "PREDICT_AS_ONE" ]:
 	logger.info(f"> {env_name} {str(globals()[env_name])}")
 
 
@@ -78,20 +79,32 @@ for env_name in [ "BATCH_SIZE","NUM_CLASSES", "DIR_RAINFALLWATER", "PATH_HEIGHTM
 # ██   ██ ██   ██    ██    ██   ██      ██ ██         ██    
 # ██████  ██   ██    ██    ██   ██ ███████ ███████    ██    
 
-dataset_train, dataset_validate = dataset_mono(
-	dirpath_input=DIR_RAINFALLWATER,
-	batch_size=BATCH_SIZE,
-	water_threshold=WATER_THRESHOLD,
-	rainfall_scale_up=2, # done BEFORE cropping to the below size
-	output_size=IMAGE_SIZE,
-	input_size="same",
-	filepath_heightmap=PATH_HEIGHTMAP,
-	do_remove_isolated_pixels=REMOVE_ISOLATED_PIXELS
-)
+if not PREDICT_AS_ONE:
+	dataset_train, dataset_validate = dataset_mono(
+		dirpath_input=DIR_RAINFALLWATER,
+		batch_size=BATCH_SIZE,
+		water_threshold=WATER_THRESHOLD,
+		rainfall_scale_up=2, # done BEFORE cropping to the below size
+		output_size=IMAGE_SIZE,
+		input_size="same",
+		filepath_heightmap=PATH_HEIGHTMAP,
+		do_remove_isolated_pixels=REMOVE_ISOLATED_PIXELS
+	)
 
-logger.info("Train Dataset:", dataset_train)
-logger.info("Validation Dataset:", dataset_validate)
-
+	logger.info("Train Dataset:", dataset_train)
+	logger.info("Validation Dataset:", dataset_validate)
+else:
+	dataset_train = dataset_mono_predict(
+		dirpath_input=DIR_RAINFALLWATER,
+		batch_size=BATCH_SIZE,
+		water_threshold=WATER_THRESHOLD,
+		rainfall_scale_up=2,  # done BEFORE cropping to the below size
+		output_size=IMAGE_SIZE,
+		input_size="same",
+		filepath_heightmap=PATH_HEIGHTMAP,
+		do_remove_isolated_pixels=REMOVE_ISOLATED_PIXELS
+	)
+	logger.info("Dataset AS_ONE:", dataset_train)
 
 # ███    ███  ██████  ██████  ███████ ██     
 # ████  ████ ██    ██ ██   ██ ██      ██     
@@ -372,11 +385,12 @@ plot_predictions(
 	colormap,
 	model=model
 )
-plot_predictions(
-	os.path.join(DIR_OUTPUT, "predict_validate_$$.png"),
-	get_from_batched(dataset_validate, PREDICT_COUNT),
-	colormap,
-	model=model
-)
+if not PREDICT_AS_ONE:
+	plot_predictions(
+		os.path.join(DIR_OUTPUT, "predict_validate_$$.png"),
+		get_from_batched(dataset_validate, PREDICT_COUNT),
+		colormap,
+		model=model
+	)
 
 logger.info(f"Complete at {str(datetime.now().isoformat())}, elapsed {str((datetime.now() - time_start).total_seconds())} seconds")

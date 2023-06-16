@@ -46,6 +46,7 @@ show_help() {
 	echo -e "    RANDSEED           The random seed to use when shuffling filepaths. Default: unset, which means use a random value." >&2;
 	echo -e "    JIT_COMPILE        Set to any value to compile the model with XLA." >&2;
 	echo -e "    PREDICT_COUNT		The number of items from the (SCRAMBLED) dataset to make a prediction for." >&2;
+	echo -e "    PREDICT_AS_ONE		[prediction only] Set to any value to avoid splitting the input dataset into training/validation and instead treat it as a single dataset. Default: False (treat it as training/validation)" >&2;
 	echo -e "    POSTFIX			Postfix to append to the output dir (auto calculated)." >&2;
 	echo -e "    ARGS				Optional. Any additional arguments to pass to the python program." >&2;
 	echo -e "" >&2;
@@ -75,7 +76,7 @@ echo -e ">>> DIR_OUTPUT: ${DIR_OUTPUT}";
 echo -e ">>> Additional args: ${ARGS}";
 
 export PATH=$HOME/software/bin:$PATH;
-export IMAGE_SIZE BATCH_SIZE DIR_RAINFALLWATER PATH_HEIGHTMAP PATH_COLOURMAP STEPS_PER_EPOCH DIR_OUTPUT PATH_CHECKPOINT EPOCHS PREDICT_COUNT NO_REMOVE_ISOLATED_PIXELS LOSS LEARNING_RATE DICE_LOG_COSH WATER_THRESHOLD UPSAMPLE STEPS_PER_EXECUTION JIT_COMPILE RANDSEED;
+export IMAGE_SIZE BATCH_SIZE DIR_RAINFALLWATER PATH_HEIGHTMAP PATH_COLOURMAP STEPS_PER_EPOCH DIR_OUTPUT PATH_CHECKPOINT EPOCHS PREDICT_COUNT NO_REMOVE_ISOLATED_PIXELS LOSS LEARNING_RATE DICE_LOG_COSH WATER_THRESHOLD UPSAMPLE STEPS_PER_EXECUTION JIT_COMPILE RANDSEED PREDICT_AS_ONE;
 
 echo ">>> Installing requirements";
 conda run -n py38 pip install -q -r requirements.txt;
