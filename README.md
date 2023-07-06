@@ -51,3 +51,7 @@ NOW
 Note to self: 150.12 hashes/sec on i7-4770 4c8t, ???.?? hashes/sec on Viper compute
 
 After double checking, rainfallwrangler does NOT mess with the ordering of the data.
+
+
+## License
+All the code in this repository is released under the GNU Affero General Public License unless otherwise specified. The full license text is included in the [`LICENSE.md` file](./LICENSE.md) in this repository. GNU [have a great summary of the licence](https://www.gnu.org/licenses/#AGPL) which I strongly recommend reading before using this software.
