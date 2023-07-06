@@ -35,7 +35,7 @@ Only steps #6 to #9 actually use code in this repository.
 `rainfallwrangler` is a Node.js application to wrangle the dataset into something more appropriate for training an AI efficiently. The rainfall radar and water depth data are considered temporally to be regular time steps. Here's a diagram explaining the terminology:
 
 ```
-NOW
+                       NOW
 │                       │         │Water depth
 │▼ Rainfall Radar Data ▼│[Offset] │▼
 ├─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┼─┬─┬─┬─┬─┼─┐
