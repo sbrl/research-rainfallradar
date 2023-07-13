@@ -151,6 +151,8 @@ def dataset_mono(dirpath_input, train_percentage=0.8, **kwargs):
 	filepaths_train = filepaths[:dataset_splitpoint]
 	filepaths_validate = filepaths[dataset_splitpoint:]
 	
+	print("DEBUG:dataset_mono filepaths_train", filepaths_train, "filepaths_validate", filepaths_validate)
+	
 	metadata = read_metadata(dirpath_input)
 	
 	dataset_train = make_dataset(filepaths_train, metadata=metadata, **kwargs)
