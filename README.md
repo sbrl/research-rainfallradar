@@ -6,6 +6,9 @@ This is the 3rd major version of this model.
 
 Unfortunately using this model is rather complicated and involves a large number of steps. There is no way around this. This README (will) explain it the best I can though.
 
+> [!WARNING]
+> This README is currently under construction!
+
 ## Paper
 The research in this repository has been published in a conference paper(!)
 
