@@ -48,7 +48,7 @@ More fully:
 3. Obtain a heightmap (or *Digital Elevation Model*, as it's sometimes known) from the Ordnance Survey (can't remember the link, please PR to add this)
 4. Use [`terrain50-cli`](https://www.npmjs.com/package/terrain50-cli) to slice the the output from steps #2 and #3 to be exactly the same size [TODO: Preprocess to extract just a single river basin from the data]
 5. Push through [HAIL-CAESAR](https://github.com/sbrl/HAIL-CAESAR) (this fork has the ability to handle streams of .asc files rather than each time step having it's own filename)
-6. Use `rainfallwrangler` in this repository (finally!) to convert the output to .json.gz then .tfrecord files
+6. Use `rainfallwrangler` in this repository (finally!) to convert the rainfall, heightmap, and water depth data to a .json.gz dataset, and then to a set of .tfrecord files the model can read and understand
 7. Train a DeepLabV3+ prediction model
 
 Only steps #6 and #7 actually use code in this repository. Steps #2 and #4 involve the use of modular [`npm`](https://npmjs.org/) packages.
@@ -104,6 +104,8 @@ This is done using the `rainfallwrangler` tool in the eponymous directory in thi
 ◄────────── Timesteps ─────────────►
 ```
 
+This is also the point at which the compression of the rainfall history the DeepLabV3+ model sees is done - i.e. compressing multiple timesteps with `max()` to save VRAM.
+
 Note to self: 150.12 hashes/sec on i7-4770 4c8t, ???.?? hashes/sec on Viper compute
 
 After double checking, rainfallwrangler does NOT mess with the ordering of the data.
@@ -126,11 +128,11 @@ The model should work with any recent version of Tensorflow. See the [version ta
 With requirements installed, we can train a model. The general form this is done is like so:
 
 ```bash
-cd aimodel
+cd aimodel;
 [ENVIRONMENT_VARIABLES_HERE] src/deeplabv3_plus_test_rainfall.py
 ```
 
-This model has mainly been tested and trained on the [University of Hull's Viper HPC](), which runs [Slurm](). As such, a Slurm job file is available in [`aimodel/slurm-TEST-deeplabv3p-rainfall.job`](./aimodel/slurm-TEST-deeplabv3p-rainfall.job), which wraps the aforementioned script.
+This model has mainly been tested and trained on the [University of Hull's Viper HPC](https://hpc.wordpress.hull.ac.uk/home/), which runs [Slurm](https://slurm.schedmd.com/). As such, a Slurm job file is available in [`aimodel/slurm-TEST-deeplabv3p-rainfall.job`](./aimodel/slurm-TEST-deeplabv3p-rainfall.job), which wraps the aforementioned script.
 
 The following environment variables are supported:
 
@@ -166,7 +168,8 @@ ARGS						| Optional. Any additional arguments to pass to the python program.
 
 **Making predictions:** Set `PATH_CHECKPOINT` to point to a checkpoint file to make predictions with an existing model that you trained earlier instead of training a new one. Data is pulled from the given dataset, same as during training. The first `PREDICT_COUNT` items in the dataset are picked to make a prediction. 
 
-> [!NOTE] The dataset pipeline is naturally non-deterministic with respect to the order in which samples are read. Ensuring the ordering of samples is not mangled is only possible when making predictions, and requires a number of environment variables to be set:
+> [!NOTE]
+> The dataset pipeline is naturally non-deterministic with respect to the order in which samples are read. Ensuring the ordering of samples is not mangled is only possible when making predictions, and requires a number of environment variables to be set:
 > 
 > - **`PREDICT_AS_ONE`:** Set to any value to disable the training / validation split
 > - **`PARALLEL_READS`:** Set to `0` to reading input files sequentially.
@@ -174,6 +177,7 @@ ARGS						| Optional. Any additional arguments to pass to the python program.
 ## Contributing
 Contributions are very welcome - both issues and pull requests! Please mention in any pull requests that you release your work under the AGPL-3 (see below).
 
+We acknowledge and thank the [VIPER high-performance computing facility](https://hpc.wordpress.hull.ac.uk/home/) of the [University of Hull](https://hull.ac.uk/) and its support team, without whom this project would not have been possible.
 
 ## License
 All the code in this repository is released under the GNU Affero General Public License 3.0 unless otherwise specified. The full license text is included in the [`LICENSE.md` file](./LICENSE.md) in this repository. GNU [have a great summary of the licence](https://www.gnu.org/licenses/#AGPL) which I strongly recommend reading before using this software.
