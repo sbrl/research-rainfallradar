@@ -12,8 +12,8 @@ if not os.environ.get("NO_SILENCE"):
 import tensorflow as tf
 
 # The maximum value allowed for the rainfall radar data. Used to normalise the data when converting to .tfrecord files
-# TODO: Enter the optimal value for this.
-RAINFALL_MAX_NUMBER = 100
+# TODO: Find the optimal value for this.
+RAINFALL_MAX_NUMBER = int(os.environ["RAINFALL_MAX_NUMBER"]) if "RAINFALL_MAX_NUMBER" in os.environ else 100
 
 def parse_args():
 	parser = argparse.ArgumentParser(description="Convert a generated .jsonl.gz file to a .tfrecord.gz file")
