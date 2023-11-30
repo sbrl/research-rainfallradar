@@ -43,6 +43,7 @@ NUM_CLASSES = 2
 DIR_RAINFALLWATER = os.environ["DIR_RAINFALLWATER"]
 PATH_HEIGHTMAP = os.environ["PATH_HEIGHTMAP"]
 PATH_COLOURMAP = os.environ["PATH_COLOURMAP"]
+PARALLEL_READS = float(os.environ["PARALLEL_READS"]) if "PARALLEL_READS" in os.environ else 1.5
 STEPS_PER_EPOCH = int(os.environ["STEPS_PER_EPOCH"]) if "STEPS_PER_EPOCH" in os.environ else None
 REMOVE_ISOLATED_PIXELS = False if "NO_REMOVE_ISOLATED_PIXELS" in os.environ else True
 EPOCHS = int(os.environ["EPOCHS"]) if "EPOCHS" in os.environ else 50
@@ -69,7 +70,7 @@ if not os.path.exists(DIR_OUTPUT):
 # ~~~
 
 logger.info("DeepLabV3+ rainfall radar TEST")
-for env_name in [ "BATCH_SIZE","NUM_CLASSES", "DIR_RAINFALLWATER", "PATH_HEIGHTMAP", "PATH_COLOURMAP", "STEPS_PER_EPOCH", "REMOVE_ISOLATED_PIXELS", "EPOCHS", "LOSS", "LEARNING_RATE", "DIR_OUTPUT", "PATH_CHECKPOINT", "PREDICT_COUNT", "DICE_LOG_COSH", "WATER_THRESHOLD", "UPSAMPLE", "STEPS_PER_EXECUTION", "JIT_COMPILE", "PREDICT_AS_ONE" ]:
+for env_name in [ "BATCH_SIZE","NUM_CLASSES", "DIR_RAINFALLWATER", "PATH_HEIGHTMAP", "PATH_COLOURMAP", "STEPS_PER_EPOCH", "PARALLEL_READS", "REMOVE_ISOLATED_PIXELS", "EPOCHS", "LOSS", "LEARNING_RATE", "DIR_OUTPUT", "PATH_CHECKPOINT", "PREDICT_COUNT", "DICE_LOG_COSH", "WATER_THRESHOLD", "UPSAMPLE", "STEPS_PER_EXECUTION", "JIT_COMPILE", "PREDICT_AS_ONE" ]:
 	logger.info(f"> {env_name} {str(globals()[env_name])}")
 
 
@@ -88,7 +89,8 @@ if not PREDICT_AS_ONE:
 		output_size=IMAGE_SIZE,
 		input_size="same",
 		filepath_heightmap=PATH_HEIGHTMAP,
-		do_remove_isolated_pixels=REMOVE_ISOLATED_PIXELS
+		do_remove_isolated_pixels=REMOVE_ISOLATED_PIXELS,
+		parallel_reads_multiplier=PARALLEL_READS
 	)
 
 	logger.info("Train Dataset:", dataset_train)

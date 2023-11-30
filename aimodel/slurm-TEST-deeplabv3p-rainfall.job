@@ -33,13 +33,14 @@ show_help() {
 	echo -e "    DIR_RAINFALLWATER	The path to the directory the .tfrecord files containing the rainfall radar / water depth data." >&2;
 	echo -e "    PATH_HEIGHTMAP 	The path to the heightmap jsonl file to read in." >&2;
 	echo -e "    PATH_COLOURMAP 	The path to the colourmap for predictive purposes." >&2;
+	echo -e "    PARALLEL_READS		Multiplier for the number of files to read in parallel. 1 = number of CPU cores available. Very useful on high-read-latency systems (e.g. HPC like Viper) to avoid starving the GPU of data. WILL MANGLE THE ORDERING OF DATA. Set to 0 to disable and read data sequentially. WILL ONLY NOT MANGLE DATA IF PREDICT_AS_ONE IS SET. Defaults to 1.5." >&2;
 	echo -e "    STEPS_PER_EPOCH	The number of steps to consider an epoch. Defaults to None, which means use the entire dataset." >&2;
 	echo -e "    NO_REMOVE_ISOLATED_PIXELS	Set to any value to avoid the engine from removing isolated pixels - that is, water pixels with no other surrounding pixels, either side to side to diagonally." >&2;
 	echo -e "    EPOCHS				The number of epochs to train for." >&2;
 	echo -e "    LOSS               The loss function to use. Default: cross-entropy (possible values: cross-entropy, cross-entropy-dice)." >&2;
 	echo -e "    DICE_LOG_COSH      When in cross-entropy-dice mode, in addition do loss = cel + log(cosh(dice_loss)) instead of just loss = cel + dice_loss." >&2;
 	echo -e "    WATER_THRESHOLD    The threshold to cut water off at when training, in metres. Default: 0.1" >&2;
-	echo -e "    PATH_CHECKPOINT 	The path to a checkcpoint to load. If specified, a model will be loaded instead of being trained." >&2;
+	echo -e "    PATH_CHECKPOINT 	The path to a checkpoint to load. If specified, a model will be loaded instead of being trained." >&2;
 	echo -e "    LEARNING_RATE      The learning rate to use. Default: 0.001." >&2;
 	echo -e "    UPSAMPLE           How much to upsample by at the beginning of the model. A value of disables upscaling. Default: 2." >&2;
 	echo -e "    STEPS_PER_EXECUTION How many steps to perform before surfacing from the GPU to e.g. do callbacks. Default: 16." >&2;
