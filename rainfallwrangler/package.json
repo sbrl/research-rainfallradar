@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Wrangles rainfall radar and water depth data into something sensible.",
   "main": "src/index.mjs",
+  "private": true,
   "scripts": {
     "test": "echo \"No tests have been implemented yet\""
   },
