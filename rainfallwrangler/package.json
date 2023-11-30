@@ -15,14 +15,14 @@
   "license": "AGPL-3.0-or-later",
   "dependencies": {
     "@tensorflow/tfjs-node-gpu": "^3.18.0",
-    "applause-cli": "^1.8.1",
+    "applause-cli": "^1.8.2",
     "gunzip-maybe": "^1.4.2",
     "nexline": "^1.2.2",
-    "p-map": "^5.5.0",
-    "p-reflect": "^3.0.0",
+    "p-map": "^6.0.0",
+    "p-reflect": "^3.1.0",
     "pretty-ms": "^8.0.0",
     "spawn-stream": "^1.0.2",
-    "terrain50": "^1.10.1",
-    "workerpool": "^6.2.1"
+    "terrain50": "^1.11.0",
+    "workerpool": "^8.0.0"
   }
 }
