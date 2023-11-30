@@ -4,7 +4,9 @@
 
 This is the 3rd major version of this model.
 
-Unfortunately using this model is rather complicated and involves a large number of steps. There is no way around this. This README (will) explain it the best I can though.
+Unfortunately using this model is rather complicated and involves a large number of steps. There is no way around this. This README explains it the best I can though.
+
+Should anything be unclear, please [open an issue](https://github.com/sbrl/research-rainfallradar/issues/new)
 
 > [!WARNING]
 > This README is currently under construction!
@@ -30,6 +32,11 @@ By modelling the task as an image segmentation problem, an alternative approach 
  - Experience with the command line
  - 1TiB disk space free
  - Lots of time and patience
+
+> [!NOTE]
+> The format that HAIL-CAESAR accepts data in results in a ~450GiB rainfall radar file O.o
+> 
+> Thankfully the format that `nimrod-data-downloader` downloads in is only a couple of GiB in the end, and the `.tfrecord` files that the model accepts is only ~70GiB.
 
 ## Overview
 The process of using this model is as as illustrated:
@@ -110,10 +117,72 @@ After all of the above steps are completed, a model can now be trained.
 
 The current state of the art (that was presented in the above paper!) is based on DeepLabV3+. A note of caution: this repository contains some older models, so it can be easy to mix them up. Hence this documentation :-)
 
-<------ WRITING HERE
+This model is located in the file [`aimodel/src/deeplabv3_plus_test_rainfall.py`](./aimodel/src/deeplabv3_plus_test_rainfall.py), and is controlled via a system of environment variables. Before using it, you must first install any dependencies you're missing:
 
-TODO: Continue the guide here.
+```bash
+pip3 install --user -r aimodel/requirements.txt
+```
+
+The model should work with any recent version of Tensorflow. See the [version table](https://www.tensorflow.org/install/source#gpu) if you are having trouble with CUDA and/or CuDNN.
+
+With requirements installed, we can train a model. The general form this is done is like so:
+
+```bash
+cd aimodel
+[ENVIRONMENT_VARIABLES_HERE] src/deeplabv3_plus_test_rainfall.py
+```
+
+This model has mainly been tested and trained on the [University of Hull's Viper HPC](), which runs [Slurm](). As such, a Slurm job file is available in [`aimodel/slurm-TEST-deeplabv3p-rainfall.job`](./aimodel/slurm-TEST-deeplabv3p-rainfall.job), which wraps the aforementioned script.
+
+The following environment variables are supported:
+
+Environment Variable		| Meaning
+----------------------------|-------------------------------------------------
+IMAGE_SIZE=128				| Optional. Sets the size of the 'images' that the DeepLabV3+ model will work with.
+BATCH_SIZE=64				| Optional. Sets the batch size to train the model with.
+DIR_RAINFALLWATER			| The path to the directory the .tfrecord files containing the rainfall radar / water depth data.
+PATH_HEIGHTMAP 				| The path to the heightmap jsonl file to read in.
+PATH_COLOURMAP 				| The path to the colourmap for predictive purposes.
+DIR_OUTPUT					| The directory to write output files to. Automatically calculated in the Slurm job files unless manually set. See POSTFIX to alter DIR_OUTPUT without disrupting the automatic calculation. If you are calling `slurm-TEST-deeplabv3p-rainfall.job` directly then you MUST set this environment variable manually.
+PARALLEL_READS				| Multiplier for the number of files to read in parallel. 1 = number of CPU cores available. Very useful on high-read-latency systems (e.g. HPC like Viper) to avoid starving the GPU of data. WILL MANGLE THE ORDERING OF DATA. Set to 0 to disable and read data sequentially. WILL ONLY NOT MANGLE DATA IF PREDICT_AS_ONE IS SET. Defaults to 1.5.
+STEPS_PER_EPOCH				| The number of steps to consider an epoch. Defaults to None, which means use the entire dataset.
+NO_REMOVE_ISOLATED_PIXELS	| Set to any value to avoid the engine from removing isolated pixels - that is, water pixels with no other surrounding pixels, either side to side to diagonally.
+EPOCHS=50					| The number of epochs to train for.
+LOSS="cross-entropy"		| The loss function to use. Default: cross-entropy (possible values: cross-entropy, cross-entropy-dice).
+DICE_LOG_COSH				| When in cross-entropy-dice mode, in addition do loss = cel + log(cosh(dice_loss)) instead of just loss = cel + dice_loss. Default: unset
+WATER_THRESHOLD=0.1			| The threshold to cut water off at when training, in metres. Default: 0.1
+PATH_CHECKPOINT				| The path to a checkpoint to load. If specified, a model will be loaded instead of being trained.
+LEARNING_RATE=0.001			| The learning rate to use. Default: 0.001.
+UPSAMPLE=2					| How much to upsample by at the beginning of the model. A value of disables upscaling. Default: 2.
+STEPS_PER_EXECUTION=1		| How many steps to perform before surfacing from the GPU to e.g. do callbacks. Default: 1.
+RANDSEED					| The random seed to use when shuffling filepaths. Default: unset, which means use a random value.
+JIT_COMPILE					| Set to any value to compile the model with XLA. Defaults to unset; set to any value to enable.
+PREDICT_COUNT=25			| The number of items from the (SCRAMBLED) dataset to make a prediction for.
+PREDICT_AS_ONE				| [prediction only] Set to any value to avoid splitting the input dataset into training/validation and instead treat it as a single dataset. Default: False (treat it as training/validation)
+POSTFIX						| Postfix to append to the output directory name (primarily auto calculated if DIR_OUTPUT is not specified, but this allows adjustments to be made without setting DIR_OUTPUT).
+ARGS						| Optional. Any additional arguments to pass to the python program.
+
+> [!IMPORTANT]
+> It is strongly advised that all filepaths do **NOT** contain spaces.
+
+
+**Making predictions:** Set `PATH_CHECKPOINT` to point to a checkpoint file to make predictions with an existing model that you trained earlier instead of training a new one. Data is pulled from the given dataset, same as during training. The first `PREDICT_COUNT` items in the dataset are picked to make a prediction. 
+
+> [!NOTE] The dataset pipeline is naturally non-deterministic with respect to the order in which samples are read. Ensuring the ordering of samples is not mangled is only possible when making predictions, and requires a number of environment variables to be set:
+> 
+> - **`PREDICT_AS_ONE`:** Set to any value to disable the training / validation split
+> - **`PARALLEL_READS`:** Set to `0` to reading input files sequentially.
+
+## Contributing
+Contributions are very welcome - both issues and pull requests! Please mention in any pull requests that you release your work under the AGPL-3 (see below).
 
 
 ## License
-All the code in this repository is released under the GNU Affero General Public License unless otherwise specified. The full license text is included in the [`LICENSE.md` file](./LICENSE.md) in this repository. GNU [have a great summary of the licence](https://www.gnu.org/licenses/#AGPL) which I strongly recommend reading before using this software.
+All the code in this repository is released under the GNU Affero General Public License 3.0 unless otherwise specified. The full license text is included in the [`LICENSE.md` file](./LICENSE.md) in this repository. GNU [have a great summary of the licence](https://www.gnu.org/licenses/#AGPL) which I strongly recommend reading before using this software.
+
+> [!NOTE] AGPL 3.0 was chosen for a number of reasons. The code in this repository has taken a very large amount of effort to put together, and to this end it is my greatest wish that this code and all derivatives be open-source. Open-source AI models enable the benefits thereof to be distributed and shared to all, and ensure transparency surrounding methodology, process, and limitations.
+> 
+> You may contact me to negotiate a different licence, but do not hold out hope.
+> 
+> --Starbeamrainbowlabs, aka Lydia Bryan-Smith  
+> Primary author
