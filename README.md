@@ -14,7 +14,9 @@ The research in this repository has been published in a conference paper(!)
 
 - **Title:** Towards AI for approximating hydrodynamic simulations as a 2D segmentation task
 - **Conference:** Northern Lights Deep Learning Conference 2024
-- **DOI:** coming soon, but in advance you can view what should be the final paper here: <https://openreview.net/pdf?id=TpOsdB4gwR>
+- **Permanent Link:** <https://proceedings.mlr.press/v233/bryan-smith24a/bryan-smith24a.pdf>
+
+<!-- - **DOI:** coming soon, but in advance you can view what should be the final paper here: <https://openreview.net/pdf?id=TpOsdB4gwR> -->
 
 **Abstract:**  
 Traditional predictive simulations and remote sensing techniques for forecasting floods are based on fixed and spatially restricted physics-based models. These models are computationally expensive and can take many hours to run, resulting in predictions made based on outdated data. They are also spatially fixed, and unable to scale to unknown areas.
