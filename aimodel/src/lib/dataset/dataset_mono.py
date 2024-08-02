@@ -143,6 +143,7 @@ def get_filepaths(dirpath_input, do_shuffle=True):
 	
 	return result
 
+# TODO refactor this to validate_percentage=0.2 and test_percentage=0, but DON'T FORGET TO CHECK ***ALL*** usages of this FIRST and update them afterwards!
 def dataset_mono(dirpath_input, train_percentage=0.8, **kwargs):
 	filepaths = get_filepaths(dirpath_input)
 	filepaths_count = len(filepaths)
