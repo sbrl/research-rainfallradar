@@ -56,12 +56,12 @@ def run(args):
 	
 	
 	dataset_train, dataset_validate = dataset_mono(
-		dirpath_input=args.input,
-		batch_size=args.batch_size,
-		water_threshold=args.water_threshold,
-		output_size=args.water_size,
-		input_size=None, # Don't crop the input size
-		filepath_heightmap=args.heightmap
+		dirpath_input		= args.input,
+		batch_size			= args.batch_size,
+		water_threshold		= args.water_threshold,
+		output_size			= args.water_size,
+		input_size			= None, # Don't crop the input size
+		filepath_heightmap	= args.heightmap
 	)
 	dataset_metadata = read_metadata(args.input)
 	
