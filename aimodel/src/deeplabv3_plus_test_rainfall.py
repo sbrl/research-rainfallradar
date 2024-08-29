@@ -20,6 +20,7 @@ import matplotlib.pyplot as plt
 
 import tensorflow as tf
 
+import lib.primitives.env
 from lib.dataset.dataset_mono import dataset_mono, dataset_mono_predict
 from lib.ai.components.LossCrossEntropyDice import LossCrossEntropyDice
 from lib.ai.components.MetricDice import metric_dice_coefficient as dice_coefficient
@@ -37,41 +38,41 @@ logger.info(f"Starting at {str(datetime.now().isoformat())}")
 # ██      ██  ██ ██  ██  ██  ██ ██   ██ ██    ██ ██  ██ ██ ██  ██  ██ ██      ██  ██ ██    ██
 # ███████ ██   ████   ████   ██ ██   ██  ██████  ██   ████ ██      ██ ███████ ██   ████    ██
 
-IMAGE_SIZE = int(os.environ["IMAGE_SIZE"]) if "IMAGE_SIZE" in os.environ else 128 # was 512; 128 is the highest power of 2 that fits the data
-BATCH_SIZE = int(os.environ["BATCH_SIZE"]) if "BATCH_SIZE" in os.environ else 64
+IMAGE_SIZE = env.read("IMAGE_SIZE", int, 128)  # was 512; 128 is the highest power of 2 that fits the data
+BATCH_SIZE = env.read("BATCH_SIZE", int, 64)
 NUM_CLASSES = 2
-DIR_RAINFALLWATER = os.environ["DIR_RAINFALLWATER"]
-PATH_HEIGHTMAP = os.environ["PATH_HEIGHTMAP"]
-PATH_COLOURMAP = os.environ["PATH_COLOURMAP"]
-PARALLEL_READS = float(os.environ["PARALLEL_READS"]) if "PARALLEL_READS" in os.environ else 1.5
-STEPS_PER_EPOCH = int(os.environ["STEPS_PER_EPOCH"]) if "STEPS_PER_EPOCH" in os.environ else None
-REMOVE_ISOLATED_PIXELS = False if "NO_REMOVE_ISOLATED_PIXELS" in os.environ else True
-EPOCHS = int(os.environ["EPOCHS"]) if "EPOCHS" in os.environ else 50
-LOSS = os.environ["LOSS"] if "LOSS" in os.environ else "cross-entropy-dice" # other possible valuesL cross-entropy
-DICE_LOG_COSH = True if "DICE_LOG_COSH" in os.environ else False
-LEARNING_RATE = float(os.environ["LEARNING_RATE"]) if "LEARNING_RATE" in os.environ else 0.001
-WATER_THRESHOLD = float(os.environ["WATER_THRESHOLD"]) if "WATER_THRESHOLD" in os.environ else 0.1
-UPSAMPLE = int(os.environ["UPSAMPLE"]) if "UPSAMPLE" in os.environ else 2
+DIR_RAINFALLWATER = env.read("DIR_RAINFALLWATER", str)
+PATH_HEIGHTMAP = env.read("PATH_HEIGHTMAP", str)
+PATH_COLOURMAP = env.read("PATH_COLOURMAP", str)
+PARALLEL_READS = env.read("PARALLEL_READS", float, 1.5)
+STEPS_PER_EPOCH = env.read("STEPS_PER_EPOCH", int, None)
+REMOVE_ISOLATED_PIXELS = env.read("NO_REMOVE_ISOLATED_PIXELS", bool, True)
+EPOCHS = env.read("EPOCHS", int, 50)
+LOSS = env.read("LOSS", str, "cross-entropy-dice")  # other possible values: cross-entropy
+DICE_LOG_COSH = env.read("DICE_LOG_COSH", bool, False)
+LEARNING_RATE = env.read("LEARNING_RATE", float, 0.001)
+WATER_THRESHOLD = env.read("WATER_THRESHOLD", float, 0.1)
+UPSAMPLE = env.read("UPSAMPLE", int, 2)
+SPLIT_VALIDATE = env.read("SPLIT_VALIDATE", float, 0.2)
+SPLIT_TEST = env.read("SPLIT_TEST", float, 0)
 
 
-STEPS_PER_EXECUTION = int(os.environ["STEPS_PER_EXECUTION"]) if "STEPS_PER_EXECUTION" in os.environ else 1
-JIT_COMPILE = True if "JIT_COMPILE" in os.environ else False
-DIR_OUTPUT=os.environ["DIR_OUTPUT"] if "DIR_OUTPUT" in os.environ else f"output/{datetime.utcnow().date().isoformat()}_deeplabv3plus_rainfall_TEST"
-
-PATH_CHECKPOINT = os.environ["PATH_CHECKPOINT"] if "PATH_CHECKPOINT" in os.environ else None
-PREDICT_COUNT = int(os.environ["PREDICT_COUNT"]) if "PREDICT_COUNT" in os.environ else 25
-PREDICT_AS_ONE = True if "PREDICT_AS_ONE" in os.environ else False
-
+STEPS_PER_EXECUTION = env.read("STEPS_PER_EXECUTION", int, 1)
+JIT_COMPILE = env.read("JIT_COMPILE", bool, False)
+DIR_OUTPUT = env.read("DIR_OUTPUT", str, f"output/{datetime.utcnow().date().isoformat()}_deeplabv3plus_rainfall_TEST")
+PATH_CHECKPOINT = env.read("PATH_CHECKPOINT", str, None)
+PREDICT_COUNT = env.read("PREDICT_COUNT", int, 25)
+PREDICT_AS_ONE = env.read("PREDICT_AS_ONE", bool, False)
 # ~~~
 
-if not os.path.exists(DIR_OUTPUT):
-	os.makedirs(os.path.join(DIR_OUTPUT, "checkpoints"))
+env.val_dir_exists(os.path.join(DIR_OUTPUT, "checkpoints"), create=True)
 
 # ~~~
 
 logger.info("DeepLabV3+ rainfall radar TEST")
-for env_name in [ "BATCH_SIZE","NUM_CLASSES", "DIR_RAINFALLWATER", "PATH_HEIGHTMAP", "PATH_COLOURMAP", "STEPS_PER_EPOCH", "PARALLEL_READS", "REMOVE_ISOLATED_PIXELS", "EPOCHS", "LOSS", "LEARNING_RATE", "DIR_OUTPUT", "PATH_CHECKPOINT", "PREDICT_COUNT", "DICE_LOG_COSH", "WATER_THRESHOLD", "UPSAMPLE", "STEPS_PER_EXECUTION", "JIT_COMPILE", "PREDICT_AS_ONE" ]:
-	logger.info(f"> {env_name} {str(globals()[env_name])}")
+env.print_all(False)
+# for env_name in [ "BATCH_SIZE","NUM_CLASSES", "DIR_RAINFALLWATER", "PATH_HEIGHTMAP", "PATH_COLOURMAP", "STEPS_PER_EPOCH", "PARALLEL_READS", "REMOVE_ISOLATED_PIXELS", "EPOCHS", "LOSS", "LEARNING_RATE", "DIR_OUTPUT", "PATH_CHECKPOINT", "PREDICT_COUNT", "DICE_LOG_COSH", "WATER_THRESHOLD", "UPSAMPLE", "STEPS_PER_EXECUTION", "JIT_COMPILE", "PREDICT_AS_ONE" ]:
+# 	logger.info(f"> {env_name} {str(globals()[env_name])}")
 
 
 # ██████   █████  ████████  █████  ███████ ███████ ████████ 
