@@ -2,7 +2,7 @@ from unicodedata import name
 import numpy as np
 import tensorflow as tf
 import tensorflow_addons as tfa
-
+import keras_cv
 
 # Code from https://github.com/leanderme/ConvNeXt-Tensorflow/blob/main/ConvNeXt.ipynb
 from .LayerConvNeXtGamma import LayerConvNeXtGamma
@@ -165,7 +165,8 @@ def add_convnext_block(y, dim, drop_prob=0, prefix=""):
 		name      = f'{prefix}.gamma'
 	)(y)
 	
-	y = tfa.layers.StochasticDepth(
+	# y = tfa.layers.StochasticDepth(
+	y = keras_cv.layers.StochasticDepth(
 		drop_prob,
 		name = f'{prefix}.drop_path'
 	)([skip, y])
