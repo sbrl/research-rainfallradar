@@ -31,18 +31,7 @@ maintainers = [
 
 requires-python = ">= 3.10"
 
-dependencies = [
-	"tensorflow>=2.4",
-	# "tensorflow_addons",
-	"keras_cv",
-	"silence_tensorflow",
-	"loguru",
-	"umap-learn[plot]",
-	"seaborn",
-	"matplotlib",
-	"numpy",
-	"pandas"
-]
+dependencies = { file = ["requirements.txt"] }
 
 [project.urls]
 Homepage = "https://github.com/sbrl/research-rainfallradar"
