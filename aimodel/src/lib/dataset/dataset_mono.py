@@ -160,19 +160,18 @@ def get_filepaths(dirpath_input, do_shuffle=True):
 	
 	return result
 
-# TODO refactor this to validate_percentage=0.2 and test_percentage=0, but DON'T FORGET TO CHECK ***ALL*** usages of this FIRST and update them afterwards!
-def dataset_mono(dirpath_input, validate_percentage=0.2, test_percentage=0, **kwargs):
+def dataset_mono(dirpath_input, percentage_validate=0.2, percentage_test=0, **kwargs):
 	filepaths = get_filepaths(dirpath_input)
 	filepaths_count = len(filepaths)
 	
-	split_trainvalidate=math.floor(filepaths_count * (1-(validate_percentage+test_percentage)))
-	split_validatetest=math.floor(filepaths * (1 - test_percentage))
+	split_trainvalidate=math.floor(filepaths_count * (1-(percentage_validate+percentage_test)))
+	split_validatetest=math.floor(filepaths * (1 - percentage_test))
 	
 	
 	filepaths_train = filepaths[:split_trainvalidate]
 	filepaths_validate = filepaths[split_trainvalidate:split_validatetest]
 	filepaths_test = []
-	if test_percentage > 0:
+	if percentage_test > 0:
 		filepaths_test = filepaths[split_validatetest:]
 	
 	print("DEBUG:dataset_mono filepaths_train", filepaths_train, "filepaths_validate", filepaths_validate, "filepaths_test", filepaths_test)
@@ -182,7 +181,7 @@ def dataset_mono(dirpath_input, validate_percentage=0.2, test_percentage=0, **kw
 	dataset_train = make_dataset(filepaths_train, metadata=metadata, **kwargs)
 	dataset_validate = make_dataset(filepaths_validate, metadata=metadata, **kwargs)
 	dataset_test = None
-	if test_percentage > 0:
+	if percentage_test > 0:
 		dataset_test = make_dataset(filepaths_test, metadata=metadata, **kwargs)
 	
 	return dataset_train, dataset_validate, dataset_test #, filepaths

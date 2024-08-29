@@ -43,6 +43,8 @@ show_help() {
 	echo -e "    PATH_CHECKPOINT 	The path to a checkpoint to load. If specified, a model will be loaded instead of being trained." >&2;
 	echo -e "    LEARNING_RATE      The learning rate to use. Default: 0.001." >&2;
 	echo -e "    UPSAMPLE           How much to upsample by at the beginning of the model. A value of disables upscaling. Default: 2." >&2;
+	echo -e "    SPLIT_VALIDATE     Percentage of the available files in the dataset to be allocated to the validation split. Default: 0.2" >&2;
+	echo -e "    SPLIT_TEST         Percentage of the available files in the dataset to be allocated to the test split. Default: 0.2" >&2;
 	echo -e "    STEPS_PER_EXECUTION How many steps to perform before surfacing from the GPU to e.g. do callbacks. Default: 16." >&2;
 	echo -e "    RANDSEED           The random seed to use when shuffling filepaths. Default: unset, which means use a random value." >&2;
 	echo -e "    JIT_COMPILE        Set to any value to compile the model with XLA." >&2;
@@ -77,7 +79,7 @@ echo -e ">>> DIR_OUTPUT: ${DIR_OUTPUT}";
 echo -e ">>> Additional args: ${ARGS}";
 
 export PATH=$HOME/software/bin:$PATH;
-export IMAGE_SIZE BATCH_SIZE DIR_RAINFALLWATER PATH_HEIGHTMAP PATH_COLOURMAP STEPS_PER_EPOCH DIR_OUTPUT PATH_CHECKPOINT EPOCHS PREDICT_COUNT NO_REMOVE_ISOLATED_PIXELS LOSS LEARNING_RATE DICE_LOG_COSH WATER_THRESHOLD UPSAMPLE STEPS_PER_EXECUTION JIT_COMPILE RANDSEED PREDICT_AS_ONE;
+export IMAGE_SIZE BATCH_SIZE DIR_RAINFALLWATER PATH_HEIGHTMAP PATH_COLOURMAP STEPS_PER_EPOCH DIR_OUTPUT PATH_CHECKPOINT EPOCHS PREDICT_COUNT NO_REMOVE_ISOLATED_PIXELS LOSS LEARNING_RATE DICE_LOG_COSH WATER_THRESHOLD UPSAMPLE STEPS_PER_EXECUTION JIT_COMPILE RANDSEED PREDICT_AS_ONE SPLIT_VALIDATE SPLIT_TEST;
 
 echo ">>> Installing requirements";
 conda run -n py38 pip install -q -r requirements.txt;

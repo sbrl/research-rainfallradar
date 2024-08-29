@@ -56,13 +56,13 @@ UPSAMPLE = env.read("UPSAMPLE", int, 2)
 SPLIT_VALIDATE = env.read("SPLIT_VALIDATE", float, 0.2)
 SPLIT_TEST = env.read("SPLIT_TEST", float, 0)
 
-
 STEPS_PER_EXECUTION = env.read("STEPS_PER_EXECUTION", int, 1)
 JIT_COMPILE = env.read("JIT_COMPILE", bool, False)
 DIR_OUTPUT = env.read("DIR_OUTPUT", str, f"output/{datetime.utcnow().date().isoformat()}_deeplabv3plus_rainfall_TEST")
 PATH_CHECKPOINT = env.read("PATH_CHECKPOINT", str, None)
 PREDICT_COUNT = env.read("PREDICT_COUNT", int, 25)
 PREDICT_AS_ONE = env.read("PREDICT_AS_ONE", bool, False)
+
 # ~~~
 
 env.val_dir_exists(os.path.join(DIR_OUTPUT, "checkpoints"), create=True)
@@ -82,7 +82,7 @@ env.print_all(False)
 # ██████  ██   ██    ██    ██   ██ ███████ ███████    ██    
 
 if not PREDICT_AS_ONE:
-	dataset_train, dataset_validate = dataset_mono(
+	dataset_train, dataset_validate, dataset_test = dataset_mono(
 		dirpath_input=DIR_RAINFALLWATER,
 		batch_size=BATCH_SIZE,
 		water_threshold=WATER_THRESHOLD,
@@ -91,11 +91,14 @@ if not PREDICT_AS_ONE:
 		input_size="same",
 		filepath_heightmap=PATH_HEIGHTMAP,
 		do_remove_isolated_pixels=REMOVE_ISOLATED_PIXELS,
-		parallel_reads_multiplier=PARALLEL_READS
+		parallel_reads_multiplier=PARALLEL_READS,
+		percentage_validate=SPLIT_VALIDATE,
+		percentage_test=SPLIT_TESTs
 	)
 
 	logger.info("Train Dataset:", dataset_train)
 	logger.info("Validation Dataset:", dataset_validate)
+	logger.info("Test Dataset:", dataset_test)
 else:
 	dataset_train = dataset_mono_predict(
 		dirpath_input=DIR_RAINFALLWATER,
@@ -253,6 +256,7 @@ if PATH_CHECKPOINT is None:
 	logger.info(">>> Beginning training")
 	history = model.fit(dataset_train,
 		validation_data=dataset_validate,
+		# test_data=dataset_test, # Nope, it doesn't have a param like this so it's time to do this the *hard* way
 		epochs=EPOCHS,
 		callbacks=[
 			tf.keras.callbacks.CSVLogger(
@@ -395,5 +399,12 @@ if not PREDICT_AS_ONE:
 		colormap,
 		model=model
 	)
+	if dataset_test is not None:
+		plot_predictions(
+			os.path.join(DIR_OUTPUT, "predict_test_$$.png"),
+			get_from_batched(dataset_test, PREDICT_COUNT),
+			colormap,
+			model=model
+		)
 
 logger.info(f"Complete at {str(datetime.now().isoformat())}, elapsed {str((datetime.now() - time_start).total_seconds())} seconds")
