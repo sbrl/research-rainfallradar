@@ -4,7 +4,7 @@ import os
 
 ###
 ## Environment parsing and validation helpers
-## 		@sbrl, Licence: GPLv3
+## 		@sbrl, Licence: AGPLv3
 ###
 
 ## Changelog:
