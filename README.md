@@ -170,7 +170,9 @@ ARGS						| Optional. Any additional arguments to pass to the python program.
 > It is strongly advised that all filepaths do **NOT** contain spaces.
 
 
-**Making predictions:** Set `PATH_CHECKPOINT` to point to a checkpoint file to make predictions with an existing model that you trained earlier instead of training a new one. Data is pulled from the given dataset, same as during training. The first `PREDICT_COUNT` items in the dataset are picked to make a prediction. 
+**Making predictions:** Set `PATH_CHECKPOINT` to point to a checkpoint file to make predictions with an existing model that you trained earlier instead of training a new one. Data is pulled from the given dataset, same as during training. The first `PREDICT_COUNT` items in the dataset are picked to make a prediction.
+
+**`RANDSEED`:** The experiment runs in the series in the conference paper (see above!) uses `RANDSEED=QPnwyRZbLJBaTS7pjo4JZcl8vy9yv1D0SCpbS6olD5cmy`
 
 > [!NOTE]
 > The dataset pipeline is naturally non-deterministic with respect to the order in which samples are read. Ensuring the ordering of samples is not mangled is only possible when making predictions, and requires a number of environment variables to be set:
