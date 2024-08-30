@@ -27,6 +27,7 @@ from lib.ai.components.MetricDice import metric_dice_coefficient as dice_coeffic
 from lib.ai.components.MetricSensitivity import make_sensitivity as sensitivity
 from lib.ai.components.MetricSpecificity import specificity
 from lib.ai.components.MetricMeanIoU import make_one_hot_mean_iou as mean_iou
+from lib.ai.components.CallbackExtraValidation import CallbackExtraValidation
 
 time_start = datetime.now()
 logger.info(f"Starting at {str(datetime.now().isoformat())}")
@@ -259,6 +260,9 @@ if PATH_CHECKPOINT is None:
 		# test_data=dataset_test, # Nope, it doesn't have a param like this so it's time to do this the *hard* way
 		epochs=EPOCHS,
 		callbacks=[
+			CallbackExtraValidation(model, {
+				"test": dataset_test # Can be None because it handles that
+			}),
 			tf.keras.callbacks.CSVLogger(
 				filename=os.path.join(DIR_OUTPUT, "metrics.tsv"),
 				separator="\t"
