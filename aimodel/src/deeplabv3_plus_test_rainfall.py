@@ -56,6 +56,7 @@ WATER_THRESHOLD = env.read("WATER_THRESHOLD", float, 0.1)
 UPSAMPLE = env.read("UPSAMPLE", int, 2)
 SPLIT_VALIDATE = env.read("SPLIT_VALIDATE", float, 0.2)
 SPLIT_TEST = env.read("SPLIT_TEST", float, 0)
+# NOTE: RANDSEED is declared and handled in src/lib/dataset/primitives/shuffle.py
 
 STEPS_PER_EXECUTION = env.read("STEPS_PER_EXECUTION", int, 1)
 JIT_COMPILE = env.read("JIT_COMPILE", bool, False)
