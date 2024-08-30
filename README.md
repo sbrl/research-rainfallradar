@@ -158,6 +158,8 @@ LEARNING_RATE=0.001			| The learning rate to use. Default: 0.001.
 UPSAMPLE=2					| How much to upsample by at the beginning of the model. A value of disables upscaling. Default: 2.
 STEPS_PER_EXECUTION=1		| How many steps to perform before surfacing from the GPU to e.g. do callbacks. Default: 1.
 RANDSEED					| The random seed to use when shuffling filepaths. Default: unset, which means use a random value.
+SPLIT_VALIDATE				| Percentage of the available files in the dataset to be allocated to the validation split. Default: 0.2
+SPLIT_TEST					| Percentage of the available files in the dataset to be allocated to the test split. Default: 0.2
 JIT_COMPILE					| Set to any value to compile the model with XLA. Defaults to unset; set to any value to enable.
 PREDICT_COUNT=25			| The number of items from the (SCRAMBLED) dataset to make a prediction for.
 PREDICT_AS_ONE				| [prediction only] Set to any value to avoid splitting the input dataset into training/validation and instead treat it as a single dataset. Default: False (treat it as training/validation)
