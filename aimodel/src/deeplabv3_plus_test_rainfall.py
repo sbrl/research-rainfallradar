@@ -12,7 +12,7 @@ import os
 import io
 import math
 import json
-import cv2
+# import cv2 # optional import below in get_overlay
 import numpy as np
 from glob import glob
 from scipy.io import loadmat
@@ -325,6 +325,10 @@ def decode_segmentation_masks(mask, colormap, n_classes):
 
 
 def get_overlay(image, coloured_mask):
+	global cv2
+	# import cv2 only when used, since it might not be available and this function isn't currently used (was prob something I dropped halfway through writing 'cause I got distracted)
+	if not cv2:
+		cv2 = __import__("cv2") 
 	image = tf.keras.preprocessing.image.array_to_img(image)
 	image = np.array(image).astype(np.uint8)
 	overlay = cv2.addWeighted(image, 0.35, coloured_mask, 0.65, 0)
