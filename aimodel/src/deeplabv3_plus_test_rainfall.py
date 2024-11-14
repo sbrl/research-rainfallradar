@@ -20,7 +20,7 @@ import matplotlib.pyplot as plt
 
 import tensorflow as tf
 
-import lib.primitives.env
+import lib.primitives.env as env
 from lib.dataset.dataset_mono import dataset_mono, dataset_mono_predict
 from lib.ai.components.LossCrossEntropyDice import LossCrossEntropyDice
 from lib.ai.components.MetricDice import metric_dice_coefficient as dice_coefficient
