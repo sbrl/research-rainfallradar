@@ -12,13 +12,28 @@
 # ---> in MiB
 # no-requeue: ref https://support.hull.ac.uk/tas/public/ssp/content/detail/incident?unid=652db7ac6e73485c9f7658db78b2b628
 
-module load utilities/multi
-module load readline/7.0
-module load gcc/10.2.0
-module load cuda/11.5.0
-export XLA_FLAGS="--xla_gpu_cuda_data_dir=/home/ViperAppsFiles/cuda/11.5.0"; # weird... this wasn't needed before?
+#######################################################
 
-module load python/anaconda/4.6/miniconda/3.7
+command_exists() {
+    command -v "$1" >/dev/null 2>&1
+	return $?;
+}
+
+#######################################################
+
+if command_exists module; then
+	module load utilities/multi
+	module load readline/7.0
+	module load gcc/10.2.0
+	module load cuda/11.5.0;
+	export XLA_FLAGS="--xla_gpu_cuda_data_dir=/home/ViperAppsFiles/cuda/11.5.0"; # weird... this wasn't needed before?
+	
+	module load python/anaconda/4.6/miniconda/3.7
+else
+	echo "[bash/runner]: module command not present, not loading modules" >&2;
+fi
+
+
 
 
 show_help() {
@@ -28,6 +43,8 @@ show_help() {
 	echo -e "    sbatch slurm-TEST-deeplabv3p-rainfall.job" >&2;
 	echo -e "" >&2;
 	echo -e "....where:" >&2;
+	echo -e "    USE_CONDA		Optional. Set to any value to use conda when running the experiment. REQUIRED ON VIPER." >&2;
+	echo -e "" >&2;
 	echo -e "    IMAGE_SIZE=128		Optional. Sets the size of the 'images' that the DeepLabV3+ model will work with." >&2;
 	echo -e "    BATCH_SIZE=64		Optional. Sets the batch size to train the model with." >&2;
 	echo -e "    DIR_RAINFALLWATER	The path to the directory the .tfrecord files containing the rainfall radar / water depth data." >&2;
@@ -82,8 +99,17 @@ export PATH=$HOME/software/bin:$PATH;
 export IMAGE_SIZE BATCH_SIZE DIR_RAINFALLWATER PATH_HEIGHTMAP PATH_COLOURMAP STEPS_PER_EPOCH DIR_OUTPUT PATH_CHECKPOINT EPOCHS PREDICT_COUNT NO_REMOVE_ISOLATED_PIXELS LOSS LEARNING_RATE DICE_LOG_COSH WATER_THRESHOLD UPSAMPLE STEPS_PER_EXECUTION JIT_COMPILE RANDSEED PREDICT_AS_ONE SPLIT_VALIDATE SPLIT_TEST;
 
 echo ">>> Installing requirements";
-conda run -n py38 pip install -q -r requirements.txt;
+if [[ -n "${USE_CONDA}" ]]; then
+	conda run -n py38 pip install -q -r requirements.txt;
+else
+	echo "[bash/runner]: USE_CONDA env var NOT specified, not installing pip packages." >&2;
+fi
 echo ">>> Training model";
 #shellcheck disable=SC2016
-/usr/bin/env time -v conda run -n py38 bash -c 'src/deeplabv3_plus_test_rainfall.py >>"${DIR_OUTPUT}/experiment.${SLURM_JOB_ID}.out.log" 2>>"${DIR_OUTPUT}/experiment.${SLURM_JOB_ID}.err.log"; echo "[slurm_runner] EXIT_CODE: $?" >>"${DIR_OUTPUT}/experiment.${SLURM_JOB_ID}.out.log";';
+if [[ -n "${USE_CONDA}" ]]; then
+	/usr/bin/env time -v conda run -n py38 bash -c 'src/deeplabv3_plus_test_rainfall.py >>"${DIR_OUTPUT}/experiment.${SLURM_JOB_ID}.out.log" 2>>"${DIR_OUTPUT}/experiment.${SLURM_JOB_ID}.err.log"; echo "[slurm_runner] EXIT_CODE: $?" >>"${DIR_OUTPUT}/experiment.${SLURM_JOB_ID}.out.log";';
+else
+	/usr/bin/env time -v src/deeplabv3_plus_test_rainfall.py >>"${DIR_OUTPUT}/experiment.${SLURM_JOB_ID}.out.log" 2>>"${DIR_OUTPUT}/experiment.${SLURM_JOB_ID}.err.log";
+	echo "[slurm_runner] EXIT_CODE: $?" >>"${DIR_OUTPUT}/experiment.${SLURM_JOB_ID}.out.log";
+fi
 echo ">>> exited with code $?";
