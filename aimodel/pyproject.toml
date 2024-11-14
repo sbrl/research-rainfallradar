@@ -3,7 +3,7 @@ name = "research-rainfallradar"
 description = "A model to predict water depth data from rainfall radar information"
 readme = "../README.md"
 version = "1.0"
-licennse = { text = "AGPL-3.0" }
+license = { text = "AGPL-3.0" }
 
 keywords = [ "rainfall-radar", "water-depth-prediction", "deep-learning", "deeplabv3+", "image-segmentation", "hydrological-modeling", "flood-forecasting", "ai", "machine-learning", "tensorflow" ]
 classifiers = [
