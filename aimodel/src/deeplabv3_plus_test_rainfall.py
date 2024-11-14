@@ -95,7 +95,7 @@ if not PREDICT_AS_ONE:
 		do_remove_isolated_pixels=REMOVE_ISOLATED_PIXELS,
 		parallel_reads_multiplier=PARALLEL_READS,
 		percentage_validate=SPLIT_VALIDATE,
-		percentage_test=SPLIT_TESTs
+		percentage_test=SPLIT_TEST
 	)
 
 	logger.info("Train Dataset:", dataset_train)
