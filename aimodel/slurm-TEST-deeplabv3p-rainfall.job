@@ -21,11 +21,17 @@ command_exists() {
 
 #######################################################
 
-# Fix "Could not load library libcublasLt.so.12. Error: libcublasLt.so.12: cannot open shared object file: No such file or directory" error
-if [[ "${SLURM_CLUSTER_NAME}" == "cs-cluster" ]] && [[ -d "${HOME}/cuda" ]]; then
-	echo "[slurm_runner] csgpu cluster detected, sourcing extra CUDA setup script" >&2;
-	#shellcheck source=/dev/null
-	source "${HOME}/cuda/activate.sh";
+if [[ "${SLURM_CLUSTER_NAME}" == "cs-cluster" ]]; then
+	echo "[slurm_runner] csgpu cluster detected, applying CUDA workarounds" >&2;
+	# Fix "Could not load library libcublasLt.so.12. Error: libcublasLt.so.12: cannot open shared object file: No such file or directory" error
+	if [[ -d "${HOME}/cuda" ]]; then
+		echo "[slurm_runner] sourcing extra CUDA setup script" >&2;
+		#shellcheck source=/dev/null
+		source "${HOME}/cuda/activate.sh";
+	fi
+	
+	export XLA_FLAGS="--xla_gpu_cuda_data_dir=/usr/lib/cuda"; # weird... this wasn't needed before? Fixes 
+	echo "[slurm_runner] set XLA_FLAGS=\"${XLA_FLAGS}\"" >&2;
 fi
 
 # No modules on the CS cluster
