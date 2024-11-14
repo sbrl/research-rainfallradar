@@ -40,7 +40,7 @@ logger.info(f"Starting at {str(datetime.now().isoformat())}")
 # ███████ ██   ████   ████   ██ ██   ██  ██████  ██   ████ ██      ██ ███████ ██   ████    ██
 
 IMAGE_SIZE = env.read("IMAGE_SIZE", int, 128)  # was 512; 128 is the highest power of 2 that fits the data
-BATCH_SIZE = env.read("BATCH_SIZE", int, 64)
+BATCH_SIZE = env.read("BATCH_SIZE", int, 32)
 NUM_CLASSES = 2
 DIR_RAINFALLWATER = env.read("DIR_RAINFALLWATER", str)
 PATH_HEIGHTMAP = env.read("PATH_HEIGHTMAP", str)
@@ -48,10 +48,10 @@ PATH_COLOURMAP = env.read("PATH_COLOURMAP", str)
 PARALLEL_READS = env.read("PARALLEL_READS", float, 1.5)
 STEPS_PER_EPOCH = env.read("STEPS_PER_EPOCH", int, None)
 REMOVE_ISOLATED_PIXELS = env.read("NO_REMOVE_ISOLATED_PIXELS", bool, True)
-EPOCHS = env.read("EPOCHS", int, 50)
+EPOCHS = env.read("EPOCHS", int, 25)
 LOSS = env.read("LOSS", str, "cross-entropy-dice")  # other possible values: cross-entropy
 DICE_LOG_COSH = env.read("DICE_LOG_COSH", bool, False)
-LEARNING_RATE = env.read("LEARNING_RATE", float, 0.001)
+LEARNING_RATE = env.read("LEARNING_RATE", float, 0.00001)
 WATER_THRESHOLD = env.read("WATER_THRESHOLD", float, 0.1)
 UPSAMPLE = env.read("UPSAMPLE", int, 2)
 SPLIT_VALIDATE = env.read("SPLIT_VALIDATE", float, 0.2)
@@ -59,7 +59,7 @@ SPLIT_TEST = env.read("SPLIT_TEST", float, 0)
 # NOTE: RANDSEED is declared and handled in src/lib/dataset/primitives/shuffle.py
 
 STEPS_PER_EXECUTION = env.read("STEPS_PER_EXECUTION", int, 1)
-JIT_COMPILE = env.read("JIT_COMPILE", bool, False)
+JIT_COMPILE = env.read("JIT_COMPILE", bool, True)
 DIR_OUTPUT = env.read("DIR_OUTPUT", str, f"output/{datetime.utcnow().date().isoformat()}_deeplabv3plus_rainfall_TEST")
 PATH_CHECKPOINT = env.read("PATH_CHECKPOINT", str, None)
 PREDICT_COUNT = env.read("PREDICT_COUNT", int, 25)
