@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #SBATCH -J DeepRain
 #SBATCH -N 1
-#SBATCH -n 14
+#SBATCH -n 9
 #SBATCH --gres=gpu:1
 #SBATCH -o %j.%N.%a.deeplab-rainfall.out.log
 #SBATCH -e %j.%N.%a.deeplab-rainfall.err.log
