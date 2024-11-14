@@ -31,7 +31,7 @@ if command_exists module && [[ "${SLURM_CLUSTER_NAME}" != "cs-cluster" ]]; then
 	
 	module load python/anaconda/4.6/miniconda/3.7
 else
-	echo "[slurm_runner]: module command not present, not loading modules" >&2;
+	echo "[slurm_runner]: module command not present or csgpu cluster detected, not loading modules" >&2;
 fi
 
 
