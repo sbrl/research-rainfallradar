@@ -21,7 +21,8 @@ command_exists() {
 
 #######################################################
 
-if command_exists module; then
+# No modules on the CS cluster
+if command_exists module && [[ "${SLURM_CLUSTER_NAME}" != "cs-cluster" ]]; then
 	module load utilities/multi
 	module load readline/7.0
 	module load gcc/10.2.0
