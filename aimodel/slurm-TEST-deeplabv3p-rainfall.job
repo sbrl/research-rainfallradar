@@ -75,7 +75,7 @@ show_help() {
 	exit;
 }
 
-DIR_RAINFALLWATER="${DIR_RAINFALLWATER:-$HOME/rainfallwater_records_tfrecord}";
+DIR_RAINFALLWATER="${DIR_RAINFALLWATER:-$HOME/data/rainfallwater_records_tfrecord}";
 PATH_HEIGHTMAP="${PATH_HEIGHTMAP:-$HOME/data/terrain50-nimrodsized.json.gz}";
 PATH_COLOURMAP="${PATH_COLOURMAP:-$HOME/data/instance-level-human-parsing/instance-level_human_parsing/human_colormap.mat}";
 
