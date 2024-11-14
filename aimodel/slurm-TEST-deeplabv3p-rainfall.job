@@ -30,10 +30,8 @@ if command_exists module; then
 	
 	module load python/anaconda/4.6/miniconda/3.7
 else
-	echo "[bash/runner]: module command not present, not loading modules" >&2;
+	echo "[slurm_runner]: module command not present, not loading modules" >&2;
 fi
-
-
 
 
 show_help() {
@@ -102,13 +100,15 @@ echo ">>> Installing requirements";
 if [[ -n "${USE_CONDA}" ]]; then
 	conda run -n py38 pip install -q -r requirements.txt;
 else
-	echo "[bash/runner]: USE_CONDA env var NOT specified, not installing pip packages." >&2;
+	echo "[slurm_runner]: USE_CONDA env var NOT specified, not installing pip packages." >&2;
 fi
 echo ">>> Training model";
 #shellcheck disable=SC2016
 if [[ -n "${USE_CONDA}" ]]; then
+	echo "[slurm_runner]: Running harness via conda as USE_CONDA env var was defined" >&2;
 	/usr/bin/env time -v conda run -n py38 bash -c 'src/deeplabv3_plus_test_rainfall.py >>"${DIR_OUTPUT}/experiment.${SLURM_JOB_ID}.out.log" 2>>"${DIR_OUTPUT}/experiment.${SLURM_JOB_ID}.err.log"; echo "[slurm_runner] EXIT_CODE: $?" >>"${DIR_OUTPUT}/experiment.${SLURM_JOB_ID}.out.log";';
 else
+	echo "[slurm_runner]: Ignoring conda and running harness directly as USE_CONDA env var was NOT defined" >&2;
 	/usr/bin/env time -v src/deeplabv3_plus_test_rainfall.py >>"${DIR_OUTPUT}/experiment.${SLURM_JOB_ID}.out.log" 2>>"${DIR_OUTPUT}/experiment.${SLURM_JOB_ID}.err.log";
 	echo "[slurm_runner] EXIT_CODE: $?" >>"${DIR_OUTPUT}/experiment.${SLURM_JOB_ID}.out.log";
 fi
