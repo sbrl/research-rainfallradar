@@ -261,7 +261,7 @@ if PATH_CHECKPOINT is None:
 		# test_data=dataset_test, # Nope, it doesn't have a param like this so it's time to do this the *hard* way
 		epochs=EPOCHS,
 		callbacks=[
-			CallbackExtraValidation(model, {
+			CallbackExtraValidation({  # `model,` removed 'ref apparently exists by default????? ehhhh...???
 				"test": dataset_test # Can be None because it handles that
 			}),
 			tf.keras.callbacks.CSVLogger(
