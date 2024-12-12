@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #SBATCH -J DeepRain
 #SBATCH -N 1
-#SBATCH -n 14
+#SBATCH -n 9
 #SBATCH --gres=gpu:1
 #SBATCH -o %j.%N.%a.deeplab-rainfall.out.log
 #SBATCH -e %j.%N.%a.deeplab-rainfall.err.log
@@ -21,7 +21,21 @@ command_exists() {
 
 #######################################################
 
-if command_exists module; then
+if [[ "${SLURM_CLUSTER_NAME}" == "cs-cluster" ]]; then
+	echo "[slurm_runner] csgpu cluster detected, applying CUDA workarounds" >&2;
+	# Fix "Could not load library libcublasLt.so.12. Error: libcublasLt.so.12: cannot open shared object file: No such file or directory" error
+	if [[ -d "${HOME}/cuda" ]]; then
+		echo "[slurm_runner] sourcing extra CUDA setup script" >&2;
+		#shellcheck source=/dev/null
+		source "${HOME}/cuda/activate.sh";
+	fi
+	
+	export XLA_FLAGS="--xla_gpu_cuda_data_dir=/usr/lib/cuda"; # weird... this wasn't needed before? Fixes 
+	echo "[slurm_runner] set XLA_FLAGS=\"${XLA_FLAGS}\"" >&2;
+fi
+
+# No modules on the CS cluster
+if command_exists module && [[ "${SLURM_CLUSTER_NAME}" != "cs-cluster" ]]; then
 	module load utilities/multi
 	module load readline/7.0
 	module load gcc/10.2.0
@@ -30,7 +44,7 @@ if command_exists module; then
 	
 	module load python/anaconda/4.6/miniconda/3.7
 else
-	echo "[slurm_runner]: module command not present, not loading modules" >&2;
+	echo "[slurm_runner]: module command not present or csgpu cluster detected, not loading modules" >&2;
 fi
 
 
@@ -74,7 +88,7 @@ show_help() {
 	exit;
 }
 
-DIR_RAINFALLWATER="${DIR_RAINFALLWATER:-$HOME/rainfallwater_records_tfrecord}";
+DIR_RAINFALLWATER="${DIR_RAINFALLWATER:-$HOME/data/rainfallwater_records_tfrecord}";
 PATH_HEIGHTMAP="${PATH_HEIGHTMAP:-$HOME/data/terrain50-nimrodsized.json.gz}";
 PATH_COLOURMAP="${PATH_COLOURMAP:-$HOME/data/instance-level-human-parsing/instance-level_human_parsing/human_colormap.mat}";
 
@@ -92,6 +106,9 @@ mkdir -p "${DIR_OUTPUT}";
 echo -e ">>> NOW: $(date)";
 echo -e ">>> DIR_OUTPUT: ${DIR_OUTPUT}";
 echo -e ">>> Additional args: ${ARGS}";
+echo -e ">>> GIT COMMIT: $(git rev-parse HEAD)";
+
+{ echo "*****"; git rev-parse HEAD; git status; git log -1 | cat; } >>"${DIR_OUTPUT}/commit.txt";
 
 export PATH=$HOME/software/bin:$PATH;
 export IMAGE_SIZE BATCH_SIZE DIR_RAINFALLWATER PATH_HEIGHTMAP PATH_COLOURMAP STEPS_PER_EPOCH DIR_OUTPUT PATH_CHECKPOINT EPOCHS PREDICT_COUNT NO_REMOVE_ISOLATED_PIXELS LOSS LEARNING_RATE DICE_LOG_COSH WATER_THRESHOLD UPSAMPLE STEPS_PER_EXECUTION JIT_COMPILE RANDSEED PREDICT_AS_ONE SPLIT_VALIDATE SPLIT_TEST;

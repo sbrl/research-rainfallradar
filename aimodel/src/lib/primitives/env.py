@@ -8,6 +8,7 @@ import os
 ###
 
 ## Changelog:
+# 2024-11-14: Fix crash on line #107 unterminated string literal
 # 2024-09-29: Create this changelog, prepare for reuse
 
 ##############################################################################
@@ -104,8 +105,7 @@ def print_all(table=True):
 	
 	
 	# Create the table format string
-	format_string = f"| {{:<{width_name}}} | {{:<{
-		width_type}}} | {{:<{width_value}}} | {{:<{width_flags}}} |"
+	format_string = f"| {{:<{width_name}}} | {{:<{width_type}}} | {{:<{width_value}}} | {{:<{width_flags}}} |"
 
 	# Calculate total width
 	total_width = width_name + width_type + width_value + \

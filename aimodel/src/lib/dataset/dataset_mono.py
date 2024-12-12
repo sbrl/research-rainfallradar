@@ -165,7 +165,7 @@ def dataset_mono(dirpath_input, percentage_validate=0.2, percentage_test=0, **kw
 	filepaths_count = len(filepaths)
 	
 	split_trainvalidate=math.floor(filepaths_count * (1-(percentage_validate+percentage_test)))
-	split_validatetest=math.floor(filepaths * (1 - percentage_test))
+	split_validatetest=math.floor(filepaths_count * (1 - percentage_test))
 	
 	
 	filepaths_train = filepaths[:split_trainvalidate]
