@@ -250,7 +250,6 @@ if PATH_CHECKPOINT is None:
 			mean_iou(),
 			sensitivity(), # How many true positives were accurately predicted
 			specificity # How many true negatives were accurately predicted?
-			# TODO: Add IoU, F1, Precision, Recall,  here. 
 		],
 		steps_per_execution=STEPS_PER_EXECUTION,
 		jit_compile=JIT_COMPILE
