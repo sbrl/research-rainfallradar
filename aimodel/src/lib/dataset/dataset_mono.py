@@ -1,6 +1,5 @@
 import os
 import math
-import json
 
 from loguru import logger
 
@@ -8,7 +7,6 @@ import tensorflow as tf
 
 from lib.dataset.read_metadata import read_metadata
 
-from ..io.readfile import readfile
 from .parse_heightmap import parse_heightmap
 from .primitives.shuffle import shuffle
 from .primitives.remove_isolated_pixels import remove_isolated_pixels
@@ -142,7 +140,7 @@ def make_dataset(filepaths, compression_type="GZIP", parallel_reads_multiplier=1
 		dataset = dataset.shuffle(shuffle_buffer_size)
 	dataset = dataset.map(parse_item(heightmap=heightmap, **kwargs), num_parallel_calls=tf.data.AUTOTUNE)
 	
-	if batch_size != None:
+	if batch_size is not None:
 		dataset = dataset.batch(batch_size, drop_remainder=True)
 	if prefetch:
 		dataset = dataset.prefetch(0 if "NO_PREFETCH" in os.environ else tf.data.AUTOTUNE)
