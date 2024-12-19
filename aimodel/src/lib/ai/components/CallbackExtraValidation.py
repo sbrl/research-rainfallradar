@@ -27,7 +27,7 @@ class CallbackExtraValidation(tf.keras.callbacks.Callback):
 		self.verbose = verbose
 
 	def on_epoch_end(self, epoch, logs=None):
-		if logs == None:
+		if logs is None:
 			logger.warning(
 				"[CallbackExtraValidation] logs is None! Can't do anything here.")
 			return False

@@ -17,11 +17,11 @@ def segmentation_plot(water_actual, water_predict, model_code, filepath_output):
 	figure, axes = plt.subplot_mosaic("AB", figsize=(width*px, height*px))
 	
 	axes["A"].imshow(water_actual)
-	axes["A"].set_title(f"Actual", fontsize=20)
+	axes["A"].set_title("Actual", fontsize=20)
 	
 	
 	axes["B"].imshow(water_predict)
-	axes["B"].set_title(f"Predicted", fontsize=20)
+	axes["B"].set_title("Predicted", fontsize=20)
 	
 	
 	plt.suptitle(f"Rainfall → Water depth prediction | {model_code}", fontsize=28, weight="bold")

@@ -6,8 +6,8 @@ import tensorflow as tf
 
 from ..dataset.batched_iterator import batched_iterator
 
-from ..io.find_paramsjson import find_paramsjson
-from ..io.readfile import readfile
+# from ..io.find_paramsjson import find_paramsjson
+# from ..io.readfile import readfile
 from ..io.writefile import writefile
 
 from .model_rainfallwater_contrastive import model_rainfallwater_contrastive
@@ -16,7 +16,7 @@ from .helpers import summarywriter
 from .components.LayerContrastiveEncoder import LayerContrastiveEncoder
 from .components.LayerConvNeXtGamma import LayerConvNeXtGamma
 from .components.LayerCheeseMultipleOut import LayerCheeseMultipleOut
-from .helpers.summarywriter import summarywriter
+
 
 class RainfallWaterContraster(object):
 	def __init__(self, dir_output=None, filepath_checkpoint=None, epochs=50, batch_size=64, **kwargs):
@@ -28,8 +28,8 @@ class RainfallWaterContraster(object):
 		self.batch_size = batch_size
 		
 		
-		if filepath_checkpoint == None:
-			if self.dir_output == None:
+		if filepath_checkpoint is None:
+			if self.dir_output is None:
 				raise Exception("Error: dir_output was not specified, and since no checkpoint was loaded training mode is activated.")
 			if not os.path.exists(self.dir_output):
 				os.mkdir(self.dir_output)

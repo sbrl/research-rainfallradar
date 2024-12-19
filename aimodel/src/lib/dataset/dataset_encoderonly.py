@@ -1,6 +1,5 @@
 import os
 import math
-import json
 
 from loguru import logger
 
@@ -8,9 +7,9 @@ import tensorflow as tf
 
 from lib.dataset.read_metadata import read_metadata
 
-from ..io.readfile import readfile
 from .primitives.shuffle import shuffle
 from .parse_heightmap import parse_heightmap
+from .dataset_mono import dataset_mono
 
 
 
@@ -125,7 +124,7 @@ def make_dataset(filepaths, compression_type="GZIP", parallel_reads_multiplier=3
 		# defaults = (33*33 + 1) * 2**16 * 8 = about 2.219GiB
 		dataset = dataset.shuffle(shuffle_buffer_size)
 	
-	if batch_size != None:
+	if batch_size is not None:
 		dataset = dataset.batch(batch_size, drop_remainder=True)
 	if prefetch:
 		dataset = dataset.prefetch(0 if "NO_PREFETCH" in os.environ else tf.data.AUTOTUNE)

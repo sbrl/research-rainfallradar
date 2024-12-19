@@ -1,8 +1,8 @@
-import os
+# import os
 
 import umap
 import umap.plot
-import numpy as np
+# import numpy as np
 import matplotlib.pylab as plt
 import pandas
 
@@ -24,7 +24,7 @@ def vis_embeddings(filepath_output, features):
 	umap.plot.points(dimreducer,
 		ax=axes["A"]
 	)
-	axes["A"].set_title(f"UMAP Dimensionality Reduction", fontsize=20)
+	axes["A"].set_title("UMAP Dimensionality Reduction", fontsize=20)
 	
 	# 2: Parallel coordinates
 	dataframe = pandas.DataFrame(features)
@@ -39,7 +39,7 @@ def vis_embeddings(filepath_output, features):
 		sort_labels=True
 	)
 	
-	axes["B"].set_title(f"Parallel coordinates plot", fontsize=20)
+	axes["B"].set_title("Parallel coordinates plot", fontsize=20)
 	
 	plt.suptitle(f"RainfallContrastive embeddings | rainfall | E2 ConvNeXt | {len(features)} items", fontsize=28, weight="bold")
 	plt.savefig(filepath_output)

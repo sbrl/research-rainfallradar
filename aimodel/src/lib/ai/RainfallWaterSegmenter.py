@@ -4,10 +4,10 @@ import json
 from loguru import logger
 import tensorflow as tf
 
-from ..dataset.batched_iterator import batched_iterator
+# from ..dataset.batched_iterator import batched_iterator
 
-from ..io.find_paramsjson import find_paramsjson
-from ..io.readfile import readfile
+# from ..io.find_paramsjson import find_paramsjson
+# from ..io.readfile import readfile
 from ..io.writefile import writefile
 
 from .model_rainfallwater_segmentation import model_rainfallwater_segmentation
@@ -15,7 +15,6 @@ from .helpers import make_callbacks
 from .helpers import summarywriter
 from .components.LayerConvNeXtGamma import LayerConvNeXtGamma
 from .components.LayerStack2Image import LayerStack2Image
-from .helpers.summarywriter import summarywriter
 
 class RainfallWaterSegmenter(object):
 	def __init__(self, dir_output=None, filepath_checkpoint=None, epochs=50, batch_size=64, **kwargs):
@@ -27,8 +26,8 @@ class RainfallWaterSegmenter(object):
 		self.batch_size = batch_size
 		
 		
-		if filepath_checkpoint == None:
-			if self.dir_output == None:
+		if filepath_checkpoint is None:
+			if self.dir_output is None:
 				raise Exception("Error: dir_output was not specified, and since no checkpoint was loaded training mode is activated.")
 			if not os.path.exists(self.dir_output):
 				os.mkdir(self.dir_output)

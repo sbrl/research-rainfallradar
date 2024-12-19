@@ -1,6 +1,5 @@
 import os
 import math
-import json
 
 from loguru import logger
 
@@ -8,7 +7,6 @@ import tensorflow as tf
 
 from lib.dataset.read_metadata import read_metadata
 
-from ..io.readfile import readfile
 from .primitives.shuffle import shuffle
 
 
@@ -63,7 +61,7 @@ def make_dataset(filepaths, metadata, shape_water_desired=[100,100], compression
 		dataset = dataset.shuffle(shuffle_buffer_size)
 	dataset = dataset.map(parse_item(metadata, shape_water_desired=shape_water_desired, dummy_label=dummy_label), num_parallel_calls=tf.data.AUTOTUNE)
 		
-	if batch_size != None:
+	if batch_size is not None:
 		dataset = dataset.batch(batch_size, drop_remainder=True)
 	if prefetch:
 		dataset = dataset.prefetch(0 if "NO_PREFETCH" in os.environ else tf.data.AUTOTUNE)

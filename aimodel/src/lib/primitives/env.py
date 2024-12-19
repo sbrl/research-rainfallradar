@@ -51,7 +51,7 @@ def read(name, type_class, default=SYM_RAISE_EXCEPTION):
 	"""
 
 	if name not in os.environ:
-		if type_class == bool and default == SYM_RAISE_EXCEPTION:
+		if type_class is bool and default == SYM_RAISE_EXCEPTION:
 			default = False
 		if default == SYM_RAISE_EXCEPTION:
 			raise Exception(f"Error: Environment variable {name} does not exist")
@@ -59,8 +59,8 @@ def read(name, type_class, default=SYM_RAISE_EXCEPTION):
 		return default
 	
 	result = os.environ[name]
-	if type_class == bool:
-		result = False if default == True else True
+	if type_class is bool:
+		result = False if default is True else True
 	else:
 		result = type_class(result)
 	
@@ -99,7 +99,7 @@ def print_all(table=True):
 		for env in envs_read:
 			key, value, is_default = env
 			prefix = "* " if is_default else ""
-			print(f"> {key.ljust(width_name)} {value}")
+			print(f"> {prefix}{key.ljust(width_name)} {value}")
 		print(f"Total {len(envs_read)} values")
 		print("===================================")
 	

@@ -1,5 +1,3 @@
-import math
-
 import tensorflow as tf
 
 def dice_coef(y_true, y_pred, smooth=100):        
@@ -27,7 +25,7 @@ def dice_coef_loss(y_true, y_pred, **kwargs):
 		y_true (Tensor): The ground truth
 		y_pred (Tensor): The predicted output.
 	Returns:
-		Tensor: The Dice coefficient, but as a loss value that decreases instead fo increases as the model learns.
+		Tensor: The Dice coefficient, but as a loss value that decreases instead of increases as the model learns.
 	"""
 	return 1 - dice_coef(y_true, y_pred, **kwargs)
 
