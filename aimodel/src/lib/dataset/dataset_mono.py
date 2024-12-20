@@ -114,6 +114,8 @@ def parse_item(metadata, output_size=100, input_size="same", water_threshold=0.1
 		if water_threshold is not None: # if water_threshold=None, then regression mode
 			water = tf.cast(tf.math.greater_equal(water, water_threshold), dtype=tf.float32)
 			# BUG it may be a problem we're [height, width, channel] here rather than [height, width], depending on how dlr works
+		else:
+			water = tf.expand_dims(water, axis=-1) # Stack to have a channel, since if water_threshold=None then we would end up with [height, width] instead of [height, width, channel] otherwise
 		if do_remove_isolated_pixels:
 			water = remove_isolated_pixels(water)
 		
