@@ -101,8 +101,8 @@ for metric in metrics.keys():
     )
     plt.fill_between(
         epochs,
-        stats[metric]["mean"] - stats[metric]["mad"],
-        stats[metric]["mean"] + stats[metric]["mad"],
+        stats[metric]["mean"] - stats[metric]["mad"], # TODO switch to something else based on Nina's feedback about what is generally done
+        stats[metric]["mean"] + stats[metric]["mad"], # TODO switch to something else based on Nina's feedback about what is generally done
         alpha=0.5,
         facecolor="#228A8D",
         edgecolor="#3CBB74",
