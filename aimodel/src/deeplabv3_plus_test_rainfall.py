@@ -47,9 +47,9 @@ PATH_HEIGHTMAP = env.read("PATH_HEIGHTMAP", str)
 PATH_COLOURMAP = env.read("PATH_COLOURMAP", str)
 PARALLEL_READS = env.read("PARALLEL_READS", float, 1.5)
 STEPS_PER_EPOCH = env.read("STEPS_PER_EPOCH", int, None)
-REMOVE_ISOLATED_PIXELS = env.read("NO_REMOVE_ISOLATED_PIXELS", bool, True)
+REMOVE_ISOLATED_PIXELS = env.read("NO_REMOVE_ISOLATED_PIXELS", bool, True) # This will flip True → False so it's okay
 EPOCHS = env.read("EPOCHS", int, 25)
-LOSS = env.read("LOSS", str, "cross-entropy-dice")  # other possible values: cross-entropy
+LOSS = env.read("LOSS", str, "cross-entropy-dice")  # other possible values: cross-entropy, root-mean-squared-error (bleh)
 DICE_LOG_COSH = env.read("DICE_LOG_COSH", bool, False)
 LEARNING_RATE = env.read("LEARNING_RATE", float, 0.00001)
 WATER_THRESHOLD = env.read("WATER_THRESHOLD", float, 0.1, do_none=True)
