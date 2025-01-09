@@ -73,8 +73,11 @@ env.val_dir_exists(os.path.join(DIR_OUTPUT, "checkpoints"), create=True)
 
 logger.info("DeepLabV3+ rainfall radar TEST")
 env.print_all(False)
-# for env_name in [ "BATCH_SIZE","NUM_CLASSES", "DIR_RAINFALLWATER", "PATH_HEIGHTMAP", "PATH_COLOURMAP", "STEPS_PER_EPOCH", "PARALLEL_READS", "REMOVE_ISOLATED_PIXELS", "EPOCHS", "LOSS", "LEARNING_RATE", "DIR_OUTPUT", "PATH_CHECKPOINT", "PREDICT_COUNT", "DICE_LOG_COSH", "WATER_THRESHOLD", "UPSAMPLE", "STEPS_PER_EXECUTION", "JIT_COMPILE", "PREDICT_AS_ONE" ]:
-# 	logger.info(f"> {env_name} {str(globals()[env_name])}")
+
+if WATER_THRESHOLD is None and LOSS == "root-mean-squared-error":
+	logger.info("Regression mode detected via WATER_THRESHOLD==NONE && LOSS==root-mean-squared-error, changing NUM_CLASSES=2→1")
+	# This is required because DeepLabV3+ requires that it format the output as N=value classes
+	NUM_CLASSES = 1
 
 
 # ██████   █████  ████████  █████  ███████ ███████ ████████ 
