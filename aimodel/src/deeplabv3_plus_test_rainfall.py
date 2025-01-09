@@ -49,7 +49,7 @@ PARALLEL_READS = env.read("PARALLEL_READS", float, 1.5)
 STEPS_PER_EPOCH = env.read("STEPS_PER_EPOCH", int, None)
 REMOVE_ISOLATED_PIXELS = env.read("NO_REMOVE_ISOLATED_PIXELS", bool, True) # This will flip True → False so it's okay
 EPOCHS = env.read("EPOCHS", int, 25)
-LOSS = env.read("LOSS", str, "cross-entropy-dice")  # other possible values: cross-entropy, root-mean-squared-error (bleh)
+LOSS = env.read("LOSS", str, "cross-entropy-dice")  # other possible values: cross-entropy, mean-squared-error (bleh)
 DICE_LOG_COSH = env.read("DICE_LOG_COSH", bool, False)
 LEARNING_RATE = env.read("LEARNING_RATE", float, 0.00001)
 WATER_THRESHOLD = env.read("WATER_THRESHOLD", float, 0.1, do_none=True)
@@ -236,97 +236,101 @@ def plot_metric(train, val, name, dir_output):
 	plt.close()
 
 if PATH_CHECKPOINT is None:
-	loss_fn = None
-	metrics = [
-		"accuracy",
-		dice_coefficient,
-		mean_iou(),
-		sensitivity(),  # How many true positives were accurately predicted
-		specificity,  # How many true negatives were accurately predicted?
-	]
-	if LOSS == "cross-entropy-dice":
-		loss_fn = LossCrossEntropyDice(log_cosh=DICE_LOG_COSH)
-	elif LOSS == "cross-entropy":
-		loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
-	elif LOSS == "root-mean-squared-error":
-		loss_fn = tf.keras.metrics.RootMeanSquaredError()
-		metrics = [tf.keras.metrics.RootMeanSquaredError()] # Others don't make sense w/o this
-	else:
-		raise Exception(
-			f"Error: Unknown loss function '{LOSS}' (possible values: cross-entropy, cross-entropy-dice)."
-		)
+    loss_fn = None
+    metrics = [
+        "accuracy",
+        dice_coefficient,
+        mean_iou(),
+        sensitivity(),  # How many true positives were accurately predicted
+        specificity,  # How many true negatives were accurately predicted?
+    ]
+    if LOSS == "cross-entropy-dice":
+        loss_fn = LossCrossEntropyDice(log_cosh=DICE_LOG_COSH)
+    elif LOSS == "cross-entropy":
+        loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
+    elif LOSS == "mean-squared-error":
+        loss_fn = tf.keras.losses.MeanSquaredError() # TODO consider L2 loss as it might be more computationally efficient?
+        metrics = [
+            tf.keras.metrics.MeanSquaredError(),
+            tf.keras.metrics.RootMeanSquaredError(),
+            tf.keras.metrics.MeanAbsoluteError()
+        ]  # Others don't make sense w/o this - NOTE this is mse and not rmse!
+    else:
+        raise Exception(
+            f"Error: Unknown loss function '{LOSS}' (possible values: cross-entropy, cross-entropy-dice)."
+        )
 
-	model.compile(
-		optimizer=tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE),
-		loss=loss_fn,
-		metrics=metrics,
-		steps_per_execution=STEPS_PER_EXECUTION,
-		jit_compile=JIT_COMPILE,
-	)
-	logger.info(">>> Beginning training")
-	history = model.fit(
-		dataset_train,
-		validation_data=dataset_validate,
-		# test_data=dataset_test, # Nope, it doesn't have a param like this so it's time to do this the *hard* way
-		epochs=EPOCHS,
-		callbacks=[
-			CallbackExtraValidation(
-				{  # `model,` removed 'ref apparently exists by default????? ehhhh...???
-					"test": dataset_test  # Can be None because it handles that
-				}
-			),
-			tf.keras.callbacks.CSVLogger(
-				filename=os.path.join(DIR_OUTPUT, "metrics.tsv"), separator="\t"
-			),
-			CallbackCustomModelCheckpoint(
-				model_to_checkpoint=model,
-				filepath=os.path.join(
-					DIR_OUTPUT,
-					"checkpoints",
-					"checkpoint_e{epoch:d}_loss{loss:.3f}.hdf5",
-				),
-				monitor="loss",
-			),
-		],
-		steps_per_epoch=STEPS_PER_EPOCH,
-		# use_multiprocessing=True #  commented out but could be a good idea to squash warning? alt increase batch size..... but that uses more memory >_<
-	)
-	logger.info(">>> Training complete")
-	logger.info(">>> Plotting graphs")
+    model.compile(
+        optimizer=tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE),
+        loss=loss_fn,
+        metrics=metrics,
+        steps_per_execution=STEPS_PER_EXECUTION,
+        jit_compile=JIT_COMPILE,
+    )
+    logger.info(">>> Beginning training")
+    history = model.fit(
+        dataset_train,
+        validation_data=dataset_validate,
+        # test_data=dataset_test, # Nope, it doesn't have a param like this so it's time to do this the *hard* way
+        epochs=EPOCHS,
+        callbacks=[
+            CallbackExtraValidation(
+                {  # `model,` removed 'ref apparently exists by default????? ehhhh...???
+                    "test": dataset_test  # Can be None because it handles that
+                }
+            ),
+            tf.keras.callbacks.CSVLogger(
+                filename=os.path.join(DIR_OUTPUT, "metrics.tsv"), separator="\t"
+            ),
+            CallbackCustomModelCheckpoint(
+                model_to_checkpoint=model,
+                filepath=os.path.join(
+                    DIR_OUTPUT,
+                    "checkpoints",
+                    "checkpoint_e{epoch:d}_loss{loss:.3f}.hdf5",
+                ),
+                monitor="loss",
+            ),
+        ],
+        steps_per_epoch=STEPS_PER_EPOCH,
+        # use_multiprocessing=True #  commented out but could be a good idea to squash warning? alt increase batch size..... but that uses more memory >_<
+    )
+    logger.info(">>> Training complete")
+    logger.info(">>> Plotting graphs")
 
-	plot_metric(
-		history.history["loss"], history.history["val_loss"], "loss", DIR_OUTPUT
-	)
-	plot_metric(
-		history.history["accuracy"],
-		history.history["val_accuracy"],
-		"accuracy",
-		DIR_OUTPUT,
-	)
-	plot_metric(
-		history.history["metric_dice_coefficient"],
-		history.history["val_metric_dice_coefficient"],
-		"dice",
-		DIR_OUTPUT,
-	)
-	plot_metric(
-		history.history["one_hot_mean_iou"],
-		history.history["val_one_hot_mean_iou"],
-		"mean iou",
-		DIR_OUTPUT,
-	)
-	plot_metric(
-		history.history["sensitivity"],
-		history.history["val_sensitivity"],
-		"sensitivity",
-		DIR_OUTPUT,
-	)
-	plot_metric(
-		history.history["specificity"],
-		history.history["val_specificity"],
-		"specificity",
-		DIR_OUTPUT,
-	)
+    plot_metric(
+        history.history["loss"], history.history["val_loss"], "loss", DIR_OUTPUT
+    )
+    plot_metric(
+        history.history["accuracy"],
+        history.history["val_accuracy"],
+        "accuracy",
+        DIR_OUTPUT,
+    )
+    plot_metric(
+        history.history["metric_dice_coefficient"],
+        history.history["val_metric_dice_coefficient"],
+        "dice",
+        DIR_OUTPUT,
+    )
+    plot_metric(
+        history.history["one_hot_mean_iou"],
+        history.history["val_one_hot_mean_iou"],
+        "mean iou",
+        DIR_OUTPUT,
+    )
+    plot_metric(
+        history.history["sensitivity"],
+        history.history["val_sensitivity"],
+        "sensitivity",
+        DIR_OUTPUT,
+    )
+    plot_metric(
+        history.history["specificity"],
+        history.history["val_specificity"],
+        "specificity",
+        DIR_OUTPUT,
+    )
 	
 
 # ██ ███    ██ ███████ ███████ ██████  ███████ ███    ██  ██████ ███████ 
