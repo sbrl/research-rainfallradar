@@ -8,6 +8,7 @@ import os
 ###
 
 ## Changelog:
+# 2025-01-09: Add do_none=False to env.read
 # 2024-11-14: Fix crash on line #107 unterminated string literal
 # 2024-09-29: Create this changelog, prepare for reuse
 
@@ -30,7 +31,7 @@ SYM_RAISE_EXCEPTION = Symbol("__env_read_raise_exception")
 envs_read = []
 
 
-def read(name, type_class, default=SYM_RAISE_EXCEPTION):
+def read(name, type_class, default=SYM_RAISE_EXCEPTION, do_none=False):
 	"""
 	Reads, parses, and returns an environment variable with the specified name and type, with an optional default value.
 
@@ -42,7 +43,8 @@ def read(name, type_class, default=SYM_RAISE_EXCEPTION):
 	name (str): The name of the environment variable to read.
 	type_class (type): The type to convert the environment variable value to.
 	default (Any, optional): The default value to use if the environment variable does not exist. Defaults to `SYM_RAISE_EXCEPTION`, which will raise an exception if the variable does not exist.
-
+	do_none (bool, optional): Treat the string "None" as a literal None. Default: False.
+	
 	Returns:
 			Any: The environment variable value converted to the specified type.
 
@@ -59,6 +61,10 @@ def read(name, type_class, default=SYM_RAISE_EXCEPTION):
 		return default
 	
 	result = os.environ[name]
+	
+	if do_none and result.strip() == "None":
+		return None
+	
 	if type_class is bool:
 		result = False if default is True else True
 	else:

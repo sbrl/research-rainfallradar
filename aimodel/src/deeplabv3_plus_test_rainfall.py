@@ -52,7 +52,7 @@ EPOCHS = env.read("EPOCHS", int, 25)
 LOSS = env.read("LOSS", str, "cross-entropy-dice")  # other possible values: cross-entropy
 DICE_LOG_COSH = env.read("DICE_LOG_COSH", bool, False)
 LEARNING_RATE = env.read("LEARNING_RATE", float, 0.00001)
-WATER_THRESHOLD = env.read("WATER_THRESHOLD", float, 0.1)
+WATER_THRESHOLD = env.read("WATER_THRESHOLD", float, 0.1, do_none=True)
 UPSAMPLE = env.read("UPSAMPLE", int, 2)
 SPLIT_VALIDATE = env.read("SPLIT_VALIDATE", float, 0.2)
 SPLIT_TEST = env.read("SPLIT_TEST", float, 0)
@@ -341,8 +341,9 @@ colormap = colormap.astype(np.uint8)
 
 
 def infer(model, image_tensor, do_argmax=True):
+	# we tf.expand_dims here to add a batch size to the input to the model
 	predictions = model.predict(tf.expand_dims((image_tensor), axis=0))
-	predictions = tf.squeeze(predictions)
+	predictions = tf.squeeze(predictions) # Remove the batch size dimension again
 	return predictions
 
 
@@ -387,8 +388,8 @@ def save_samples(filepath, save_list):
 	handle.write("\n")
 	handle.close()
 
-def plot_predictions(filepath, input_items, colormap, model):
-	filepath_jsonl = filepath.replace("_$$", "").replace(".png", ".jsonl")
+def plot_predictions(filepath_output, input_items, colormap, model):
+	filepath_jsonl = filepath_output.replace("_$$", "").replace(".png", ".jsonl")
 	if os.path.exists(filepath_jsonl):
 		os.truncate(filepath_jsonl, 0)
 	
@@ -402,7 +403,7 @@ def plot_predictions(filepath, input_items, colormap, model):
 		# print("DEBUG:plot_predictions INFER", str(prediction_mask.numpy().tolist()).replace("], [", "],\n["))
 		
 		plot_samples_matplotlib(
-			filepath.replace("$$", str(i)),
+			filepath_output.replace("$$", str(i)),
 			[
 				# input_tensor,
 				tf.math.reduce_max(input_pair[0][:,:,:-1], axis=-1), # rainfall only
@@ -419,6 +420,47 @@ def plot_predictions(filepath, input_items, colormap, model):
 		)
 		i += 1
 
+def plot_predictions_regressive(filepath_output, input_items, model):
+    # Iterate over items	
+	i = 0
+	for input_pair in input_items:
+		item_in = input_pair[0]
+		item_label = input_pair[1]
+		prediction = model.predict(item_in)
+		
+		# TODO we probably need to rework some shapes here
+		
+		# Pre-emptive logging
+		print("DEBUG:plot_predictions_regressive item_in.shape", item_in.shape)
+		print("DEBUG:plot_predictions_regressive item_label.shape", item_label.shape)
+		print("DEBUG:plot_predictions_regressive prediction.shape", prediction.shape)
+		
+		plot_samples_matplotlib(filepath_output.replace("$$", str(i)), [
+			tf.math.reduce_max(input_pair[0][:,:,:-1], axis=-1), # rainfall only
+			item_label, # absolute output
+			prediction # prediction as image
+		])
+		
+		i += 1
+
+
+def plot_predictions_switcher(filepath_output, input_items, colormap, model):
+	"""Switches dynamically between the regressive and classification plotting backends.
+
+	Args:
+		filepath_output (string): The filepath to output things to. $$ isr eplaced with the index in input_items that is being processed.
+		input_items (list<[Tensor, Tensor]>): List of items to process. Each item in the list should be in the form [ tensor_input, tensor_label ].
+		colormap (ColorMap): The colour map thingy. I forget the specifics of where this came from.
+		model (tf.keras.Model): The model to use to make predictions.
+	
+	Returns:
+		any: The return value from the relevant backend, which is usually void/None.
+	"""
+	if WATER_THRESHOLD is None:
+		return plot_predictions_regressive(filepath_output, input_items, model)
+	else:
+		return plot_predictions(filepath_output, input_items, colormap, model)
+
 def get_from_batched(dataset, count):
 	result = []
 	for batched in dataset:
@@ -429,22 +471,21 @@ def get_from_batched(dataset, count):
 			if len(result) >= count:
 				return result
 
-
-plot_predictions(
+plot_predictions_switcher(
 	os.path.join(DIR_OUTPUT, "predict_train_$$.png"),
 	get_from_batched(dataset_train, PREDICT_COUNT),
 	colormap,
 	model=model
 )
 if not PREDICT_AS_ONE:
-	plot_predictions(
+	plot_predictions_switcher(
 		os.path.join(DIR_OUTPUT, "predict_validate_$$.png"),
 		get_from_batched(dataset_validate, PREDICT_COUNT),
 		colormap,
 		model=model
 	)
 	if dataset_test is not None:
-		plot_predictions(
+		plot_predictions_switcher(
 			os.path.join(DIR_OUTPUT, "predict_test_$$.png"),
 			get_from_batched(dataset_test, PREDICT_COUNT),
 			colormap,
