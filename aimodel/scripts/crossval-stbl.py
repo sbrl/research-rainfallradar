@@ -11,7 +11,7 @@ from matplotlib import pyplot as plt
 # This script analyses metrics.tsv files from a series of identical experiments and reports metrics on them.
 # This is sometimes known as cross-validation, but we usually use the model series code crossval-stblX, where X is an integer >0.
 
-error_bar_mode = os.environ["ERROR_BAR_MODE"] if "ERROR_BAR_MODE" in os.environ else "stddev"
+ERROR_BAR_MODE = os.environ["ERROR_BAR_MODE"] if "ERROR_BAR_MODE" in os.environ else "stddev"
 
 if len(sys.argv) <= 1:
 	print("""
@@ -106,8 +106,8 @@ for metric in metrics.keys():
     )
     plt.fill_between(
         epochs,
-        stats[metric]["mean"] - stats[metric][error_bar_mode],
-        stats[metric]["mean"] + stats[metric][error_bar_mode],
+        stats[metric]["mean"] - stats[metric][ERROR_BAR_MODE],
+        stats[metric]["mean"] + stats[metric][ERROR_BAR_MODE],
         alpha=0.5,
         facecolor="#228A8D",
         edgecolor="#3CBB74",
@@ -118,7 +118,7 @@ for metric in metrics.keys():
     plt.title(f"{metric} // crossval-stbl{files}")
     plt.xlabel("epoch")
     plt.ylabel(metric)
-    plt.savefig(os.path.join(DIRPATH, f"crossval-stbl{files}_{metric}.png"))
+    plt.savefig(os.path.join(DIRPATH, f"crossval-stbl{files}_{metric}_{ERROR_BAR_MODE}.png"))
     plt.close()
 
 logger.success(f"Written {len(stats.keys())} graphs to {DIRPATH}")
