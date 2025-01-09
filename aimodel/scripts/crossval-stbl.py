@@ -11,6 +11,7 @@ from matplotlib import pyplot as plt
 # This script analyses metrics.tsv files from a series of identical experiments and reports metrics on them.
 # This is sometimes known as cross-validation, but we usually use the model series code crossval-stblX, where X is an integer >0.
 
+error_bar_mode = os.environ["ERROR_BAR_MODE"] if "ERROR_BAR_MODE" in os.environ else "stddev"
 
 if len(sys.argv) <= 1:
 	print("""
@@ -26,6 +27,10 @@ epoch	metric_A	metric_B	…
 1	val:float	val:float	…
 2	val:float	val:float	…
 ⋮
+
+Environment variables:
+	ERROR_BAR_MODE=stddev
+		Statistic to use for error bars/area. Default: stddev. Possible values: stddev, mad
 """)
 	sys.exit(0)
 
@@ -101,8 +106,8 @@ for metric in metrics.keys():
     )
     plt.fill_between(
         epochs,
-        stats[metric]["mean"] - stats[metric]["mad"], # TODO switch to something else based on Nina's feedback about what is generally done
-        stats[metric]["mean"] + stats[metric]["mad"], # TODO switch to something else based on Nina's feedback about what is generally done
+        stats[metric]["mean"] - stats[metric][error_bar_mode],
+        stats[metric]["mean"] + stats[metric][error_bar_mode],
         alpha=0.5,
         facecolor="#228A8D",
         edgecolor="#3CBB74",
