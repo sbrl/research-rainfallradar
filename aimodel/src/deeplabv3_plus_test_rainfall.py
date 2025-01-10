@@ -72,12 +72,19 @@ env.val_dir_exists(os.path.join(DIR_OUTPUT, "checkpoints"), create=True)
 # ~~~
 
 logger.info("DeepLabV3+ rainfall radar TEST")
+
+
+if LOSS == "mean-squared-error":
+    logger.warning(
+        "Regression mode detected via LOSS==mean-squared-error, changing NUM_CLASSES=2→1 and WATER_THRESHOLD=None"
+    )
+    # This is required because DeepLabV3+ requires that it format the output as N=value classes
+    NUM_CLASSES = 1
+    WATER_THRESHOLD = None
+
+
 env.print_all(False)
 
-if WATER_THRESHOLD is None and LOSS == "root-mean-squared-error":
-	logger.info("Regression mode detected via WATER_THRESHOLD==NONE && LOSS==root-mean-squared-error, changing NUM_CLASSES=2→1")
-	# This is required because DeepLabV3+ requires that it format the output as N=value classes
-	NUM_CLASSES = 1
 
 
 # ██████   █████  ████████  █████  ███████ ███████ ████████ 
