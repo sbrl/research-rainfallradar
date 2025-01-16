@@ -75,12 +75,12 @@ logger.info("DeepLabV3+ rainfall radar TEST")
 
 
 if LOSS == "mean-squared-error":
-    logger.warning(
-        "Regression mode detected via LOSS==mean-squared-error, changing NUM_CLASSES=2→1 and WATER_THRESHOLD=None"
-    )
-    # This is required because DeepLabV3+ requires that it format the output as N=value classes
-    NUM_CLASSES = 1
-    WATER_THRESHOLD = None
+	logger.warning(
+		"Regression mode detected via LOSS==mean-squared-error, changing NUM_CLASSES=2→1 and WATER_THRESHOLD=None"
+	)
+	# This is required because DeepLabV3+ requires that it format the output as N=value classes
+	NUM_CLASSES = 1
+	WATER_THRESHOLD = None
 
 
 env.print_all(False)
@@ -256,11 +256,13 @@ if PATH_CHECKPOINT is None:
     elif LOSS == "cross-entropy":
         loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
     elif LOSS == "mean-squared-error":
-        loss_fn = tf.keras.losses.MeanSquaredError() # TODO consider L2 loss as it might be more computationally efficient?
+        loss_fn = (
+            tf.keras.losses.MeanSquaredError()
+        )  # TODO consider L2 loss as it might be more computationally efficient?
         metrics = [
             tf.keras.metrics.MeanSquaredError(),
             tf.keras.metrics.RootMeanSquaredError(),
-            tf.keras.metrics.MeanAbsoluteError()
+            tf.keras.metrics.MeanAbsoluteError(),
         ]  # Others don't make sense w/o this - NOTE this is mse and not rmse!
     else:
         raise Exception(
@@ -306,38 +308,61 @@ if PATH_CHECKPOINT is None:
     logger.info(">>> Plotting graphs")
 
     plot_metric(
-        history.history["loss"], history.history["val_loss"], "loss", DIR_OUTPUT
+        history.history["loss"],
+		history.history["val_loss"],
+		"loss",
+		DIR_OUTPUT
     )
-    plot_metric(
-        history.history["accuracy"],
-        history.history["val_accuracy"],
-        "accuracy",
-        DIR_OUTPUT,
-    )
-    plot_metric(
-        history.history["metric_dice_coefficient"],
-        history.history["val_metric_dice_coefficient"],
-        "dice",
-        DIR_OUTPUT,
-    )
-    plot_metric(
-        history.history["one_hot_mean_iou"],
-        history.history["val_one_hot_mean_iou"],
-        "mean iou",
-        DIR_OUTPUT,
-    )
-    plot_metric(
-        history.history["sensitivity"],
-        history.history["val_sensitivity"],
-        "sensitivity",
-        DIR_OUTPUT,
-    )
-    plot_metric(
-        history.history["specificity"],
-        history.history["val_specificity"],
-        "specificity",
-        DIR_OUTPUT,
-    )
+    if WATER_THRESHOLD is None:
+        plot_metric(
+            history.history["mean_absolute_error"],
+            history.history["val_mean_absolute_error"],
+            "mean absolute error",
+            DIR_OUTPUT,
+        )
+        plot_metric(
+            history.history["mean_squared_error"],
+            history.history["val_mean_squared_error"],
+            "mean squared error",
+            DIR_OUTPUT,
+        )
+        plot_metric(
+            history.history["root_mean_squared_error"],
+            history.history["val_root_mean_squared_error"],
+            "root mean squared error",
+            DIR_OUTPUT,
+        )
+    else:
+        plot_metric(
+            history.history["accuracy"],
+            history.history["val_accuracy"],
+            "accuracy",
+            DIR_OUTPUT,
+        )
+        plot_metric(
+            history.history["metric_dice_coefficient"],
+            history.history["val_metric_dice_coefficient"],
+            "dice",
+            DIR_OUTPUT,
+        )
+        plot_metric(
+            history.history["one_hot_mean_iou"],
+            history.history["val_one_hot_mean_iou"],
+            "mean iou",
+            DIR_OUTPUT,
+        )
+        plot_metric(
+            history.history["sensitivity"],
+            history.history["val_sensitivity"],
+            "sensitivity",
+            DIR_OUTPUT,
+        )
+        plot_metric(
+            history.history["specificity"],
+            history.history["val_specificity"],
+            "specificity",
+            DIR_OUTPUT,
+        )
 	
 
 # ██ ███    ██ ███████ ███████ ██████  ███████ ███    ██  ██████ ███████ 
@@ -435,7 +460,7 @@ def plot_predictions(filepath_output, input_items, colormap, model):
 		i += 1
 
 def plot_predictions_regressive(filepath_output, input_items, model):
-    # Iterate over items	
+	# Iterate over items	
 	i = 0
 	for input_pair in input_items:
 		item_in = input_pair[0]
