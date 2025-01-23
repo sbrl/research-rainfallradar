@@ -38,9 +38,12 @@ class CallbackExtraValidation(tf.keras.callbacks.Callback):
 				continue
 
 			metrics = self.model.evaluate(
-				dataset, verbose=self.verbose, return_dict=True)
-
+				dataset,
+				verbose=self.verbose,
+				return_dict=True
+			)
+			
 			for metric_name, metric_value in metrics.items():
 				logs[f"{name}_{metric_name}"] = metric_value
-
+			
 			print(metrics)
