@@ -460,27 +460,31 @@ def plot_predictions(filepath_output, input_items, colormap, model):
 		i += 1
 
 def plot_predictions_regressive(filepath_output, input_items, model):
-	# Iterate over items	
-	i = 0
-	for input_pair in input_items:
-		item_in = input_pair[0]
-		item_label = input_pair[1]
-		prediction = model.predict(item_in)
+    # Iterate over items
+    i = 0
+    for input_pair in input_items:
+        item_in = input_pair[0]
+        item_label = input_pair[1]
+
+        # Pre-emptive logging
+        print("DEBUG:plot_predictions_regressive item_in.shape", item_in.shape)
+        print("DEBUG:plot_predictions_regressive item_label.shape", item_label.shape)
+        print("DEBUG:plot_predictions_regressive prediction.shape", prediction.shape)
+
+        # TODO we probably need to rework some shapes here
 		
-		# TODO we probably need to rework some shapes here
-		
-		# Pre-emptive logging
-		print("DEBUG:plot_predictions_regressive item_in.shape", item_in.shape)
-		print("DEBUG:plot_predictions_regressive item_label.shape", item_label.shape)
-		print("DEBUG:plot_predictions_regressive prediction.shape", prediction.shape)
-		
-		plot_samples_matplotlib(filepath_output.replace("$$", str(i)), [
-			tf.math.reduce_max(input_pair[0][:,:,:-1], axis=-1), # rainfall only
-			item_label, # absolute output
-			prediction # prediction as image
-		])
-		
-		i += 1
+        prediction = model.predict(item_in)
+
+        plot_samples_matplotlib(
+            filepath_output.replace("$$", str(i)),
+            [
+                tf.math.reduce_max(input_pair[0][:, :, :-1], axis=-1),  # rainfall only
+                item_label,  # absolute output
+                prediction,  # prediction as image
+            ],
+        )
+
+        i += 1
 
 
 def plot_predictions_switcher(filepath_output, input_items, colormap, model):
