@@ -469,11 +469,12 @@ def plot_predictions_regressive(filepath_output, input_items, model):
         # Pre-emptive logging
         print("DEBUG:plot_predictions_regressive item_in.shape", item_in.shape)
         print("DEBUG:plot_predictions_regressive item_label.shape", item_label.shape)
-        print("DEBUG:plot_predictions_regressive prediction.shape", prediction.shape)
 
-        # TODO we probably need to rework some shapes here
 		
+        # TODO we probably need to rework some shapes here
         prediction = model.predict(item_in)
+		
+        print("DEBUG:plot_predictions_regressive prediction.shape", prediction.shape)
 
         plot_samples_matplotlib(
             filepath_output.replace("$$", str(i)),
