@@ -6,7 +6,6 @@ import re
 
 from loguru import logger
 import pandas as pd
-import scipy
 from matplotlib import pyplot as plt
 
 # This script analyses metrics.tsv files from a series of experiments from the same codebase and reports metrics on them.
@@ -75,6 +74,7 @@ for metric in metrics.keys():
 	filepath_graph_next = os.path.join(DIRPATH, f"metric-multiplot{files}_{metric}.png")
 
 	plt.figure(figsize=(12, 8))
+	plt.rcParams["font.size"] = 22
 	# plt.ylim(min(0, stats[metric]["agg_min"]), max(1, stats[metric]["agg_max"]))
 	plt.grid(visible=True, which="major", axis="y", linewidth=2)
 	plt.grid(visible=True, which="minor", axis="y", linewidth=1)
@@ -83,14 +83,14 @@ for metric in metrics.keys():
 	for col in metrics[metric]:
 		plt.plot(epochs, col, label=model_codes[colnum])
 		colnum += 1
-	plt.legend(model_codes)
+	plt.legend(model_codes, fontsize=14, title_fontsize=16)
 	plt.title(f"{metric} // {DIRPATH_basename} // metric-multiplot{files}")
 	plt.xlabel("epoch")
 	plt.ylabel(metric)
 	plt.savefig(filepath_graph_next)
 	plt.close()
 	logger.success(f"GRAPH OUT {filepath_graph_next}")
-
+	
 	i += 1
 
 logger.success(f"Written {i} graphs to {DIRPATH}")
