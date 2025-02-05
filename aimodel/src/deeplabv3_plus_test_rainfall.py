@@ -243,126 +243,126 @@ def plot_metric(train, val, name, dir_output):
 	plt.close()
 
 if PATH_CHECKPOINT is None:
-    loss_fn = None
-    metrics = [
-        "accuracy",
-        dice_coefficient,
-        mean_iou(),
-        sensitivity(),  # How many true positives were accurately predicted
-        specificity,  # How many true negatives were accurately predicted?
-    ]
-    if LOSS == "cross-entropy-dice":
-        loss_fn = LossCrossEntropyDice(log_cosh=DICE_LOG_COSH)
-    elif LOSS == "cross-entropy":
-        loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
-    elif LOSS == "mean-squared-error":
-        loss_fn = (
-            tf.keras.losses.MeanSquaredError()
-        )  # TODO consider L2 loss as it might be more computationally efficient?
-        metrics = [
-            tf.keras.metrics.MeanSquaredError(),
-            tf.keras.metrics.RootMeanSquaredError(),
-            tf.keras.metrics.MeanAbsoluteError(),
-        ]  # Others don't make sense w/o this - NOTE this is mse and not rmse!
-    else:
-        raise Exception(
-            f"Error: Unknown loss function '{LOSS}' (possible values: cross-entropy, cross-entropy-dice)."
-        )
+	loss_fn = None
+	metrics = [
+		"accuracy",
+		dice_coefficient,
+		mean_iou(),
+		sensitivity(),  # How many true positives were accurately predicted
+		specificity,  # How many true negatives were accurately predicted?
+	]
+	if LOSS == "cross-entropy-dice":
+		loss_fn = LossCrossEntropyDice(log_cosh=DICE_LOG_COSH)
+	elif LOSS == "cross-entropy":
+		loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
+	elif LOSS == "mean-squared-error":
+		loss_fn = (
+			tf.keras.losses.MeanSquaredError()
+		)  # TODO consider L2 loss as it might be more computationally efficient?
+		metrics = [
+			tf.keras.metrics.MeanSquaredError(),
+			tf.keras.metrics.RootMeanSquaredError(),
+			tf.keras.metrics.MeanAbsoluteError(),
+		]  # Others don't make sense w/o this - NOTE this is mse and not rmse!
+	else:
+		raise Exception(
+			f"Error: Unknown loss function '{LOSS}' (possible values: cross-entropy, cross-entropy-dice)."
+		)
 
-    model.compile(
-        optimizer=tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE),
-        loss=loss_fn,
-        metrics=metrics,
-        steps_per_execution=STEPS_PER_EXECUTION,
-        jit_compile=JIT_COMPILE,
-    )
-    logger.info(">>> Beginning training")
-    history = model.fit(
-        dataset_train,
-        validation_data=dataset_validate,
-        # test_data=dataset_test, # Nope, it doesn't have a param like this so it's time to do this the *hard* way
-        epochs=EPOCHS,
-        callbacks=[
-            CallbackExtraValidation(
-                {  # `model,` removed 'ref apparently exists by default????? ehhhh...???
-                    "test": dataset_test  # Can be None because it handles that
-                }
-            ),
-            tf.keras.callbacks.CSVLogger(
-                filename=os.path.join(DIR_OUTPUT, "metrics.tsv"), separator="\t"
-            ),
-            CallbackCustomModelCheckpoint(
-                model_to_checkpoint=model,
-                filepath=os.path.join(
-                    DIR_OUTPUT,
-                    "checkpoints",
-                    "checkpoint_e{epoch:d}_loss{loss:.3f}.hdf5",
-                ),
-                monitor="loss",
-            ),
-        ],
-        steps_per_epoch=STEPS_PER_EPOCH,
-        # use_multiprocessing=True #  commented out but could be a good idea to squash warning? alt increase batch size..... but that uses more memory >_<
-    )
-    logger.info(">>> Training complete")
-    logger.info(">>> Plotting graphs")
+	model.compile(
+		optimizer=tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE),
+		loss=loss_fn,
+		metrics=metrics,
+		steps_per_execution=STEPS_PER_EXECUTION,
+		jit_compile=JIT_COMPILE,
+	)
+	logger.info(">>> Beginning training")
+	history = model.fit(
+		dataset_train,
+		validation_data=dataset_validate,
+		# test_data=dataset_test, # Nope, it doesn't have a param like this so it's time to do this the *hard* way
+		epochs=EPOCHS,
+		callbacks=[
+			CallbackExtraValidation(
+				{  # `model,` removed 'ref apparently exists by default????? ehhhh...???
+					"test": dataset_test  # Can be None because it handles that
+				}
+			),
+			tf.keras.callbacks.CSVLogger(
+				filename=os.path.join(DIR_OUTPUT, "metrics.tsv"), separator="\t"
+			),
+			CallbackCustomModelCheckpoint(
+				model_to_checkpoint=model,
+				filepath=os.path.join(
+					DIR_OUTPUT,
+					"checkpoints",
+					"checkpoint_e{epoch:d}_loss{loss:.3f}.hdf5",
+				),
+				monitor="loss",
+			),
+		],
+		steps_per_epoch=STEPS_PER_EPOCH,
+		# use_multiprocessing=True #  commented out but could be a good idea to squash warning? alt increase batch size..... but that uses more memory >_<
+	)
+	logger.info(">>> Training complete")
+	logger.info(">>> Plotting graphs")
 
-    plot_metric(
-        history.history["loss"],
+	plot_metric(
+		history.history["loss"],
 		history.history["val_loss"],
 		"loss",
 		DIR_OUTPUT
-    )
-    if WATER_THRESHOLD is None:
-        plot_metric(
-            history.history["mean_absolute_error"],
-            history.history["val_mean_absolute_error"],
-            "mean absolute error",
-            DIR_OUTPUT,
-        )
-        plot_metric(
-            history.history["mean_squared_error"],
-            history.history["val_mean_squared_error"],
-            "mean squared error",
-            DIR_OUTPUT,
-        )
-        plot_metric(
-            history.history["root_mean_squared_error"],
-            history.history["val_root_mean_squared_error"],
-            "root mean squared error",
-            DIR_OUTPUT,
-        )
-    else:
-        plot_metric(
-            history.history["accuracy"],
-            history.history["val_accuracy"],
-            "accuracy",
-            DIR_OUTPUT,
-        )
-        plot_metric(
-            history.history["metric_dice_coefficient"],
-            history.history["val_metric_dice_coefficient"],
-            "dice",
-            DIR_OUTPUT,
-        )
-        plot_metric(
-            history.history["one_hot_mean_iou"],
-            history.history["val_one_hot_mean_iou"],
-            "mean iou",
-            DIR_OUTPUT,
-        )
-        plot_metric(
-            history.history["sensitivity"],
-            history.history["val_sensitivity"],
-            "sensitivity",
-            DIR_OUTPUT,
-        )
-        plot_metric(
-            history.history["specificity"],
-            history.history["val_specificity"],
-            "specificity",
-            DIR_OUTPUT,
-        )
+	)
+	if WATER_THRESHOLD is None:
+		plot_metric(
+			history.history["mean_absolute_error"],
+			history.history["val_mean_absolute_error"],
+			"mean absolute error",
+			DIR_OUTPUT,
+		)
+		plot_metric(
+			history.history["mean_squared_error"],
+			history.history["val_mean_squared_error"],
+			"mean squared error",
+			DIR_OUTPUT,
+		)
+		plot_metric(
+			history.history["root_mean_squared_error"],
+			history.history["val_root_mean_squared_error"],
+			"root mean squared error",
+			DIR_OUTPUT,
+		)
+	else:
+		plot_metric(
+			history.history["accuracy"],
+			history.history["val_accuracy"],
+			"accuracy",
+			DIR_OUTPUT,
+		)
+		plot_metric(
+			history.history["metric_dice_coefficient"],
+			history.history["val_metric_dice_coefficient"],
+			"dice",
+			DIR_OUTPUT,
+		)
+		plot_metric(
+			history.history["one_hot_mean_iou"],
+			history.history["val_one_hot_mean_iou"],
+			"mean iou",
+			DIR_OUTPUT,
+		)
+		plot_metric(
+			history.history["sensitivity"],
+			history.history["val_sensitivity"],
+			"sensitivity",
+			DIR_OUTPUT,
+		)
+		plot_metric(
+			history.history["specificity"],
+			history.history["val_specificity"],
+			"specificity",
+			DIR_OUTPUT,
+		)
 	
 
 # ██ ███    ██ ███████ ███████ ██████  ███████ ███    ██  ██████ ███████ 
@@ -470,10 +470,14 @@ def plot_predictions_regressive(filepath_output, input_items, model):
         print("DEBUG:plot_predictions_regressive item_in.shape", item_in.shape)
         print("DEBUG:plot_predictions_regressive item_label.shape", item_label.shape)
 
-		
+        # item_in.shape (128, 128, 8)
+        # item_label.shape (128, 128, 1)
+
+        item_in = tf.expand_dims(item_in, axis=0)  # Now (1, 128, 128, 8) to add batch size
+
         # TODO we probably need to rework some shapes here
         prediction = model.predict(item_in)
-		
+
         print("DEBUG:plot_predictions_regressive prediction.shape", prediction.shape)
 
         plot_samples_matplotlib(
