@@ -94,6 +94,7 @@ for metric in metrics.keys():
     plt.grid(visible=True, which="major", axis="y", linewidth=2)
     plt.grid(visible=True, which="minor", axis="y", linewidth=1)
     plt.minorticks_on()
+    plt.rcParams['font.size'] = 32
     plt.fill_between(
         epochs,
         stats[metric]["min"],
