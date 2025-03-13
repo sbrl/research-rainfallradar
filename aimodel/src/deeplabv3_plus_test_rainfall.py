@@ -31,6 +31,7 @@ from lib.dataset.dataset_mono import dataset_mono, dataset_mono_predict
 
 time_start = datetime.now()
 logger.info(f"Starting at {str(datetime.now().isoformat())}")
+logger.info(f"I, Tensorflow am version {tf.__version__}")
 
 
 # ███████ ███    ██ ██    ██ ██ ██████   ██████  ███    ██ ███    ███ ███████ ███    ██ ████████
