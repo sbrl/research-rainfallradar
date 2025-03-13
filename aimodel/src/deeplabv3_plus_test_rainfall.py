@@ -417,7 +417,7 @@ def plot_samples_matplotlib(filepath, display_list):
 		if display_list[i].shape[-1] == 3:
 			plt.imshow(tf.keras.preprocessing.image.array_to_img(display_list[i]))
 		else:
-			plt.imshow(display_list[i])
+			plt.imshow(tf.squeeze(display_list[i]))
 			plt.colorbar()
 	plt.savefig(filepath, dpi=200)
 
