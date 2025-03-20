@@ -421,6 +421,7 @@ def plot_samples_matplotlib(filepath, display_list):
 			plt.imshow(tf.squeeze(display_list[i]))
 			plt.colorbar()
 	plt.savefig(filepath, dpi=200)
+	plt.close()
 
 def save_samples(filepath, save_list):
 	handle = io.open(filepath, "a")
