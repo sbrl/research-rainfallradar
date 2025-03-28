@@ -30,7 +30,9 @@ def parse_item(metadata, output_size=100, input_size="same", water_threshold=0.1
 	Returns:
 			A function that takes a single TFRecord item and returns the parsed rainfall radar and water depth data.
 	"""
-
+	
+	print("DEBUG:parse_item input_size", input_size, "output_size", output_size)
+	
 	if input_size == "same":
 		input_size = (
 			output_size  # This is almost always the case with e.g. the DeepLabV3+ model
@@ -39,13 +41,14 @@ def parse_item(metadata, output_size=100, input_size="same", water_threshold=0.1
 	water_height_source, water_width_source = metadata["waterdepth"]
 	water_offset_x = math.ceil((water_width_source - output_size) / 2)
 	water_offset_y = math.ceil((water_height_source - output_size) / 2)
-
+	
+	# BUG: we assume that wate  and rainfall are the SAME size ref input_size and output_size, when in reality this is not the case. hence we crash if rainfall_scale_up != 2....!
 	_, rainfall_height_source, rainfall_width_source = metadata["rainfallradar"]
 	rainfall_height_source *= rainfall_scale_up
 	rainfall_width_source *= rainfall_scale_up
 	rainfall_offset_x = math.ceil((rainfall_width_source - input_size) / 2)
 	rainfall_offset_y = math.ceil((rainfall_height_source - input_size) / 2)
-
+	
 	print(
 		"DEBUG DATASET:rainfall shape",
 		metadata["rainfallradar"],
@@ -57,7 +60,9 @@ def parse_item(metadata, output_size=100, input_size="same", water_threshold=0.1
 	print("DEBUG DATASET:water_bins", water_bins)
 	print("DEBUG DATASET:output_size", output_size)
 	print("DEBUG DATASET:input_size", input_size)
+	print("DEBUG DATASET:water/SIZE height", water_height_source, "width", water_width_source)
 	print("DEBUG DATASET:water_offset x", water_offset_x, "y", water_offset_y)
+	print("DEBUG DATASET:rainfall/SIZE height", rainfall_height_source, "width", rainfall_width_source)
 	print("DEBUG DATASET:rainfall_offset x", rainfall_offset_x, "y", rainfall_offset_y)
 
 	if heightmap is not None:
@@ -217,7 +222,7 @@ def dataset_mono(dirpath_input, percentage_validate=0.2, percentage_test=0, **kw
 	
 	return dataset_train, dataset_validate, dataset_test #, filepaths
 
-def dataset_mono_predict(dirpath_input, batch_size=64, **kwargs):
+def dataset_mono_predict(dirpath_input, batch_size=64, shuffle=False, **kwargs):
 	"""Creates a tf.data.Dataset() for prediction using the contrastive learning model.
 	Note that this WILL MANGLE THE ORDERING if you set parallel_reads_multiplier to anything other than 0!!
 	
@@ -235,7 +240,7 @@ def dataset_mono_predict(dirpath_input, batch_size=64, **kwargs):
 		filepaths=filepaths,
 		metadata=read_metadata(dirpath_input),
 		batch_size=batch_size, # WAS None
-		shuffle=False, #even with shuffle=False we're not gonna get them all in the same order since we're reading in parallel by default
+		shuffle=shuffle, #even with shuffle=False we're not gonna get them all in the same order since we're reading in parallel by default
 		**kwargs
 	)
 
