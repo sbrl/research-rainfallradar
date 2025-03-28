@@ -3,6 +3,7 @@ import sys
 import os
 import re
 import math
+from functools import reduce
 
 import pandas as pd
 import holoviews as hv
@@ -105,6 +106,8 @@ logger.success(f"Written histogram for {WEIGHTING_STAT_BASE} to {filepath_output
 
 # ------------------------------------------------------
 
+filepath_output_weightings = re.sub(r"\..*$", f"_WEIGHTS-{WEIGHTING_STAT_BASE}.tsv", FILEPATH_OUTPUT)
+
 stat_ranged = df[
     df[WEIGHTING_STAT_BASE].between(WEIGHTING_RANGE[0], WEIGHTING_RANGE[1])
 ][WEIGHTING_STAT_BASE].sort_values()
@@ -113,6 +116,10 @@ stat_ranged = df[
 print("DEBUG:stat_ranged SORTED", stat_ranged)
 
 def find_bins(data: pd.Series, bin_count: int):
+	"""
+	Calculates boundaries & counts for N given bins. This forms the basis of the sample weighting system.
+	TODO take advantage of the fact that `data` could be sorted (TODO move sort_values() down into this function?)
+	"""
 	min_val = data.min()
 	max_val = data.max()
 	bin_width = (max_val - min_val) / bin_count
@@ -128,6 +135,33 @@ def find_bins(data: pd.Series, bin_count: int):
 	
 	return bins
 
-bins = find_bins(stat_ranged, WEIGHTING_RESOLUTION)
+def normalise_count(count, ds_min, ds_max):
+	ds_range = ds_max - ds_min
 
-print("DEBUG:bins", bins)
+	result = (count - ds_min) / ds_range	# Normalise 0..1
+	result = 1 - result						# Flip so bins with many values in them are rated lower
+	# TODO consider exponential function here?
+	# TODO handle really low stuff & filter out like water <= 3500 
+	result = 0.1 + (result * 0.9)			# Change to be in range 0.1..1 so that all samples have at least SOME effect
+	return result
+
+def normalise_bins(bins):
+	count_min = reduce(lambda acc, el: math.min(acc, el[2]))
+	count_max = reduce(lambda acc, el: math.max(acc, el[2]))
+
+	# Normalise count to 0..1, also flip such that boxes 
+	bins = [(l, u, normalise_count(c, count_min, count_max)) for (l, u, c) in bins]
+	bins.insert(0, (-math.inf, bins[0][0], 0.05)) # anything below range is of normalised weight 0.05
+	bins.append((bins[-1][1], math.inf, bins[-1][2])) # anything above range takes weighting from the upper bin
+	
+	return bins
+
+bins = normalise_bins(find_bins(stat_ranged, WEIGHTING_RESOLUTION))
+
+df_bins = pd.DataFrame(bins, columns=["lower", "upper", "weight"])
+
+df_bins.to_csv(filepath_output_weightings, sep="\t")
+
+print("DEBUG:df_bins", df_bins)
+
+logger.success(f"Written weights with {WEIGHTING_RESOLUTION} bins to {filepath_output_weightings}")
