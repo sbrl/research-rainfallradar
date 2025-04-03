@@ -131,6 +131,47 @@ def print_all(table=True):
 			  "+" + "-" * (width_value + 2) + "+" + "-" * (width_flags + 2) + "+")
 
 
+
+def get_env(env_name):
+	"""Get the value of the environment variable with the given name.
+	
+	Args:
+		env_name (str): The name of the environment variable to get.
+	
+	Returns:
+		The value of the environment variable if found, None otherwise.
+	"""
+	for name, value, _ in envs_read:
+		if name == env_name:
+			return value
+	return None
+
+
+
+def val_nonempty(env_name, raise_error=True, msg_error="The value of the environment variable () is empty."):
+	"""Validate that an environment variable is not empty.
+ 
+ 	Args:
+ 		env_name (str): The name of the environment variable to check.
+ 		raise_error (bool, optional): Whether to raise an exception if the value is empty. Defaults to True.
+ 		msg_error (str, optional): Custom error message to display. Defaults to "The value of the environment variable () is empty.".
+
+	Returns:
+		bool: True if the value is empty and raise_error is False, False otherwise.
+
+	Raises:
+		Exception: If the environment variable value is empty and raise_error is True.
+	"""
+	
+	value = get_env(env_name)
+	if "".__eq__(value): # empty!
+		if raise_error:
+			raise Exception(msg_error.replace("()", f"'{env_name}'"))
+		else:
+			return True
+		
+	return False
+
 def val_exists(value, msg_error="The file or directory () does not exist, or I don't have permission to read it"):
 	if not os.path.exists(value):
 		raise Exception(msg_error.replace("()", f"'{value}'"))

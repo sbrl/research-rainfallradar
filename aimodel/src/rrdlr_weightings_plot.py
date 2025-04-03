@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
+import platform
 import sys
 import os
 import re
 import math
 from functools import reduce
 
+import numpy as np
 import pandas as pd
 import holoviews as hv
 import datashader as ds
@@ -12,6 +14,7 @@ import holoviews.operation.datashader as hvds # REQUIRED, as it's a separate ent
 import holoviews.plotting.plotly
 import colorcet as cc
 import seaborn as sns
+from matplotlib import pyplot as plt
 
 from loguru import logger
 
@@ -19,20 +22,35 @@ import lib.primitives.env as env
 
 hv.extension("matplotlib")
 
-FILEPATH_INPUT = env.read("FILEPATH_INPUT", str, default="-")
-FILEPATH_OUTPUT = env.read("FILEPATH_OUTPUT", str)
+DIRPATH_RAINFALLWATER = env.read("DIRPATH_RAINFALLWATER", str, None)	# Specify to call the summation script rrdlr_calculate_sums automatically
 
-IMAGE_WIDTH = env.read("IMAGE_WIDTH", int, default=1000)
-IMAGE_HEIGHT = env.read("IMAGE_HEIGHT", int, default=1000)
+FILEPATH_INPUT = env.read("FILEPATH_INPUT", str, default="-")	# Input summation file, if the above is specified this file is generated automatically, defaults to stdin
+FILEPATH_OUTPUT = env.read("FILEPATH_OUTPUT", str)	# Filepath to output for plots. Variations of this filepath are used for other related outputs
 
-DO_DSRAW = env.read("DO_DSRAW", bool)
+IMAGE_WIDTH = env.read("IMAGE_WIDTH", int, default=1000)	# Width of the water vs rainfall plots
+IMAGE_HEIGHT = env.read("IMAGE_HEIGHT", int, default=1000)	# Height of the water vs rainfall plots
 
-WEIGHTING_STAT_BASE = env.read("WEIGHTING_STAT_BASE", str, default="water")
-WEIGHTING_RANGE = env.read("WEIGHTING_RANGE", str, default="3500:")
-WEIGHTING_RESOLUTION = env.read("WEIGHTING_RESOLUTION", int, default=100)
+DO_DSRAW = env.read("DO_DSRAW", bool)	# Also plot with raw datashader & save alongside, default false
+
+WEIGHTING_STAT_BASE = env.read("WEIGHTING_STAT_BASE", str, default="water")	# The stat to use to calculate loss weightings
+WEIGHTING_RANGE = env.read("WEIGHTING_RANGE", str, default="3500:")	# Limit the range of values used for the given stat when calculating loss weightings
+WEIGHTING_RESOLUTION = env.read("WEIGHTING_RESOLUTION", int, default=100)	# The # of bins to split the stat into
 
 
 env.print_all()
+
+# --------------------------------------------
+
+if DIRPATH_RAINFALLWATER is not None and os.path.isdir(DIRPATH_RAINFALLWATER):
+	from rrdlr_calculate_sums import do_calculate_sums
+	
+	logger.info("***** CALLING SUBSCRIPT CALCULATE_SUMS *****")
+	os.environ["FILEPATH_OUTPUT"] = FILEPATH_INPUT # we've read the env vars above now anyway, so we can fiddle this for the subscript relatively easily here
+	do_calculate_sums()
+
+# --------------------------------------------
+
+logger.info(f"Loss weightings calculation and plotting begins! I am python {platform.python_version()}.")
 
 # --------------------------------------------
 
@@ -102,6 +120,7 @@ histogram.set(
 print("DEBUG:histogram", histogram)
 histogram.figure.savefig(filepath_output_histogram)
 
+
 logger.success(f"Written histogram for {WEIGHTING_STAT_BASE} to {filepath_output_histogram}")
 
 # ------------------------------------------------------
@@ -112,13 +131,15 @@ stat_ranged = df[
     df[WEIGHTING_STAT_BASE].between(WEIGHTING_RANGE[0], WEIGHTING_RANGE[1])
 ][WEIGHTING_STAT_BASE].sort_values()
 
-
 print("DEBUG:stat_ranged SORTED", stat_ranged)
+
+
+logger.info("Binning and calculating weightings")
 
 def find_bins(data: pd.Series, bin_count: int):
 	"""
 	Calculates boundaries & counts for N given bins. This forms the basis of the sample weighting system.
-	TODO take advantage of the fact that `data` could be sorted (TODO move sort_values() down into this function?)
+	TODO take advantage of the fact that `data` could be sorted (TODO move sort_values() down into this function?)
 	"""
 	min_val = data.min()
 	max_val = data.max()
@@ -135,6 +156,7 @@ def find_bins(data: pd.Series, bin_count: int):
 	
 	return bins
 
+
 def normalise_count(count, ds_min, ds_max):
 	ds_range = ds_max - ds_min
 
@@ -145,22 +167,70 @@ def normalise_count(count, ds_min, ds_max):
 	result = 0.1 + (result * 0.9)			# Change to be in range 0.1..1 so that all samples have at least SOME effect
 	return result
 
-def normalise_bins(bins):
-	count_min = reduce(lambda acc, el: math.min(acc, el[2]))
-	count_max = reduce(lambda acc, el: math.max(acc, el[2]))
+def normalise_bin_counts(bins):
+	count_min = reduce(lambda acc, el: min(acc, el[2]), bins, math.inf)
+	count_max = reduce(lambda acc, el: max(acc, el[2]), bins, -math.inf)
 
 	# Normalise count to 0..1, also flip such that boxes 
-	bins = [(l, u, normalise_count(c, count_min, count_max)) for (l, u, c) in bins]
+	bins = [(lwr, upr, normalise_count(count, count_min, count_max)) for (lwr, upr, count) in bins]
 	bins.insert(0, (-math.inf, bins[0][0], 0.05)) # anything below range is of normalised weight 0.05
 	bins.append((bins[-1][1], math.inf, bins[-1][2])) # anything above range takes weighting from the upper bin
 	
 	return bins
 
-bins = normalise_bins(find_bins(stat_ranged, WEIGHTING_RESOLUTION))
+
+bins = normalise_bin_counts(find_bins(stat_ranged, WEIGHTING_RESOLUTION))
 
 df_bins = pd.DataFrame(bins, columns=["lower", "upper", "weight"])
 
 df_bins.to_csv(filepath_output_weightings, sep="\t")
+
+bound_min = float(df[WEIGHTING_STAT_BASE].min())
+bound_max = float(df[WEIGHTING_STAT_BASE].max())
+
+# --------------
+
+filepath_output_histogram_bins = re.sub(r"\..*$", f"_hist-{WEIGHTING_STAT_BASE}_weights-norm.png", FILEPATH_OUTPUT)
+
+# Calculations for drawing the histogram thata re WAY too complicated for what they are... ugh >_<
+hist_counts = [count for (_, _, count) in bins]
+hist_bins = (
+    [bins[1][1] - ((bins[2][1] - bins[1][1]) * 4)]
+    + [lwr for (lwr, upr, count) in bins[1:-1]]
+    + [bound_max]
+)
+diff = np.diff(hist_bins).tolist()
+diff.append(diff[1]) # Last bin is 'everything higher than this', just as the 1st is 'everything lower than this'
+
+# Ref https://stackoverflow.com/a/72072161/1460422
+fig, ax = plt.subplots(figsize=(16, 12))
+ax.bar(x=hist_bins, height=hist_counts, width=diff, align="edge")
+ax.set_xlabel(f"{WEIGHTING_STAT_BASE}")
+ax.set_ylabel("normalised count")
+ax.set_title(f"weightings: {WEIGHTING_STAT_BASE} // normalised counts {re.sub(r"\..*$", "", os.path.basename(FILEPATH_INPUT))}")
+ax.margins(x=0)
+plt.tight_layout()
+plt.savefig(filepath_output_histogram_bins)
+
+# histplot_bins = sns.barplot(hist_df,
+# 	x="bins", y="weights"
+# 	# bins = hist_bins,
+# 	# weights = hist_weights
+# )
+# histplot_bins.set(
+# 	title=f"weightings: {WEIGHTING_STAT_BASE} // normalised counts {re.sub(r"\..*$", "", os.path.basename(FILEPATH_INPUT))}",
+# 	xlabel=f"{WEIGHTING_STAT_BASE}",
+# 	ylabel="normalised count",
+# )
+# histplot_bins.tick_params(
+# 	labelrotation=90
+# )
+# histplot_bins.figure.savefig(filepath_output_histogram_bins)
+
+logger.success(f"Written normalised weights histogram plot to {filepath_output_histogram_bins}")
+
+# --------------
+
 
 print("DEBUG:df_bins", df_bins)
 
