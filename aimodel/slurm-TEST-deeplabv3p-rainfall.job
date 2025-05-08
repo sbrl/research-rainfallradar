@@ -12,6 +12,8 @@
 # ---> in MiB
 # no-requeue: ref https://support.hull.ac.uk/tas/public/ssp/content/detail/incident?unid=652db7ac6e73485c9f7658db78b2b628
 
+echo "[slurm_runner] I AM AT $(git-rev-parse HEAD)";
+
 #######################################################
 
 command_exists() {
