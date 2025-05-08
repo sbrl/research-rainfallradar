@@ -153,8 +153,8 @@ def parse_item(metadata, output_size=100, input_size="same", water_threshold=0.1
 			# NOTE: This MUST be done AFTER remove_isolated_pixels!
 			water = tf.expand_dims(water, axis=-1)
 
-		print("DEBUG DATASET_OUT:rainfall shape", rainfall.shape)
-		print("DEBUG DATASET_OUT:water shape", water.shape)
+		print("DEBUG DATASET_OUT:rainfall shape", rainfall.shape, "dtype", rainfall.dtype)
+		print("DEBUG DATASET_OUT:water shape", water.shape, "dtype", water.dtype)
 		return rainfall, water
 
 	return tf.function(parse_item_inner)
