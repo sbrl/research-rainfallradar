@@ -145,6 +145,7 @@ def parse_item(metadata, output_size=100, input_size="same", water_threshold=0.1
 			# @sbrl 2025-01-06: but wait, we're only [height, width] here not [H, W, C] ref 2025-01-09_deeplabv3+_rainfall_csgpu_ri_rmse_lr0.00001_us2_tNone_bs32_regresstest
 		
 		if do_remove_isolated_pixels:
+			print("DEBUG:dataset do_remove_isolated_pixels is TRUE")
 			water = remove_isolated_pixels(water) # expects [ height, width ]
 		
 		if water_threshold is None:

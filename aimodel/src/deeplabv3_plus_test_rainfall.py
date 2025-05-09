@@ -85,6 +85,8 @@ if LOSS == "mean-squared-error":
 	WATER_THRESHOLD = None
 
 
+logger.info(f"REMOVE_ISOLATED_PIXELS is {str(REMOVE_ISOLATED_PIXELS)}")
+
 env.print_all(False)
 
 
