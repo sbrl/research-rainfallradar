@@ -140,6 +140,7 @@ def parse_item(metadata, output_size=100, input_size="same", water_threshold=0.1
 		# water = tf.one_hot(water, water_bins, axis=-1, dtype=tf.int32)
 		# SPARSE [LOSS dice / sparse cross entropy]
 		if water_threshold is not None:  # if water_threshold=None, then regression mode
+			print("DEBUG:dataset water_threshold isn't none, applying threshold")
 			water = tf.cast(tf.math.greater_equal(water, water_threshold), dtype=tf.float32)
 			# BUG it may be a problem we're [height, width, channel] here rather than [height, width], depending on how dlr works
 			# @sbrl 2025-01-06: but wait, we're only [height, width] here not [H, W, C] ref 2025-01-09_deeplabv3+_rainfall_csgpu_ri_rmse_lr0.00001_us2_tNone_bs32_regresstest
@@ -147,6 +148,8 @@ def parse_item(metadata, output_size=100, input_size="same", water_threshold=0.1
 		if do_remove_isolated_pixels:
 			print("DEBUG:dataset do_remove_isolated_pixels is TRUE")
 			water = remove_isolated_pixels(water) # expects [ height, width ]
+		else
+			print("DEBUG:dataset do_remove_isolated_pixels is FALSE, not doing anything")
 		
 		if water_threshold is None:
 			# Stack to have a channel, since if water_threshold=None then we would end up with [height, width] instead of [height, width, channel] otherwise
