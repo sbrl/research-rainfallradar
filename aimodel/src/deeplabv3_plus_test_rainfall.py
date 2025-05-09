@@ -54,7 +54,7 @@ EPOCHS = env.read("EPOCHS", int, 25)
 LOSS = env.read("LOSS", str, "cross-entropy-dice")  # other possible values: cross-entropy, mean-squared-error (bleh)
 DICE_LOG_COSH = env.read("DICE_LOG_COSH", bool, False)
 LEARNING_RATE = env.read("LEARNING_RATE", float, 0.00001)
-WATER_THRESHOLD = env.read("WATER_THRESHOLD", float, 0.1, do_none=True)
+WATER_THRESHOLD = env.read("WATER_THRESHOLD", float, 0.1, do_none=True) # NO EFFECT BECAUSE THE DATASET IS PRE-BINARISED!!!!! TODO FIX RAINFALLWRANGLER!!
 UPSAMPLE = env.read("UPSAMPLE", int, 2)
 SPLIT_VALIDATE = env.read("SPLIT_VALIDATE", float, 0.2)
 SPLIT_TEST = env.read("SPLIT_TEST", float, 0)
