@@ -26,6 +26,7 @@ from lib.ai.components.MetricSensitivity import make_sensitivity as sensitivity
 from lib.ai.components.MetricSpecificity import specificity
 from lib.ai.helpers.summarywriter import summarywriter
 from lib.dataset.dataset_mono import dataset_mono, dataset_mono_predict
+from lib.dataset.get_from_batched_dataset import get_from_batched_dataset
 
 # from glob import glob
 
@@ -124,6 +125,11 @@ else:
 		do_remove_isolated_pixels=REMOVE_ISOLATED_PIXELS
 	)
 	logger.info("Dataset AS_ONE:", dataset_train)
+
+first_sample = get_from_batched_dataset(dataset_train, 1)
+print("DEBUG:core DS:TRAIN/FIRST_SAMPLE", first_sample)
+
+# TODO print 1st label or something here to validate it's not bbinarised under tNone
 
 # ███    ███  ██████  ██████  ███████ ██     
 # ████  ████ ██    ██ ██   ██ ██      ██     
@@ -511,33 +517,23 @@ def plot_predictions_switcher(filepath_output, input_items, colormap, model):
 	else:
 		return plot_predictions(filepath_output, input_items, colormap, model)
 
-def get_from_batched(dataset, count):
-	result = []
-	for batched in dataset:
-		items_input = tf.unstack(batched[0], axis=0)
-		items_label = tf.unstack(batched[1], axis=0)
-		for item in zip(items_input, items_label):
-			result.append(item)
-			if len(result) >= count:
-				return result
-
 plot_predictions_switcher(
-	os.path.join(DIR_OUTPUT, "predict_train_$$.png"),
-	get_from_batched(dataset_train, PREDICT_COUNT),
-	colormap,
-	model=model
+    os.path.join(DIR_OUTPUT, "predict_train_$$.png"),
+    get_from_batched_dataset(dataset_train, PREDICT_COUNT),
+    colormap,
+    model=model,
 )
 if not PREDICT_AS_ONE:
 	plot_predictions_switcher(
 		os.path.join(DIR_OUTPUT, "predict_validate_$$.png"),
-		get_from_batched(dataset_validate, PREDICT_COUNT),
+		get_from_batched_dataset(dataset_validate, PREDICT_COUNT),
 		colormap,
 		model=model
 	)
 	if dataset_test is not None:
 		plot_predictions_switcher(
 			os.path.join(DIR_OUTPUT, "predict_test_$$.png"),
-			get_from_batched(dataset_test, PREDICT_COUNT),
+			get_from_batched_dataset(dataset_test, PREDICT_COUNT),
 			colormap,
 			model=model
 		)
