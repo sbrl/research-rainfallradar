@@ -148,7 +148,7 @@ def parse_item(metadata, output_size=100, input_size="same", water_threshold=0.1
 		if do_remove_isolated_pixels:
 			print("DEBUG:dataset do_remove_isolated_pixels is TRUE")
 			water = remove_isolated_pixels(water) # expects [ height, width ]
-		else
+		else:
 			print("DEBUG:dataset do_remove_isolated_pixels is FALSE, not doing anything")
 		
 		if water_threshold is None:
