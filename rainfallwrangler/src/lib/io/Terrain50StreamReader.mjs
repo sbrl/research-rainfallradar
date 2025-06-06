@@ -13,13 +13,18 @@ import array2d_classify_convert_bin from '../manip/array2d_classify_convert_bin.
 import { end_safe } from './StreamHelpers.mjs';
 
 class Terrain50StreamReader {	
-	constructor(threshold = 0.1, tolerant = false) {
+	constructor(threshold = null, tolerant = false) {
 		this.threshold = threshold;
 		
 		this.tolerant = tolerant;
 		
 		this.stream_in = null;
 		this.stream_extractor = null;
+		
+		if(this.threshold == null)
+			l.log(`threshold is null, not thresholding`);
+		else
+			l.warn(`threshold = ${this.threshold}, THRESHOLDING DATA`);
 	}
 	
 	async *iterate(filepath) {
@@ -40,10 +45,10 @@ class Terrain50StreamReader {
 			if(i < this.offset)
 				continue;
 			
-			const values_bin = array2d_classify_convert_bin(
+			const values_bin = this.threshold != null ? array2d_classify_convert_bin(
 				next.data,
 				this.threshold
-			);
+			) : next.data;
 			
 			// l.debug(`[DEBUG:Terrain50Stream] values_bin`, util.inspect(values_bin).substr(0, 500));
 			

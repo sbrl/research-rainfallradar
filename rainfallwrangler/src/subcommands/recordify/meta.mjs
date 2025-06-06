@@ -11,5 +11,6 @@ export default function(cli) {
 				.reverse();
 		})
 		.argument("water-offset", "Make the water depth data be this many time steps ahead of the rainfall radar data. (default: 1)", 1, "integer")
+		.argument("threshold", "Binarise the data according to the given threshold. Defaults to null, which means no thresholding is performed.", null, "float")
 		.argument("output", "The path to the directory to write the generated .jsonl.gz files to.", null, "string");
 }

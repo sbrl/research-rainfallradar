@@ -31,7 +31,7 @@ export default async function() {
 	// Recordify CLEAN, does NOT shuffle
 	const writer = new RecordWrangler(settings.output, settings.count_file);
 	const reader_radar = new RadarWrangler(settings.rainfall_pattern);
-	const reader_water = new Terrain50StreamReader();
+	const reader_water = new Terrain50StreamReader(settings.threshold);
 	
 	await writer.write(reader_radar.iterate(settings.rainfall), reader_water.iterate(settings.water));
 	
