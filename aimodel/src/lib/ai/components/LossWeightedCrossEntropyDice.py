@@ -28,48 +28,61 @@ def read_weights(filepath_weights: str):
 	
 
 class LossWeightedCrossEntropyDice(LossCrossEntropyDice):
-	"""A weighted version of LossCrossEntropyDice. Takes a PRECOMPUTED weights file and uses that to weight each sample as it comes through by binning it via summation of ground-truth weights.
+    """A weighted version of LossCrossEntropyDice. Takes a PRECOMPUTED weights file and uses that to weight each sample as it comes through by binning it via summation of ground-truth weights.
 
-	In other words, this is a focal loss variant of the aforementioned class.
+    In other words, this is a focal loss variant of the aforementioned class.
 
-	Inherits from LossCrossEntropyDice.
-	"""
+    Inherits from LossCrossEntropyDice.
+    """
 
-	def __init__(
-		self,
-		filepath_weights: str | None,
-		col_lower: tf.Tensor | None,
-		col_upper: tf.Tensor | None,
-		col_weights: tf.Tensor | None,
-		**kwargs,
-	):
-		super(LossCrossEntropyDice, **kwargs)
+    def __init__(
+        self,
+        filepath_weights: str | None,
+        col_lower: tf.Tensor | None,
+        col_upper: tf.Tensor | None,
+        col_weights: tf.Tensor | None,
+        **kwargs,
+    ):
+        super(LossCrossEntropyDice, **kwargs)
+
+        # When config is passed back in it is done by passing to the constructor - hence the loading here
+        if col_lower is not None and col_upper is not None and col_weights is not None:
+            self.col_lower = col_lower
+            self.col_upper = col_upper
+            self.col_weights = col_upper
+        elif type(filepath_weights) is str:
+            self.col_lower, self.col_upper, self.col_weights = read_weights(
+                filepath_weights
+            )
+        else:
+            raise Exception(
+                "Error: both fileapth_weights and (col_lower || col_upper || col_weights)  were None"
+            )
+
+    def call(self, y_true, y_pred, **kwargs):
+        label_rainfall = tf.cast(y_true, dtype=tf.float16)
+
+        label_rainfall_total = tf.math.reduce_sum(label_rainfall)
+
+        val_loss = super(LossWeightedCrossEntropyDice, self).call(
+            y_true, y_pred, **kwargs
+        )
+
+        # TODO finish filling this in - we have everything we need..... probably :P
+        # gl to future me who will be implementing all the nasty tensor manipulation code here since you can't drop to normal Python/numpy data types bc of execution graphs :P
 		
-		# When config is passed back in it is done by passing to the constructor - hence the loading here
-		if col_lower is not None and col_upper is not None and col_weights is not None:
-			self.col_lower = col_lower
-			self.col_upper = col_upper
-			self.col_weights = col_upper
-		elif type(filepath_weights) is str:
-			self.col_lower, self.col_upper, self.col_weights = read_weights(
-				filepath_weights
-			)
-		else:
-			raise Exception("Error: both fileapth_weights and (col_lower || col_upper || col_weights)  were None")
-	
-	def call(self, y_true, y_pred):
-		pass # TODO fill this in - we have everything we need..... probably :P
+        pass
 
-		# gl to future me who will be implementing all the nasty tensor manipulation code here since you can't drop to normal Python/numpy data types bc of execution graphs :P
-	def get_config(self):
-		config = super(LossWeightedCrossEntropyDice, self).get_config()
-		config.update(
-			{
-				"col_lower": self.col_lower,
-				"col_upper": self.col_upper,
-				"col_weights": self.col_weights,
-			}
-		)
+
+    def get_config(self):
+        config = super(LossWeightedCrossEntropyDice, self).get_config()
+        config.update(
+            {
+                "col_lower": self.col_lower,
+                "col_upper": self.col_upper,
+                "col_weights": self.col_weights,
+            }
+        )
 		
 
 if __name__ == "__main__":
