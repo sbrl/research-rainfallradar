@@ -92,7 +92,7 @@ REMOVE_ISOLATED_PIXELS = env.read("NO_REMOVE_ISOLATED_PIXELS", bool, True) # Thi
 EPOCHS = env.read("EPOCHS", int, 25)
 LOSS = env.read("LOSS", str, "cross-entropy-dice")  # other possible values: cross-entropy, mean-squared-error (bleh), weighted-cross-entropy-dice (:D)
 DICE_LOG_COSH = env.read("DICE_LOG_COSH", bool, False)
-FILEPATH_WEIGHTS = env.read("FILEPATH_WEIGHTS", str) # This MUST be provided if LOSS="weighted-cross-entropy-dice", as that focal-loss style function requires a  precomputed weight table to apply sample weightings. See also rrdlr_weightings_plot.py to do this
+PATH_WEIGHTS = env.read("PATH_WEIGHTS", str) # This MUST be provided if LOSS="weighted-cross-entropy-dice", as that focal-loss style function requires a  precomputed weight table to apply sample weightings. See also rrdlr_weightings_plot.py to do this. If not specified then will auto-detect to DIR_RAINFALLWATER/focalweights.tsv
 LEARNING_RATE = env.read("LEARNING_RATE", float, 0.00001)
 WATER_THRESHOLD = env.read("WATER_THRESHOLD", float, 0.1, do_none=True) # NO EFFECT BECAUSE THE DATASET IS PRE-BINARISED!!!!! TODO FIX RAINFALLWRANGLER!!
 UPSAMPLE = env.read("UPSAMPLE", int, 2)
@@ -124,8 +124,15 @@ if LOSS == "mean-squared-error":
 	NUM_CLASSES = 1
 	WATER_THRESHOLD = None
 
-if LOSS == "weighted-cross-entropy-dice" and FILEPATH_WEIGHTS is None:
-    raise Exception("Error: LOSS is 'weighted-cross-entropy-dice', but FILEPATH_WEIGHTS is None. FILEPATH_WEIGHTS MUST be specified in this LOSS mode!")
+if LOSS == "weighted-cross-entropy-dice" and PATH_WEIGHTS is None:
+	logger.info("No PATH_WEIGHTS specified but we're in weighted loss mode, attempting auto-detection")
+	
+	PATH_WEIGHTS = os.path.join(DIR_RAINFALLWATER, "focalweights.tsv")
+	
+	logger.info(f"Looking for {PATH_WEIGHTS} for focal loss weights")
+	
+	if not os.path.exists(PATH_WEIGHTS):
+		raise Exception("Error: LOSS is 'weighted-cross-entropy-dice', but PATH_WEIGHTS is None. PATH_WEIGHTS MUST be specified in this LOSS mode!")
 
 
 logger.info(f"REMOVE_ISOLATED_PIXELS is {str(REMOVE_ISOLATED_PIXELS)}")
@@ -307,7 +314,7 @@ if PATH_CHECKPOINT is None:
 	match LOSS:
 		case "weighted-cross-entropy-dice":
 			loss_fn = LossCrossEntropyDice(
-				filepath_weights=FILEPATH_WEIGHTS,
+				filepath_weights=PATH_WEIGHTS,
 				log_cosh=DICE_LOG_COSH
 			)
 		case "cross-entropy-dice":
@@ -521,36 +528,36 @@ def plot_predictions(filepath_output, input_items, colormap, model):
 		i += 1
 
 def plot_predictions_regressive(filepath_output, input_items, model):
-    # Iterate over items
-    i = 0
-    for input_pair in input_items:
-        item_in = input_pair[0]
-        item_label = input_pair[1]
+	# Iterate over items
+	i = 0
+	for input_pair in input_items:
+		item_in = input_pair[0]
+		item_label = input_pair[1]
 
-        # Pre-emptive logging
-        print("DEBUG:plot_predictions_regressive item_in.shape", item_in.shape)
-        print("DEBUG:plot_predictions_regressive item_label.shape", item_label.shape)
+		# Pre-emptive logging
+		print("DEBUG:plot_predictions_regressive item_in.shape", item_in.shape)
+		print("DEBUG:plot_predictions_regressive item_label.shape", item_label.shape)
 
-        # item_in.shape (128, 128, 8)
-        # item_label.shape (128, 128, 1)
+		# item_in.shape (128, 128, 8)
+		# item_label.shape (128, 128, 1)
 
-        item_in = tf.expand_dims(item_in, axis=0)  # Now (1, 128, 128, 8) to add batch size
+		item_in = tf.expand_dims(item_in, axis=0)  # Now (1, 128, 128, 8) to add batch size
 
-        # TODO we probably need to rework some shapes here
-        prediction = model.predict(item_in)
+		# TODO we probably need to rework some shapes here
+		prediction = model.predict(item_in)
 
-        print("DEBUG:plot_predictions_regressive prediction.shape", prediction.shape)
+		print("DEBUG:plot_predictions_regressive prediction.shape", prediction.shape)
 
-        plot_samples_matplotlib(
-            filepath_output.replace("$$", str(i)),
-            [
-                tf.math.reduce_max(input_pair[0][:, :, :-1], axis=-1),  # rainfall only
-                item_label,  # absolute output
-                prediction,  # prediction as image
-            ],
-        )
+		plot_samples_matplotlib(
+			filepath_output.replace("$$", str(i)),
+			[
+				tf.math.reduce_max(input_pair[0][:, :, :-1], axis=-1),  # rainfall only
+				item_label,  # absolute output
+				prediction,  # prediction as image
+			],
+		)
 
-        i += 1
+		i += 1
 
 
 def plot_predictions_switcher(filepath_output, input_items, colormap, model):
@@ -571,10 +578,10 @@ def plot_predictions_switcher(filepath_output, input_items, colormap, model):
 		return plot_predictions(filepath_output, input_items, colormap, model)
 
 plot_predictions_switcher(
-    os.path.join(DIR_OUTPUT, "predict_train_$$.png"),
-    get_from_batched_dataset(dataset_train, PREDICT_COUNT),
-    colormap,
-    model=model,
+	os.path.join(DIR_OUTPUT, "predict_train_$$.png"),
+	get_from_batched_dataset(dataset_train, PREDICT_COUNT),
+	colormap,
+	model=model,
 )
 if not PREDICT_AS_ONE:
 	plot_predictions_switcher(
