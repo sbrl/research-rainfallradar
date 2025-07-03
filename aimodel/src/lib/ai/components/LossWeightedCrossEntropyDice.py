@@ -3,7 +3,7 @@ import os
 import io
 import tensorflow as tf
 
-from LossCrossEntropyDice import LossCrossEntropyDice
+from .LossCrossEntropyDice import LossCrossEntropyDice
 
 
 def read_weights(filepath_weights: str):
