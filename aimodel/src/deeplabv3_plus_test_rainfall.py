@@ -92,7 +92,7 @@ REMOVE_ISOLATED_PIXELS = env.read("NO_REMOVE_ISOLATED_PIXELS", bool, True) # Thi
 EPOCHS = env.read("EPOCHS", int, 25)
 LOSS = env.read("LOSS", str, "cross-entropy-dice")  # other possible values: cross-entropy, mean-squared-error (bleh), weighted-cross-entropy-dice (:D)
 DICE_LOG_COSH = env.read("DICE_LOG_COSH", bool, False)
-PATH_WEIGHTS = env.read("PATH_WEIGHTS", str) # This MUST be provided if LOSS="weighted-cross-entropy-dice", as that focal-loss style function requires a  precomputed weight table to apply sample weightings. See also rrdlr_weightings_plot.py to do this. If not specified then will auto-detect to DIR_RAINFALLWATER/focalweights.tsv
+PATH_WEIGHTS = env.read("PATH_WEIGHTS", str, None) # This MUST be provided if LOSS="weighted-cross-entropy-dice", as that focal-loss style function requires a  precomputed weight table to apply sample weightings. See also rrdlr_weightings_plot.py to do this. If not specified then will auto-detect to DIR_RAINFALLWATER/focalweights.tsv
 LEARNING_RATE = env.read("LEARNING_RATE", float, 0.00001)
 WATER_THRESHOLD = env.read("WATER_THRESHOLD", float, 0.1, do_none=True) # NO EFFECT BECAUSE THE DATASET IS PRE-BINARISED!!!!! TODO FIX RAINFALLWRANGLER!!
 UPSAMPLE = env.read("UPSAMPLE", int, 2)
