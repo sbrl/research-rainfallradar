@@ -44,7 +44,7 @@ class LossWeightedCrossEntropyDice(LossCrossEntropyDice):
         col_weights: tf.Tensor | None = None,
         **kwargs,
     ):
-        super(LossCrossEntropyDice, **kwargs)
+        super(LossWeightedCrossEntropyDice, self).__init__(**kwargs)
 
         # When config is passed back in it is done by passing to the constructor - hence the loading here
         if col_lower is not None and col_upper is not None and col_weights is not None:
