@@ -58,6 +58,7 @@ import lib.primitives.env as env
 from lib.ai.components.CallbackCustomModelCheckpoint import CallbackCustomModelCheckpoint
 from lib.ai.components.CallbackExtraValidation import CallbackExtraValidation
 from lib.ai.components.LossCrossEntropyDice import LossCrossEntropyDice
+from lib.ai.components.LossWeightedCrossEntropyDice import LossWeightedCrossEntropyDice
 from lib.ai.components.MetricDice import metric_dice_coefficient as dice_coefficient
 from lib.ai.components.MetricMeanIoU import make_one_hot_mean_iou as mean_iou
 from lib.ai.components.MetricSensitivity import make_sensitivity as sensitivity
@@ -89,8 +90,9 @@ PARALLEL_READS = env.read("PARALLEL_READS", float, 1.5)
 STEPS_PER_EPOCH = env.read("STEPS_PER_EPOCH", int, None)
 REMOVE_ISOLATED_PIXELS = env.read("NO_REMOVE_ISOLATED_PIXELS", bool, True) # This will flip True → False so it's okay
 EPOCHS = env.read("EPOCHS", int, 25)
-LOSS = env.read("LOSS", str, "cross-entropy-dice")  # other possible values: cross-entropy, mean-squared-error (bleh)
+LOSS = env.read("LOSS", str, "cross-entropy-dice")  # other possible values: cross-entropy, mean-squared-error (bleh), weighted-cross-entropy-dice (:D)
 DICE_LOG_COSH = env.read("DICE_LOG_COSH", bool, False)
+FILEPATH_WEIGHTS = env.read("FILEPATH_WEIGHTS", str) # This MUST be provided if LOSS="weighted-cross-entropy-dice", as that focal-loss style function requires a  precomputed weight table to apply sample weightings. See also rrdlr_weightings_plot.py to do this
 LEARNING_RATE = env.read("LEARNING_RATE", float, 0.00001)
 WATER_THRESHOLD = env.read("WATER_THRESHOLD", float, 0.1, do_none=True) # NO EFFECT BECAUSE THE DATASET IS PRE-BINARISED!!!!! TODO FIX RAINFALLWRANGLER!!
 UPSAMPLE = env.read("UPSAMPLE", int, 2)
@@ -121,6 +123,9 @@ if LOSS == "mean-squared-error":
 	# This is required because DeepLabV3+ requires that it format the output as N=value classes
 	NUM_CLASSES = 1
 	WATER_THRESHOLD = None
+
+if LOSS == "weighted-cross-entropy-dice" and FILEPATH_WEIGHTS is None:
+    raise Exception("Error: LOSS is 'weighted-cross-entropy-dice', but FILEPATH_WEIGHTS is None. FILEPATH_WEIGHTS MUST be specified in this LOSS mode!")
 
 
 logger.info(f"REMOVE_ISOLATED_PIXELS is {str(REMOVE_ISOLATED_PIXELS)}")
@@ -267,6 +272,7 @@ else:
 	model = tf.keras.models.load_model(PATH_CHECKPOINT, custom_objects={
 		# Tell Tensorflow about our custom layers so that it can deserialise models that use them
 		"LossCrossEntropyDice": LossCrossEntropyDice,
+		"LossWeightedCrossEntropyDice": LossWeightedCrossEntropyDice,
 		"metric_dice_coefficient": dice_coefficient,
 		"sensitivity": sensitivity,
 		"specificity": specificity,
@@ -298,24 +304,31 @@ if PATH_CHECKPOINT is None:
 		sensitivity(),  # How many true positives were accurately predicted
 		specificity,  # How many true negatives were accurately predicted?
 	]
-	if LOSS == "cross-entropy-dice":
-		loss_fn = LossCrossEntropyDice(log_cosh=DICE_LOG_COSH)
-	elif LOSS == "cross-entropy":
-		loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
-	elif LOSS == "mean-squared-error":
-		loss_fn = (
-			tf.keras.losses.MeanSquaredError()
-		)  # TODO consider L2 loss as it might be more computationally efficient?
-		metrics = [
-			tf.keras.metrics.MeanSquaredError(),
-			tf.keras.metrics.RootMeanSquaredError(),
-			tf.keras.metrics.MeanAbsoluteError(),
-		]  # Others don't make sense w/o this - NOTE this is mse and not rmse!
-	else:
-		raise Exception(
-			f"Error: Unknown loss function '{LOSS}' (possible values: cross-entropy, cross-entropy-dice)."
-		)
-
+	match LOSS:
+		case "weighted-cross-entropy-dice":
+			loss_fn = LossCrossEntropyDice(
+				filepath_weights=FILEPATH_WEIGHTS,
+				log_cosh=DICE_LOG_COSH
+			)
+		case "cross-entropy-dice":
+			loss_fn = LossCrossEntropyDice(log_cosh=DICE_LOG_COSH)
+		case "cross-entropy":
+			loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
+		case "mean-squared-error":
+			loss_fn = (
+				tf.keras.losses.MeanSquaredError()
+			)  # TODO consider L2 loss as it might be more computationally efficient?
+		
+			metrics = [
+				tf.keras.metrics.MeanSquaredError(),
+				tf.keras.metrics.RootMeanSquaredError(),
+				tf.keras.metrics.MeanAbsoluteError(),
+			]  # Others don't make sense w/o this - NOTE this is mse and not rmse!
+		case _:
+			raise Exception(
+				f"Error: Unknown loss function '{LOSS}' (possible values: cross-entropy, cross-entropy-dice)."
+			)
+	
 	model.compile(
 		optimizer=tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE),
 		loss=loss_fn,
