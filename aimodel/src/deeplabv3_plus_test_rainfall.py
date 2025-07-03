@@ -313,7 +313,7 @@ if PATH_CHECKPOINT is None:
 	]
 	match LOSS:
 		case "weighted-cross-entropy-dice":
-			loss_fn = LossCrossEntropyDice(
+			loss_fn = LossWeightedCrossEntropyDice(
 				filepath_weights=PATH_WEIGHTS,
 				log_cosh=DICE_LOG_COSH
 			)
