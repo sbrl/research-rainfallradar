@@ -2,17 +2,17 @@ import tensorflow as tf
 
 from lib.io.handle_open import handle_open
 
-class CallbackNBatchCsv(tf.keras.callbacks.Callback):
-	def __init__(self, filepath, n_batches=1, separator="\t", **kwargs) -> None:
-		super(CallbackNBatchCsv, self).__init__(**kwargs)
+class CallbackAdvancedCsv(tf.keras.callbacks.Callback):
+	def __init__(self, filepath:str, dirpath_weighted:str|None=None, n_epochs:int=1, separator:str="\t", **kwargs) -> None:
+		super(CallbackAdvancedCsv, self).__init__(**kwargs)
 		
-		self.n_batches = n_batches
+		self.n_epochs = n_epochs
 		self.separator = separator
 		
 		self.handle = handle_open(filepath, "w")
 		
 		
-		self.batches_seen = 0
+		self.epochs_seen = 0
 		self.keys = None
 	
 	def write_header(self, logs): # logs = metrics
@@ -20,11 +20,12 @@ class CallbackNBatchCsv(tf.keras.callbacks.Callback):
 		self.keys = sorted(self.keys)
 		self.handle.write("\t".join(self.keys)+"\n")
 			
-	def on_batch_end(self, batch, logs=None): # logs = metrics
-		if self.batches_seen == 0:
+	def on_epoch_end(self, epoch, logs=None): # logs = metrics
+		if self.epochs_seen == 0:
 			self.write_header(logs)
 		
-		if self.batches_seen % self.n_batches == 0:
+		if self.epochs_seen % self.n_epochs == 0:
+			
 			self.handle.write(self.separator.join([str(logs[key]) for key in self.keys]) + "\n")
 		
-		self.batches_seen += 1
+		self.epochs_seen += 1

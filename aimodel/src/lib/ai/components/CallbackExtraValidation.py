@@ -8,7 +8,7 @@ class CallbackExtraValidation(tf.keras.callbacks.Callback):
 	
 	These are passed back to Tensorflow/Keras by ~~abusing~~ updating the logs dictionary that's passed to us. If you update it with more metrics, then they get fed into the regular Tensorflow logging system :D
 	
-	IMPORTANT: This MUST be the FIRST callback in the list! Otherwise it won't be executed before e.g. `tf.kkeras.callbacks.CSVLogger`.
+	IMPORTANT: This MUST be the FIRST callback in the list! Otherwise it won't be executed before e.g. `tf.keras.callbacks.CSVLogger`.
 	
 	TODO note to self blog about this because this was not as easy to figure out as it appears.
 	

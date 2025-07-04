@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 
-def make_one_hot_mean_iou(classes=2):
+def make_mean_iou(classes=2):
 	iou = tf.keras.metrics.MeanIoU(num_classes=classes)
 	def one_hot_mean_iou(y_true, y_pred, ):
 		"""Compute the mean IoU for one-hot tensors.

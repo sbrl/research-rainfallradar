@@ -60,8 +60,8 @@ from lib.ai.components.CallbackExtraValidation import CallbackExtraValidation
 from lib.ai.components.LossCrossEntropyDice import LossCrossEntropyDice
 from lib.ai.components.LossWeightedCrossEntropyDice import LossWeightedCrossEntropyDice
 from lib.ai.components.MetricDice import metric_dice_coefficient as dice_coefficient
-from lib.ai.components.MetricMeanIoU import make_one_hot_mean_iou as mean_iou
-from lib.ai.components.MetricSensitivity import make_sensitivity as sensitivity
+from lib.ai.components.MetricMeanIoU import make_one_hot_mean_iou as make_mean_iou
+from lib.ai.components.MetricSensitivity import make_sensitivity as make_sensitivity
 from lib.ai.components.MetricSpecificity import specificity
 from lib.ai.helpers.summarywriter import summarywriter
 from lib.dataset.dataset_mono import dataset_mono, dataset_mono_predict
@@ -281,9 +281,9 @@ else:
 		"LossCrossEntropyDice": LossCrossEntropyDice,
 		"LossWeightedCrossEntropyDice": LossWeightedCrossEntropyDice,
 		"metric_dice_coefficient": dice_coefficient,
-		"sensitivity": sensitivity,
-		"specificity": specificity,
-		"one_hot_mean_iou": mean_iou
+		"one_hot_mean_iou": make_mean_iou,
+		"sensitivity": make_sensitivity,
+		"specificity": specificity
 	})
 
 
@@ -307,8 +307,8 @@ if PATH_CHECKPOINT is None:
 	metrics = [
 		"accuracy",
 		dice_coefficient,
-		mean_iou(),
-		sensitivity(),  # How many true positives were accurately predicted
+		make_mean_iou(),
+		make_sensitivity(),  # How many true positives were accurately predicted
 		specificity,  # How many true negatives were accurately predicted?
 	]
 	match LOSS:
