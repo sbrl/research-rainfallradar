@@ -5,27 +5,7 @@ import tensorflow as tf
 
 from .LossCrossEntropyDice import LossCrossEntropyDice
 
-
-def read_weights(filepath_weights: str):
-	with io.open(filepath_weights, "r", encoding="utf-8") as handle:
-		weights = handle.read().rstrip().split("\n")[1:] # split into rows & remove header
-	
-	print("DEBUG:weights", weights)
-	
-	[ lower, upper, weight ] = tf.io.decode_csv(weights, [
-		# tf.constant(0, dtype=tf.int32), # row id - we don't care abt this col so it's excluded
-		tf.constant(0, dtype=tf.float32), # lower - Tensorflow is dumb so we hafta convert this later
-		tf.constant(0, dtype=tf.float32), # upper - Tensorflow is dumb so we hafta convert this later
-		tf.constant(0, dtype=tf.float32), # weight - full precision required here
-	], field_delim="\t", select_cols=[1,2,3]) # skip col 0
-	
-	# We hafta cast afterwards bc TF is dumb
-	lower = tf.cast(lower, tf.float16)
-	upper = tf.cast(upper, tf.float16)
-	# weights are still tf.float32
-	
-	return lower, upper, weight
-	
+from .WeightedEngine import read_weights, find_sample_weight
 	
 
 class LossWeightedCrossEntropyDice(LossCrossEntropyDice):
@@ -70,21 +50,10 @@ class LossWeightedCrossEntropyDice(LossCrossEntropyDice):
 		val_loss = super(LossWeightedCrossEntropyDice, self).call(
 			y_true, y_pred, **kwargs
 		)
-
-		# Note: broadcasting improves performance/efficiency here
-		# Ref https://numpy.org/doc/stable/user/basics.broadcasting.html
-		select_lower = tf.math.greater_equal(label_rainfall_total, self.col_lower)
-		select_upper = tf.math.less_equal(label_rainfall_total, self.col_upper)
-
-		# Identify the indices of the weighting table to preserve
-		selected = tf.cast(
-			tf.math.logical_and(select_lower, select_upper),
-			dtype=tf.float32,  # we're abt to hit up the weights tbl, which is in tf.float32
-		)
-
-		# Extract the highest weight from the weighting table. This is required because if the input value falls EXACTLY on a bin boundary, then we may select multiple bins using this method
-		selected_weight = tf.math.reduce_max(selected * self.col_weights)
-
+		
+		# This is a Tensorflow function, so it's alright
+		selected_weight = find_sample_weight(label_rainfall_total, self.col_lower, self.col_upper, self.col_weights)
+		
 		return selected_weight * val_loss
 
 		# finish filling this in - we have everything we need..... probably :P  (done)
