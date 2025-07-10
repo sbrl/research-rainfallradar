@@ -363,7 +363,7 @@ if PATH_CHECKPOINT is None:
 				filepath=os.path.join(
 					DIR_OUTPUT,
 					"checkpoints",
-					"checkpoint_e{epoch:d}_loss{loss:.3f}.hdf5",
+					"checkpoint_e{epoch:d}_loss{loss:.3f}.keras",
 				),
 				monitor="loss",
 			),

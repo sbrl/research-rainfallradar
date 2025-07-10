@@ -6,8 +6,8 @@ import gzip
 import json
 import argparse
 
-from silence_tensorflow import silence_tensorflow
 if not os.environ.get("NO_SILENCE"):
+	from silence_tensorflow import silence_tensorflow
 	silence_tensorflow()
 import tensorflow as tf
 
