@@ -1,3 +1,5 @@
+import io
+
 import tensorflow as tf
 
 
@@ -6,19 +8,18 @@ def read_weights(filepath_weights: str):
 		weights = (
 			handle.read().rstrip().split("\n")[1:]
 		)  # split into rows & remove header
-
-	print("DEBUG:weights", weights)
-
+	
+	
 	[lower, upper, weight] = tf.io.decode_csv(
 		weights,
 		[
 			# tf.constant(0, dtype=tf.int32), # row id - we don't care abt this col so it's excluded
 			tf.constant(
 				0, dtype=tf.float32
-			),  # lower - Tensorflow is dumb so we hafta convert this later
+			), # lower - Tensorflow is dumb so we hafta convert this later
 			tf.constant(
 				0, dtype=tf.float32
-			),  # upper - Tensorflow is dumb so we hafta convert this later
+			), # upper - Tensorflow is dumb so we hafta convert this later
 			tf.constant(0, dtype=tf.float32),  # weight - full precision required here
 		],
 		field_delim="\t",
@@ -29,7 +30,7 @@ def read_weights(filepath_weights: str):
 	lower = tf.cast(lower, tf.float16)
 	upper = tf.cast(upper, tf.float16)
 	# weights are still tf.float32
-
+	
 	return lower, upper, weight
 
 

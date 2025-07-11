@@ -55,7 +55,7 @@ class LossWeightedCrossEntropyDice(LossCrossEntropyDice):
 		selected_weight = find_sample_weight(label_rainfall_total, self.col_lower, self.col_upper, self.col_weights)
 		
 		return selected_weight * val_loss
-
+		
 		# finish filling this in - we have everything we need..... probably :P  (done)
 		# gl to future me who will be implementing all the nasty tensor manipulation code here since you can't drop to normal Python/numpy data types bc of execution graphs :P
 		# thanks past me, it was real fun --future me
