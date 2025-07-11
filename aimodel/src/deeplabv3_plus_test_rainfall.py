@@ -316,7 +316,7 @@ if PATH_CHECKPOINT is None:
 	
 	if PATH_WEIGHTS is not None:
 		tbl_weights = read_weights(PATH_WEIGHTS)
-		metrics = map(lambda metric: metric if type(metric) is not callable else make_weighted_metric(metric, tbl_weights), metrics)
+		metrics = list(map(lambda metric: metric if type(metric) is not callable else make_weighted_metric(metric, tbl_weights), metrics))
 		logger.info(f"Mapped {len(metrics)} metrics conditionally for weighted mapping")
 	
 	match LOSS:
