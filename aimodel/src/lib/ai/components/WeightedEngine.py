@@ -31,6 +31,8 @@ def read_weights(filepath_weights: str):
 	upper = tf.cast(upper, tf.float16)
 	# weights are still tf.float32
 	
+	print(f"DEBUG:read_weights READ {filepath_weights}", lower, upper, weight)
+	
 	return lower, upper, weight
 
 
