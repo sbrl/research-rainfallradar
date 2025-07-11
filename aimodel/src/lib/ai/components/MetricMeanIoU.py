@@ -3,7 +3,7 @@ import tensorflow as tf
 
 def make_mean_iou(classes=2):
 	iou = tf.keras.metrics.MeanIoU(num_classes=classes)
-	def one_hot_mean_iou(y_true, y_pred, ):
+	def one_hot_mean_iou(y_true, y_pred):
 		"""Compute the mean IoU for one-hot tensors.
 		Args:
 			y_true (tf.Tensor): The ground truth label.

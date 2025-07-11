@@ -60,7 +60,7 @@ from lib.ai.components.CallbackExtraValidation import CallbackExtraValidation
 from lib.ai.components.LossCrossEntropyDice import LossCrossEntropyDice
 from lib.ai.components.LossWeightedCrossEntropyDice import LossWeightedCrossEntropyDice
 from lib.ai.components.MetricDice import metric_dice_coefficient as dice_coefficient
-from lib.ai.components.MetricMeanIoU import make_one_hot_mean_iou as make_mean_iou
+from lib.ai.components.MetricMeanIoU import make_mean_iou
 from lib.ai.components.MetricSensitivity import make_sensitivity as make_sensitivity
 from lib.ai.components.MetricSpecificity import specificity
 from lib.ai.components.MetricWeightedWrapper import make_weighted_metric
