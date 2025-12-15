@@ -60,9 +60,11 @@ from lib.ai.components.CallbackExtraValidation import CallbackExtraValidation
 from lib.ai.components.LossCrossEntropyDice import LossCrossEntropyDice
 from lib.ai.components.LossWeightedCrossEntropyDice import LossWeightedCrossEntropyDice
 from lib.ai.components.MetricDice import metric_dice_coefficient as dice_coefficient
-from lib.ai.components.MetricMeanIoU import make_one_hot_mean_iou as mean_iou
-from lib.ai.components.MetricSensitivity import make_sensitivity as sensitivity
+from lib.ai.components.MetricMeanIoU import make_mean_iou
+from lib.ai.components.MetricSensitivity import make_sensitivity as make_sensitivity
 from lib.ai.components.MetricSpecificity import specificity
+from lib.ai.components.MetricWeightedWrapper import make_weighted_metric
+from lib.ai.components.WeightedEngine import read_weights
 from lib.ai.helpers.summarywriter import summarywriter
 from lib.dataset.dataset_mono import dataset_mono, dataset_mono_predict
 from lib.dataset.get_from_batched_dataset import get_from_batched_dataset
@@ -281,9 +283,9 @@ else:
 		"LossCrossEntropyDice": LossCrossEntropyDice,
 		"LossWeightedCrossEntropyDice": LossWeightedCrossEntropyDice,
 		"metric_dice_coefficient": dice_coefficient,
-		"sensitivity": sensitivity,
-		"specificity": specificity,
-		"one_hot_mean_iou": mean_iou
+		"one_hot_mean_iou": make_mean_iou,
+		"sensitivity": make_sensitivity,
+		"specificity": specificity
 	})
 
 
@@ -307,15 +309,20 @@ if PATH_CHECKPOINT is None:
 	metrics = [
 		"accuracy",
 		dice_coefficient,
-		mean_iou(),
-		sensitivity(),  # How many true positives were accurately predicted
+		make_mean_iou(),
+		make_sensitivity(),  # How many true positives were accurately predicted
 		specificity,  # How many true negatives were accurately predicted?
 	]
+	
+	if PATH_WEIGHTS is not None:
+		tbl_weights = read_weights(PATH_WEIGHTS)
+		metrics = list(map(lambda metric: metric if type(metric) is not callable else make_weighted_metric(metric, tbl_weights), metrics))
+		logger.info(f"Mapped {len(metrics)} metrics conditionally for weighted mapping")
+	
 	match LOSS:
 		case "weighted-cross-entropy-dice":
 			loss_fn = LossWeightedCrossEntropyDice(
-				filepath_weights=PATH_WEIGHTS,
-				log_cosh=DICE_LOG_COSH
+				filepath_weights=PATH_WEIGHTS, log_cosh=DICE_LOG_COSH
 			)
 		case "cross-entropy-dice":
 			loss_fn = LossCrossEntropyDice(log_cosh=DICE_LOG_COSH)
@@ -325,7 +332,7 @@ if PATH_CHECKPOINT is None:
 			loss_fn = (
 				tf.keras.losses.MeanSquaredError()
 			)  # TODO consider L2 loss as it might be more computationally efficient?
-		
+
 			metrics = [
 				tf.keras.metrics.MeanSquaredError(),
 				tf.keras.metrics.RootMeanSquaredError(),
@@ -335,7 +342,7 @@ if PATH_CHECKPOINT is None:
 			raise Exception(
 				f"Error: Unknown loss function '{LOSS}' (possible values: cross-entropy, cross-entropy-dice)."
 			)
-	
+
 	model.compile(
 		optimizer=tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE),
 		loss=loss_fn,
@@ -375,10 +382,7 @@ if PATH_CHECKPOINT is None:
 	logger.info(">>> Plotting graphs")
 
 	plot_metric(
-		history.history["loss"],
-		history.history["val_loss"],
-		"loss",
-		DIR_OUTPUT
+		history.history["loss"], history.history["val_loss"], "loss", DIR_OUTPUT
 	)
 	if WATER_THRESHOLD is None:
 		plot_metric(

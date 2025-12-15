@@ -8,9 +8,9 @@ class CallbackExtraValidation(tf.keras.callbacks.Callback):
 	
 	These are passed back to Tensorflow/Keras by ~~abusing~~ updating the logs dictionary that's passed to us. If you update it with more metrics, then they get fed into the regular Tensorflow logging system :D
 	
-	IMPORTANT: This MUST be the FIRST callback in the list! Otherwise it won't be executed before e.g. `tf.kkeras.callbacks.CSVLogger`.
+	IMPORTANT: This MUST be the FIRST callback in the list! Otherwise it won't be executed before e.g. `tf.keras.callbacks.CSVLogger`.
 	
-	TODO note to self blog about this because this was not as easy to figure out as it appears.
+	Blogged about this at <https://starbeamrainbowlabs.com/blog/article.php?article=posts/557-tensorflow-3-way-dssplit.html>
 	
 	Ref kudos to <https://stackoverflow.com/a/47738812/1460422>, but you don't need to go to all that trouble :P
 	
@@ -36,7 +36,8 @@ class CallbackExtraValidation(tf.keras.callbacks.Callback):
 			if dataset is None:
 				logger.info(f"Skipping extra dataset {name} because it's None")
 				continue
-
+			
+			# TODO find a way to calculate weighted binned metrics here.... tho TODO talk to Nina about that and ask whether it's worth doing / is there an alternative!
 			metrics = self.model.evaluate(
 				dataset,
 				verbose=self.verbose,

@@ -4,7 +4,7 @@ from lib.io.handle_open import handle_open
 
 class CallbackNBatchCsv(tf.keras.callbacks.Callback):
 	def __init__(self, filepath, n_batches=1, separator="\t", **kwargs) -> None:
-		super().__init__(**kwargs)
+		super(CallbackNBatchCsv, self).__init__(**kwargs)
 		
 		self.n_batches = n_batches
 		self.separator = separator
