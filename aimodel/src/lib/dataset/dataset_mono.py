@@ -163,7 +163,7 @@ def parse_item(metadata, output_size=100, input_size="same", water_threshold=0.1
 
 	return tf.function(parse_item_inner)
 
-def make_dataset(filepaths, compression_type="GZIP", parallel_reads_multiplier=1.5, shuffle_buffer_size=128, batch_size=64, prefetch=True, shuffle=True, filepath_heightmap=None, **kwargs):
+def make_dataset(filepaths, compression_type:str="GZIP", parallel_reads_multiplier:float|int=1.5, shuffle_buffer_size:int=128, batch_size:int=64, prefetch:bool=True, shuffle:bool=True, filepath_heightmap=None, **kwargs):
 	if "NO_PREFETCH" in os.environ:
 		logger.info("disabling data prefetching.")
 	
@@ -174,7 +174,7 @@ def make_dataset(filepaths, compression_type="GZIP", parallel_reads_multiplier=1
 	
 	dataset = tf.data.TFRecordDataset(filepaths,
 		compression_type=compression_type,
-		num_parallel_reads=math.ceil(os.cpu_count() * parallel_reads_multiplier) if parallel_reads_multiplier > 0 else None
+		num_parallel_reads=math.ceil((os.cpu_count() or 1) * parallel_reads_multiplier) if parallel_reads_multiplier > 0 else None
 	)
 	if shuffle:
 		dataset = dataset.shuffle(shuffle_buffer_size)
